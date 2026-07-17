@@ -19,6 +19,11 @@ build/
 backend/.storage/
 workers/.storage/
 
+# Build and logs
+.next-build/
+.run-logs/
+_*.log
+
 # OS
 .DS_Store
 Thumbs.db
