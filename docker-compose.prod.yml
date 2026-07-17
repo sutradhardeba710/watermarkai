@@ -50,3 +50,33 @@ services:
       - ./.run-logs:/app/.run-logs
     profiles:
       - worker
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vwa-frontend
+    restart: always
+    env_file:
+      - ./backend/.env.production
+    expose:
+      - "3000"
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: vwa-caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -19,27 +19,24 @@ class MinioStorage(ObjectStorage):
             secret_key=_settings.minio_secret_key,
             secure=_settings.minio_secure,
         )
-        self._prefix = _settings.minio_bucket_prefix.rstrip("-")
+        self._bucket_name = _settings.minio_bucket_prefix.rstrip("-")
 
-    def _bucket(self, bucket: str) -> str:
-        name = f"{self._prefix}-{bucket}"
-        if not self._client.bucket_exists(name):
-            self._client.make_bucket(name)
-        return name
+    def _full_key(self, bucket: str, key: str) -> str:
+        return f"{bucket}/{key.lstrip('/')}"
 
     def put(self, bucket: str, key: str, data: IO[bytes], content_type: str = "application/octet-stream") -> str:
         from io import BytesIO
 
         raw = data.read()
-        self._client.put_object(self._bucket(bucket), key, BytesIO(raw), length=len(raw), content_type=content_type)
+        self._client.put_object(self._bucket_name, self._full_key(bucket, key), BytesIO(raw), length=len(raw), content_type=content_type)
         return key
 
     def put_file(self, bucket: str, key: str, path: str, content_type: str = "application/octet-stream") -> str:
-        self._client.fput_object(self._bucket(bucket), key, path, content_type=content_type)
+        self._client.fput_object(self._bucket_name, self._full_key(bucket, key), path, content_type=content_type)
         return key
 
     def get(self, bucket: str, key: str) -> bytes:
-        obj = self._client.get_object(self._bucket(bucket), key)
+        obj = self._client.get_object(self._bucket_name, self._full_key(bucket, key))
         try:
             return obj.read()
         finally:
@@ -47,15 +44,15 @@ class MinioStorage(ObjectStorage):
             obj.release_conn()
 
     def download_to_file(self, bucket: str, key: str, dest_path: str) -> str:
-        self._client.fget_object(self._bucket(bucket), key, dest_path)
+        self._client.fget_object(self._bucket_name, self._full_key(bucket, key), dest_path)
         return dest_path
 
     def delete(self, bucket: str, key: str) -> None:
-        self._client.remove_object(self._bucket(bucket), key)
+        self._client.remove_object(self._bucket_name, self._full_key(bucket, key))
 
     def exists(self, bucket: str, key: str) -> bool:
         try:
-            self._client.stat_object(self._bucket(bucket), key)
+            self._client.stat_object(self._bucket_name, self._full_key(bucket, key))
             return True
         except Exception:
             return False
@@ -64,5 +61,5 @@ class MinioStorage(ObjectStorage):
         from datetime import timedelta
 
         return self._client.presigned_get_object(
-            self._bucket(bucket), key, expires=timedelta(seconds=expires_seconds)
+            self._bucket_name, self._full_key(bucket, key), expires=timedelta(seconds=expires_seconds)
         )
