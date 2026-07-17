@@ -152,3 +152,4 @@ RT-DETR) or accept the AGPL terms.
 
 AGPL-3.0 for the codebase. Additional obligations apply to YOLO weights —
 see `LICENSE-NOTE.md`.
+"# watermarkai" 
