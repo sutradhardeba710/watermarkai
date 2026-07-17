@@ -1,0 +1,619 @@
+req_id=02a2e06d-346f-45c3-86d0-9fb1754ca24f method=POST path=/api/v1/auth/login status=200 ms=130972.6
+req_id=67f97ebc-95fb-4ab4-a083-29e27e3a55d3 method=POST path=/api/v1/auth/login status=200 ms=108.3
+INFO:     127.0.0.1:61316 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+req_id=8f5cf924-5f91-4f6b-be78-cdba6efece84 method=GET path=/api/v1/projects status=200 ms=43.3
+INFO:     127.0.0.1:61320 - "GET /api/v1/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61323 - "POST /api/v1/projects/e8aa638a-337b-4a4f-b2ff-25e8cdc1c0cf/process HTTP/1.1" 500 Internal Server Error
+req_id=79f6626c-6161-42a8-9706-5b1a8146b492 method=GET path=/api/v1/projects/e8aa638a-337b-4a4f-b2ff-25e8cdc1c0cf status=200 ms=20.2
+INFO:     127.0.0.1:61332 - "GET /api/v1/projects/e8aa638a-337b-4a4f-b2ff-25e8cdc1c0cf HTTP/1.1" 200 OK
+req_id=5ea2fbdf-67c1-4e7b-8838-2e8190e3cb7c method=GET path=/api/v1/projects/e8aa638a-337b-4a4f-b2ff-25e8cdc1c0cf status=200 ms=5.3
+INFO:     127.0.0.1:61334 - "GET /api/v1/projects/e8aa638a-337b-4a4f-b2ff-25e8cdc1c0cf HTTP/1.1" 200 OK
+req_id=139d840e-4085-4a7e-81c5-84520faf26e5 method=POST path=/api/v1/projects/e8aa638a-337b-4a4f-b2ff-25e8cdc1c0cf/preview status=502 ms=2805.4
+INFO:     127.0.0.1:61338 - "POST /api/v1/projects/e8aa638a-337b-4a4f-b2ff-25e8cdc1c0cf/preview HTTP/1.1" 502 Bad Gateway
+req_id=c8e026e1-b030-4732-b329-e800eeaed16e method=DELETE path=/api/v1/projects/e8aa638a-337b-4a4f-b2ff-25e8cdc1c0cf status=405 ms=0.6
+INFO:     127.0.0.1:61345 - "DELETE /api/v1/projects/e8aa638a-337b-4a4f-b2ff-25e8cdc1c0cf HTTP/1.1" 405 Method Not Allowed
+req_id=2789dc0e-97a8-48e3-a4e1-1903518a7a57 method=DELETE path=/api/v1/projects/1afbf3a8-8b28-4a19-a662-6726835ffbab status=405 ms=0.6
+INFO:     127.0.0.1:61348 - "DELETE /api/v1/projects/1afbf3a8-8b28-4a19-a662-6726835ffbab HTTP/1.1" 405 Method Not Allowed
+req_id=666590cf-1dd2-4d8a-90ef-906df989bfb1 method=GET path=/api/v1/projects status=200 ms=9.7
+INFO:     127.0.0.1:61351 - "GET /api/v1/projects?status=analyzing HTTP/1.1" 200 OK
+req_id=a6722c17-10f2-43b2-9df4-e266635e4e04 method=GET path=/api/v1/projects status=200 ms=5.2
+INFO:     127.0.0.1:61354 - "GET /api/v1/projects?status=processing HTTP/1.1" 200 OK
+req_id=9d6ca431-4080-4aca-8d66-2daaabd6cafa method=GET path=/api/v1/projects status=200 ms=5.9
+INFO:     127.0.0.1:61357 - "GET /api/v1/projects?status=completed HTTP/1.1" 200 OK
+req_id=a2d30e78-f975-4a4b-a48e-48868e4bf522 method=GET path=/api/v1/projects status=200 ms=6.6
+INFO:     127.0.0.1:61360 - "GET /api/v1/projects?status=failed HTTP/1.1" 200 OK
+req_id=4e151a76-be4a-4fa1-97a1-5e6e86382c04 method=GET path=/api/v1/projects status=200 ms=6.2
+INFO:     127.0.0.1:61363 - "GET /api/v1/projects?status=expired HTTP/1.1" 200 OK
+req_id=c6667386-3d64-4e57-b14d-0e4df990575d method=POST path=/api/v1/auth/logout status=204 ms=13.4
+INFO:     127.0.0.1:62173 - "POST /api/v1/auth/logout HTTP/1.1" 204 No Content
+req_id=bf45b66f-3e60-43b7-9843-7646a4163f3f method=POST path=/api/v1/auth/login status=200 ms=264.0
+INFO:     127.0.0.1:64043 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+req_id=e162c2bd-4e88-4f0b-b273-4cba347b16c1 method=GET path=/api/v1/projects status=200 ms=106.8
+INFO:     127.0.0.1:64046 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=ce91ca2e-5d5c-4a14-b277-e6965bd0ef37 method=GET path=/api/v1/projects status=200 ms=5.8
+INFO:     127.0.0.1:64223 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=b145bcba-2e26-4daf-ae36-b60212fc452f method=GET path=/api/v1/projects status=200 ms=10.0
+INFO:     127.0.0.1:64318 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=1eb3f68a-c250-4098-b99d-549aa8a92f56 method=POST path=/api/v1/auth/login status=200 ms=152.6
+INFO:     127.0.0.1:64320 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+req_id=5df6da8b-6ee8-426c-aeed-b8069b6d95b0 method=GET path=/api/v1/projects status=200 ms=9.8
+INFO:     127.0.0.1:64326 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=dc30fe00-8e2e-43c7-811f-d788f0f70a97 method=POST path=/api/v1/auth/login status=200 ms=137.3
+INFO:     127.0.0.1:64328 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+req_id=281bbbe8-9a1a-4fab-9c75-ce02fa687d89 method=GET path=/api/v1/admin/overview status=200 ms=2469.8
+INFO:     127.0.0.1:64336 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=7ca65d2f-044b-4f48-8706-ada2b9c90161 method=GET path=/api/v1/admin/overview status=200 ms=2037.7
+INFO:     127.0.0.1:64340 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=eff1fc1d-a1d2-4e6c-b92f-179cd42d782e method=GET path=/api/v1/projects status=200 ms=8.0
+INFO:     127.0.0.1:64780 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=07506064-fb77-4163-93ac-09e23de28202 method=GET path=/api/v1/admin/overview status=200 ms=2042.2
+INFO:     127.0.0.1:64783 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=e9b47db4-a398-405b-a524-8d40b42fe59e method=GET path=/api/v1/admin/overview status=200 ms=2061.7
+INFO:     127.0.0.1:64788 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=75ab03ac-c32b-4b83-86b0-5fae9daaba25 method=GET path=/api/v1/projects status=200 ms=6.3
+INFO:     127.0.0.1:64810 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=d33e82ee-680f-480a-916b-c0fdad975e40 method=GET path=/api/v1/admin/overview status=200 ms=2028.6
+INFO:     127.0.0.1:64815 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=f4f34d35-268e-422f-aae5-0948a8051d12 method=GET path=/api/v1/admin/overview status=200 ms=2039.8
+INFO:     127.0.0.1:64820 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=85b0e725-8adb-4d4b-a81d-487432057e26 method=GET path=/api/v1/projects status=200 ms=13.0
+INFO:     127.0.0.1:65460 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=9b5c31fa-d6e5-46c3-939b-890b5b0ef488 method=POST path=/api/v1/auth/login status=200 ms=148.1
+INFO:     127.0.0.1:65502 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+req_id=bec79325-ec0a-4fac-8671-e11df2b88b92 method=GET path=/api/v1/projects status=200 ms=10.1
+INFO:     127.0.0.1:65505 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=e38d6704-0d7a-4ded-967c-ecc12e638cc8 method=GET path=/api/v1/admin/overview status=200 ms=2053.1
+INFO:     127.0.0.1:65517 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=9107ad64-6069-411d-bb68-a16067895910 method=GET path=/api/v1/admin/overview status=200 ms=2061.3
+INFO:     127.0.0.1:65522 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=f73266f8-4545-454a-bdb1-907fb06bdabc method=GET path=/api/v1/admin/overview status=200 ms=2053.5
+INFO:     127.0.0.1:65533 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=2499c6bb-d98c-4aa1-b4b8-c9a39cc43e22 method=GET path=/api/v1/admin/overview status=200 ms=2060.4
+INFO:     127.0.0.1:49154 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=fa22d13a-bda6-4782-8442-80dc0ee0f0fd method=GET path=/api/v1/admin/jobs status=200 ms=31.7
+INFO:     127.0.0.1:49163 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=78fb58c0-d74f-48a3-a5f9-0696742e8dc7 method=GET path=/api/v1/admin/jobs status=200 ms=7.7
+INFO:     127.0.0.1:49166 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=20b79d5f-ae8f-4eec-a7a9-128bce08f9d4 method=GET path=/api/v1/admin/jobs status=200 ms=80.0
+INFO:     127.0.0.1:49173 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=4bc05531-d943-4746-8532-afc6bab9bfcb method=GET path=/api/v1/admin/jobs status=200 ms=7.7
+INFO:     127.0.0.1:49177 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=913d098a-8cf5-44c8-a506-97535cba5789 method=GET path=/api/v1/admin/workers status=200 ms=2046.4
+INFO:     127.0.0.1:49169 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=50c7df93-a1e5-4568-9a51-0f208eaa4ae3 method=GET path=/api/v1/admin/workers status=200 ms=2054.1
+INFO:     127.0.0.1:49182 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=709711aa-be9a-4c62-87ea-8b259e666d05 method=GET path=/api/v1/admin/users status=200 ms=25.9
+INFO:     127.0.0.1:49191 - "GET /api/v1/admin/users HTTP/1.1" 200 OK
+req_id=ee9774e2-c02b-44e5-8d61-550defa85b3f method=GET path=/api/v1/admin/users status=200 ms=14.7
+INFO:     127.0.0.1:49194 - "GET /api/v1/admin/users HTTP/1.1" 200 OK
+req_id=304d0107-cf1a-4bca-bd17-d5677f4028a8 method=GET path=/api/v1/admin/workers status=200 ms=2051.9
+INFO:     127.0.0.1:49187 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=3da0cfc7-417a-4bac-aa7e-00ab28e03a48 method=GET path=/api/v1/admin/users status=200 ms=13.9
+INFO:     127.0.0.1:49203 - "GET /api/v1/admin/users HTTP/1.1" 200 OK
+req_id=a06b174a-df1c-4a2e-9544-b89d839fcbe7 method=GET path=/api/v1/admin/users status=200 ms=16.4
+INFO:     127.0.0.1:49206 - "GET /api/v1/admin/users HTTP/1.1" 200 OK
+req_id=16fe89a7-943d-4d4d-9a48-6f4e85c26633 method=GET path=/api/v1/admin/config status=200 ms=15.6
+INFO:     127.0.0.1:49209 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=1b3869b2-a4e4-4406-bd6e-b9c94d7ddf8f method=GET path=/api/v1/admin/config status=200 ms=7.6
+INFO:     127.0.0.1:49212 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=5b3613f0-0fee-4a6a-949b-22eec079aeb3 method=GET path=/api/v1/admin/audit status=200 ms=18.4
+INFO:     127.0.0.1:49216 - "GET /api/v1/admin/audit HTTP/1.1" 200 OK
+req_id=561f5cf9-9094-4b16-b431-fe81cbc39c29 method=GET path=/api/v1/admin/audit status=200 ms=6.0
+INFO:     127.0.0.1:49219 - "GET /api/v1/admin/audit HTTP/1.1" 200 OK
+req_id=1ae2cea4-0f52-473d-a382-51b415bdc494 method=GET path=/api/v1/admin/abuse status=200 ms=12.2
+INFO:     127.0.0.1:49222 - "GET /api/v1/admin/abuse HTTP/1.1" 200 OK
+req_id=faa23701-c0ed-4946-b265-31fd7a1999fd method=GET path=/api/v1/admin/abuse status=200 ms=6.4
+INFO:     127.0.0.1:49225 - "GET /api/v1/admin/abuse HTTP/1.1" 200 OK
+req_id=a9c68773-203e-4cee-9a7b-5e1c7ff4410b method=GET path=/api/v1/admin/workers status=200 ms=2037.5
+INFO:     127.0.0.1:49198 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=0902e128-9872-4a2f-9beb-a160ba491108 method=GET path=/api/v1/admin/workers status=200 ms=2040.3
+INFO:     127.0.0.1:49229 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=b5bb5458-9966-4c99-b5be-5d37c033e66d method=GET path=/api/v1/admin/overview status=200 ms=2050.8
+INFO:     127.0.0.1:49235 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=0c612782-1681-4789-be6b-53d301f1939a method=GET path=/api/v1/admin/workers status=200 ms=2042.9
+INFO:     127.0.0.1:49240 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=0adcca19-d4eb-440e-a939-2ca9dde83e9a method=GET path=/api/v1/admin/overview status=200 ms=2055.1
+INFO:     127.0.0.1:49247 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=6ac0d2fc-f553-4d1a-9ff6-3d3530aa48d1 method=GET path=/api/v1/admin/jobs status=200 ms=7.9
+INFO:     127.0.0.1:49261 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=0937a831-de0f-4704-843e-b5fed7392a0a method=GET path=/api/v1/admin/jobs status=200 ms=6.4
+INFO:     127.0.0.1:49264 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=4928481b-4ff9-4a6e-a1eb-fbae845cce8a method=GET path=/api/v1/admin/workers status=200 ms=2044.3
+INFO:     127.0.0.1:49271 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=e2d0eb8f-d109-419b-92cb-1fd87c5ddfcc method=GET path=/api/v1/admin/users status=200 ms=15.0
+INFO:     127.0.0.1:49284 - "GET /api/v1/admin/users HTTP/1.1" 200 OK
+req_id=a90354cf-2b81-4a7b-ab40-66d13ed7523e method=GET path=/api/v1/admin/users status=200 ms=14.2
+INFO:     127.0.0.1:49287 - "GET /api/v1/admin/users HTTP/1.1" 200 OK
+req_id=63210e49-9775-445e-9fe3-a6e79d17a329 method=GET path=/api/v1/admin/workers status=200 ms=2390.9
+INFO:     127.0.0.1:49278 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=0b99766a-981b-45eb-8fdc-f873cec2cad3 method=GET path=/api/v1/admin/config status=200 ms=5.2
+INFO:     127.0.0.1:49296 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=deacad04-bb30-4c33-8d52-a078c9f73924 method=GET path=/api/v1/admin/config status=200 ms=6.4
+INFO:     127.0.0.1:49299 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=e3299de6-d219-40d3-a895-392c8ff4a184 method=GET path=/api/v1/admin/audit status=200 ms=5.2
+INFO:     127.0.0.1:49306 - "GET /api/v1/admin/audit HTTP/1.1" 200 OK
+req_id=a8dcabcb-29d4-4604-8424-274bb0b15b3c method=GET path=/api/v1/admin/audit status=200 ms=5.4
+INFO:     127.0.0.1:49309 - "GET /api/v1/admin/audit HTTP/1.1" 200 OK
+req_id=c9bd3c31-81a2-4661-8618-5bb141bb461d method=GET path=/api/v1/admin/abuse status=200 ms=5.4
+INFO:     127.0.0.1:49316 - "GET /api/v1/admin/abuse HTTP/1.1" 200 OK
+req_id=3ea5c86f-e0ce-47da-8864-c2a7ab5cedd7 method=GET path=/api/v1/admin/abuse status=200 ms=5.6
+INFO:     127.0.0.1:49319 - "GET /api/v1/admin/abuse HTTP/1.1" 200 OK
+req_id=a6d2e7d5-9e3e-4935-ac69-d1cf1a106a82 method=GET path=/api/v1/admin/overview status=200 ms=2326.1
+INFO:     127.0.0.1:49895 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=563335df-b831-4002-a69c-e9ae6f4ca3e4 method=GET path=/api/v1/admin/overview status=200 ms=2493.9
+INFO:     127.0.0.1:49904 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=918b4239-033f-480c-8aed-6ccbe34d340c method=GET path=/api/v1/admin/overview status=200 ms=2414.7
+INFO:     127.0.0.1:50760 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=f796e536-e209-4a15-a4ff-93da236007e6 method=GET path=/api/v1/admin/overview status=200 ms=2384.1
+INFO:     127.0.0.1:50767 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=bca977e5-5d30-4d51-b1aa-78e110067ac6 method=GET path=/api/v1/admin/overview status=200 ms=2041.8
+INFO:     127.0.0.1:50977 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=ee4353c5-1625-448e-a731-3d5069828460 method=GET path=/api/v1/admin/overview status=200 ms=2896.9
+INFO:     127.0.0.1:50983 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=b6a5289e-775c-48c5-91d8-34b7c865005c method=GET path=/api/v1/admin/jobs status=200 ms=7.8
+INFO:     127.0.0.1:50988 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=91149eaf-5848-4d94-9189-28fe4c31491e method=GET path=/api/v1/admin/jobs status=200 ms=5.7
+INFO:     127.0.0.1:50990 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=e393c385-8419-4175-aeb1-fc9253adae64 method=GET path=/api/v1/admin/workers status=200 ms=2037.1
+INFO:     127.0.0.1:50993 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=271e4a75-3c10-4c48-a5ec-103e594d0caa method=GET path=/api/v1/admin/workers status=200 ms=2030.5
+INFO:     127.0.0.1:50998 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=02d55871-cb62-4173-afff-d3b218ebce78 method=GET path=/api/v1/admin/jobs status=200 ms=6.6
+INFO:     127.0.0.1:51004 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=5632a816-3e3f-4029-a87d-72d26361e5cf method=GET path=/api/v1/admin/jobs status=200 ms=5.3
+INFO:     127.0.0.1:51007 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=ca1f849d-a351-4bc0-8971-de1367549902 method=GET path=/api/v1/admin/overview status=200 ms=2052.1
+INFO:     127.0.0.1:51011 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=29fcda23-b0c4-4903-98ef-22d6abe48465 method=GET path=/api/v1/admin/overview status=200 ms=2047.3
+INFO:     127.0.0.1:51016 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=840db1ea-83ec-465a-94aa-7db539536c25 method=GET path=/api/v1/admin/jobs status=200 ms=7.7
+INFO:     127.0.0.1:51021 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=a586d079-2d97-4339-bf72-5e875de76e14 method=GET path=/api/v1/admin/jobs status=200 ms=5.1
+INFO:     127.0.0.1:51024 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=67cb0c58-437a-4dab-bd58-952dcca2d104 method=GET path=/api/v1/admin/workers status=200 ms=2041.8
+INFO:     127.0.0.1:51027 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=5c0b3379-fb34-43ae-97dc-a0dea73a48b9 method=GET path=/api/v1/admin/overview status=200 ms=2042.0
+INFO:     127.0.0.1:51031 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=d1b72bc9-5c15-4114-b56e-5927ebe3316d method=GET path=/api/v1/admin/workers status=200 ms=2029.1
+INFO:     127.0.0.1:51036 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=69a467e3-204a-4201-9209-c3518b22c1ed method=GET path=/api/v1/admin/overview status=200 ms=2038.6
+INFO:     127.0.0.1:51041 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=08919e0e-770c-4b31-91f7-8590f5411e0f method=GET path=/api/v1/projects status=200 ms=7.7
+INFO:     127.0.0.1:51048 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=5eadbb26-1d59-4946-b96f-49b054359a97 method=GET path=/api/v1/admin/config status=200 ms=8.5
+INFO:     127.0.0.1:51323 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=b227e6ab-8516-4185-b2dc-eb5bac7ddde5 method=GET path=/api/v1/admin/config status=200 ms=5.4
+INFO:     127.0.0.1:51326 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=af29df75-04f4-4f39-8b35-210170a9af98 method=GET path=/api/v1/admin/overview status=200 ms=2052.0
+INFO:     127.0.0.1:51319 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=3a795587-a179-472a-85cb-21f6fc97a177 method=GET path=/api/v1/admin/overview status=200 ms=2053.1
+INFO:     127.0.0.1:51330 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=09e0b313-da13-41be-a197-394c6d84d73d method=PATCH path=/api/v1/admin/config status=200 ms=52.4
+INFO:     127.0.0.1:51335 - "PATCH /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=8e10047f-b22d-4b35-ae7d-21af7f5fc8c3 method=PATCH path=/api/v1/admin/config status=200 ms=28.6
+INFO:     127.0.0.1:51341 - "PATCH /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=6021b987-861a-4adf-a653-3e38835e29b9 method=PATCH path=/api/v1/admin/config status=200 ms=19.2
+INFO:     127.0.0.1:51367 - "PATCH /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=32a8a8c5-efb4-440b-9343-c009aa361375 method=GET path=/api/v1/projects status=200 ms=6.7
+INFO:     127.0.0.1:51370 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=941f8513-4ae2-4657-8996-62a6fb7d29f8 method=GET path=/api/v1/projects status=200 ms=10.3
+INFO:     127.0.0.1:51493 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=fcba7ad1-12fc-4a28-93b3-c7898c69f8bc method=GET path=/api/v1/admin/config status=200 ms=5.2
+INFO:     127.0.0.1:51572 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=d6505136-dece-4def-87e4-a26ae9244b1f method=GET path=/api/v1/admin/config status=200 ms=5.9
+INFO:     127.0.0.1:51575 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=2cfd265a-5b60-4c9e-a9a3-20ff2477f1c0 method=GET path=/api/v1/admin/overview status=401 ms=5.5
+INFO:     127.0.0.1:52257 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=e59f7c7a-7e34-4e7d-a056-d3d43294b250 method=GET path=/api/v1/admin/overview status=401 ms=4.4
+INFO:     127.0.0.1:52260 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=ed8e5e54-8fa4-411e-84d5-55de224f2d98 method=GET path=/api/v1/projects status=401 ms=6.3
+INFO:     127.0.0.1:52263 - "GET /api/v1/projects HTTP/1.1" 401 Unauthorized
+req_id=c330a2eb-1902-44a7-a21e-751cc47c62c4 method=GET path=/api/v1/admin/overview status=401 ms=2.0
+INFO:     127.0.0.1:52266 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=92b65e59-4e91-49a0-8ce0-a139d2106fdf method=GET path=/api/v1/admin/overview status=401 ms=1.7
+INFO:     127.0.0.1:52269 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=4ae5c682-e042-4609-ac4f-ada8ed3bc2fb method=GET path=/api/v1/admin/overview status=401 ms=2.4
+INFO:     127.0.0.1:52278 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=d2a24ac5-39eb-4cf2-8227-fdb6beebb300 method=GET path=/api/v1/admin/overview status=401 ms=1.7
+INFO:     127.0.0.1:52280 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=768c1d7e-1629-44d3-8c38-7ca7e74f5349 method=GET path=/api/v1/projects status=401 ms=2.1
+INFO:     127.0.0.1:52284 - "GET /api/v1/projects HTTP/1.1" 401 Unauthorized
+req_id=e88fa29d-b205-40aa-81da-00790942f6c3 method=GET path=/api/v1/projects status=401 ms=3.6
+INFO:     127.0.0.1:52286 - "GET /api/v1/projects HTTP/1.1" 401 Unauthorized
+req_id=d0578692-6167-4c01-84b3-2aa1fe2f2127 method=POST path=/api/v1/auth/logout status=204 ms=546.3
+INFO:     127.0.0.1:52289 - "POST /api/v1/auth/logout HTTP/1.1" 204 No Content
+req_id=86b6a946-db34-41eb-83b5-85e0cb0231a9 method=POST path=/api/v1/auth/login status=200 ms=167.8
+INFO:     127.0.0.1:52294 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+req_id=958235e6-8734-4e56-a457-5e1603a0c891 method=GET path=/api/v1/projects status=200 ms=9.8
+INFO:     127.0.0.1:52297 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=4812c65a-d2fc-4ecd-8d63-540072a9932e method=GET path=/api/v1/admin/overview status=200 ms=2041.9
+INFO:     127.0.0.1:52302 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=b5f07b66-2c3f-4f4c-9e42-d0f3a16089f2 method=GET path=/api/v1/admin/overview status=200 ms=2023.0
+INFO:     127.0.0.1:52307 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=45a21c55-ae64-450c-a0ed-84188238606e method=GET path=/api/v1/admin/jobs status=200 ms=9.6
+INFO:     127.0.0.1:52312 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=c822059d-01d8-4f22-9593-9b5714c54783 method=GET path=/api/v1/admin/jobs status=200 ms=6.6
+INFO:     127.0.0.1:52315 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=3cbc5687-b3ca-45f8-a57b-da8429da103f method=GET path=/api/v1/admin/workers status=200 ms=2031.0
+INFO:     127.0.0.1:52319 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=05316936-b3b8-45c7-b42a-6874499e3e75 method=GET path=/api/v1/admin/workers status=200 ms=2035.3
+INFO:     127.0.0.1:52325 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=6da757a9-1ea2-4fca-bd9f-ccf70da1c9b5 method=GET path=/api/v1/admin/overview status=200 ms=2052.7
+INFO:     127.0.0.1:53586 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=e112fae6-7545-4b96-b4bc-80f7988cd4dd method=GET path=/api/v1/admin/overview status=200 ms=2036.3
+INFO:     127.0.0.1:53590 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=3367d960-0f4b-4819-ae4b-684a2a8bbac6 method=GET path=/api/v1/admin/jobs status=200 ms=8.7
+INFO:     127.0.0.1:53595 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=1f2eec1e-4f44-44a3-95e2-b8d6d7f8c94b method=GET path=/api/v1/admin/jobs status=200 ms=7.4
+INFO:     127.0.0.1:53598 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=86cb3a1f-e3c0-4655-8b29-8bb93398e437 method=GET path=/api/v1/admin/overview status=200 ms=2074.1
+INFO:     127.0.0.1:55696 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=77ac2a70-9b8b-4914-bc4e-fd1400d1d044 method=GET path=/api/v1/admin/overview status=200 ms=2034.8
+INFO:     127.0.0.1:55700 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=5ac65389-854b-4bfc-854f-fad4869692b9 method=GET path=/api/v1/admin/workers status=200 ms=2031.5
+INFO:     127.0.0.1:55708 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=efa50e86-37e0-463b-ac8a-6f7c80e627ee method=GET path=/api/v1/admin/workers status=200 ms=2056.9
+INFO:     127.0.0.1:55714 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=cd7b50a6-0696-4448-8654-084d3660854b method=GET path=/api/v1/admin/config status=200 ms=6.0
+INFO:     127.0.0.1:55719 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=be6353b0-d3c0-44bf-91a3-bb6e651b4dbb method=GET path=/api/v1/admin/config status=200 ms=4.8
+INFO:     127.0.0.1:55722 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=a8b2caee-140b-438e-b483-bd9b2eae7ccf method=GET path=/api/v1/admin/workers status=200 ms=2033.2
+req_id=de6b51bb-e366-4932-8170-223386d78a7f method=GET path=/api/v1/admin/overview status=200 ms=2041.4
+INFO:     127.0.0.1:55736 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=11dd39dc-fbd6-4558-88b9-0cfd69b21cfc method=GET path=/api/v1/admin/overview status=200 ms=2034.4
+INFO:     127.0.0.1:55740 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=44f474ad-7e72-403f-9101-dcf707b7c193 method=GET path=/api/v1/admin/jobs status=200 ms=7.8
+INFO:     127.0.0.1:55745 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=0911a74a-ca08-404f-8e6d-f328a8106226 method=GET path=/api/v1/admin/jobs status=200 ms=5.8
+INFO:     127.0.0.1:55748 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=4796db8f-f58b-4145-9f7d-f8170aa53fe8 method=GET path=/api/v1/admin/workers status=200 ms=2027.3
+INFO:     127.0.0.1:55753 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=0f0e7209-7909-49ba-877d-35b5f4e2bb73 method=GET path=/api/v1/admin/workers status=200 ms=2021.1
+INFO:     127.0.0.1:55758 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=8e185207-1ddb-42e1-965c-2cc95231d1ff method=GET path=/api/v1/admin/config status=200 ms=6.6
+INFO:     127.0.0.1:55763 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=1ca21b70-8d6c-4c5a-a3ed-06e60d9bda95 method=GET path=/api/v1/admin/config status=200 ms=6.0
+INFO:     127.0.0.1:55766 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=eaaa0e76-036b-4489-a052-511d4d034f2a method=GET path=/api/v1/admin/workers status=200 ms=2031.6
+INFO:     127.0.0.1:55769 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=b57b47f3-fab3-45c8-b35b-841667a36017 method=GET path=/api/v1/admin/config status=200 ms=7.4
+INFO:     127.0.0.1:55778 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=665baa1f-5aa4-47b4-b992-23069c46ba9b method=GET path=/api/v1/admin/config status=200 ms=4.6
+INFO:     127.0.0.1:55781 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=87a6edaf-667a-4536-ba3b-97c3e5aeb046 method=GET path=/api/v1/admin/workers status=200 ms=2037.6
+INFO:     127.0.0.1:55774 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=40b69b1c-e944-43ac-bfe5-7436086afe53 method=GET path=/api/v1/projects status=200 ms=6.6
+INFO:     127.0.0.1:55791 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=9cc5b3c1-1902-47bb-9808-bdcb8da02087 method=GET path=/api/v1/projects status=200 ms=8.4
+INFO:     127.0.0.1:56770 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=972313af-e898-46ea-99d0-c2b45f694e82 method=GET path=/api/v1/projects status=200 ms=14.4
+INFO:     127.0.0.1:56820 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=25146ab6-fa2e-4966-b2a4-c8616d00a205 method=POST path=/api/v1/auth/login status=200 ms=134.9
+INFO:     127.0.0.1:56834 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+req_id=b888dffa-10ec-499a-a767-e3d142075df6 method=POST path=/api/v1/auth/logout status=204 ms=7.2
+INFO:     127.0.0.1:56897 - "POST /api/v1/auth/logout HTTP/1.1" 204 No Content
+req_id=7cacd568-eca5-49a1-81d7-2a52b985f70b method=POST path=/api/v1/auth/forgot-password status=200 ms=10.8
+INFO:     127.0.0.1:56906 - "POST /api/v1/auth/forgot-password HTTP/1.1" 200 OK
+ req_id=ebb5731a-a6d4-44bb-9e34-d1acd9e2ad23 method=POST path=/api/v1/auth/login status=200 ms=298.2
+INFO:     127.0.0.1:59961 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+req_id=596667b4-f6ad-4114-98ff-58275aa9b7a4 method=GET path=/api/v1/projects status=200 ms=25.5
+INFO:     127.0.0.1:59967 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=2aa6e374-1f3a-4877-8acc-7d9bc6023a41 method=GET path=/api/v1/admin/overview status=200 ms=2192.1
+INFO:     127.0.0.1:59973 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=fa4581e0-b992-4032-ba57-71eb1ccedd09 method=GET path=/api/v1/admin/overview status=200 ms=2031.5
+INFO:     127.0.0.1:59977 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+ req_id=9140106e-aebb-4120-b8e7-af6b09d7c904 method=GET path=/api/v1/projects status=200 ms=38.4
+INFO:     127.0.0.1:61637 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=ba340136-c60f-406d-b5a3-b401a885e118 method=GET path=/health status=200 ms=4.2
+INFO:     127.0.0.1:62004 - "GET /health HTTP/1.1" 200 OK
+req_id=26375e41-f250-46ca-9e35-270bfa1d5380 method=GET path=/api/v1/health status=404 ms=0.8
+INFO:     127.0.0.1:62004 - "GET /api/v1/health HTTP/1.1" 404 Not Found
+req_id=388a18ae-4c23-41c3-a1c6-f54b983d7cb1 method=GET path=/openapi.json status=200 ms=293.3
+INFO:     127.0.0.1:62065 - "GET /openapi.json HTTP/1.1" 200 OK
+req_id=ba7c757c-82f3-4aac-b243-88ddb76983e2 method=GET path=/openapi.json status=200 ms=281.3
+INFO:     127.0.0.1:62271 - "GET /openapi.json?refresh=1649953867 HTTP/1.1" 200 OK
+req_id=ab500597-eb21-4170-b239-e2de4a5d9d4b method=GET path=/api/v1/admin/overview status=200 ms=2275.6
+INFO:     127.0.0.1:62426 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62437 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+req_id=b4a48722-e8bb-4a3b-bdd5-020bdb63c779 method=GET path=/api/v1/admin/overview status=200 ms=2051.7
+INFO:     127.0.0.1:62434 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=f1c8e058-2380-44e8-8ddb-311f5d5df56f method=GET path=/api/v1/admin/config status=200 ms=9.0
+INFO:     127.0.0.1:62449 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=fca77a4d-6a2c-4bc9-8030-4b4cd230dcad method=GET path=/api/v1/admin/config status=200 ms=6.8
+INFO:     127.0.0.1:62452 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=8de604c6-edc3-4b0d-a96c-b964ff65b40f method=GET path=/api/v1/admin/abuse status=200 ms=11.1
+INFO:     127.0.0.1:62455 - "GET /api/v1/admin/abuse HTTP/1.1" 200 OK
+req_id=b48dd16a-c7e5-4e56-a1b6-8ad1672d59e0 method=GET path=/api/v1/admin/abuse status=200 ms=6.5
+INFO:     127.0.0.1:62458 - "GET /api/v1/admin/abuse HTTP/1.1" 200 OK
+req_id=69d75056-432c-49c2-8eaf-475a5492e2ce method=GET path=/api/v1/admin/overview status=200 ms=2046.7
+INFO:     127.0.0.1:62445 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=48bc48ec-8d03-4822-a3bd-015443b743f4 method=GET path=/api/v1/admin/config status=200 ms=5.3
+INFO:     127.0.0.1:62466 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=a163770c-7eb7-4347-8e79-4d958a54ff9f method=GET path=/api/v1/admin/config status=200 ms=4.8
+INFO:     127.0.0.1:62469 - "GET /api/v1/admin/config HTTP/1.1" 200 OK
+req_id=3ce95941-d043-4e44-a282-900412266a50 method=GET path=/api/v1/admin/abuse status=200 ms=5.3
+INFO:     127.0.0.1:62472 - "GET /api/v1/admin/abuse HTTP/1.1" 200 OK
+req_id=45116713-2cf9-4332-b468-746f8ef583bc method=GET path=/api/v1/admin/abuse status=200 ms=5.2
+INFO:     127.0.0.1:62475 - "GET /api/v1/admin/abuse HTTP/1.1" 200 OK
+req_id=b0aead7b-0d7c-4ba6-bb59-19c991f0c621 method=GET path=/api/v1/admin/overview status=200 ms=2029.6
+INFO:     127.0.0.1:62462 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=ff819ef8-de7f-4b72-9da5-f92d0b23317b method=GET path=/api/v1/admin/audit status=200 ms=11.1
+INFO:     127.0.0.1:62479 - "GET /api/v1/admin/audit HTTP/1.1" 200 OK
+req_id=522d9e66-12ef-4a6b-9de6-8b1782bfb290 method=GET path=/api/v1/admin/audit status=200 ms=9.2
+INFO:     127.0.0.1:62482 - "GET /api/v1/admin/audit HTTP/1.1" 200 OK
+req_id=19ff8748-b5c7-4bbc-93f1-df5fb8331fad method=GET path=/api/v1/admin/users status=200 ms=16.1
+INFO:     127.0.0.1:62485 - "GET /api/v1/admin/users HTTP/1.1" 200 OK
+req_id=d311a701-1e2d-4567-a1a3-fd3e80d93319 method=GET path=/api/v1/admin/audit status=200 ms=6.0
+INFO:     127.0.0.1:62489 - "GET /api/v1/admin/audit HTTP/1.1" 200 OK
+req_id=53823acb-b7d0-4d38-9757-f5297095e1b2 method=GET path=/api/v1/admin/audit status=200 ms=6.1
+INFO:     127.0.0.1:62492 - "GET /api/v1/admin/audit HTTP/1.1" 200 OK
+req_id=03ee558c-f365-4604-bc18-eb0ad2b17602 method=GET path=/api/v1/admin/users status=200 ms=12.7
+INFO:     127.0.0.1:62495 - "GET /api/v1/admin/users HTTP/1.1" 200 OK
+req_id=a7477406-454c-4953-a464-cc5e0f472420 method=GET path=/api/v1/admin/jobs status=200 ms=9.9
+INFO:     127.0.0.1:62502 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=2e166c2b-4106-4578-b798-5871fb429271 method=GET path=/api/v1/admin/jobs status=200 ms=7.0
+INFO:     127.0.0.1:62505 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=d8a19600-e207-4c28-a461-a7f196098b27 method=GET path=/api/v1/admin/workers status=200 ms=2039.2
+INFO:     127.0.0.1:62498 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62517 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+req_id=a1499fb2-a14c-4be8-9205-8618c58fb0ff method=GET path=/api/v1/admin/workers status=200 ms=2059.3
+INFO:     127.0.0.1:62509 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=c30b1bdf-b103-4b40-b145-24efeecffe6c method=GET path=/api/v1/admin/overview status=200 ms=2033.0
+INFO:     127.0.0.1:62513 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62528 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+req_id=b1c4f9fe-bb70-47e2-9c09-8fb97d066b0d method=GET path=/api/v1/admin/overview status=200 ms=2041.1
+INFO:     127.0.0.1:62524 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=b752543e-c10c-4e44-a493-5a4057d76eaf method=GET path=/api/v1/admin/overview status=401 ms=3.9
+INFO:     127.0.0.1:63119 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=6d7a2f3c-a251-4436-bf50-8754370e40ad method=GET path=/api/v1/admin/overview status=401 ms=2.1
+INFO:     127.0.0.1:63122 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=ffa63e4d-e7a4-4576-856d-f322ca13e99d method=GET path=/api/v1/admin/overview status=401 ms=11.7
+INFO:     127.0.0.1:63129 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=19c78eb3-aae3-4cba-804b-61501826a6d6 method=GET path=/api/v1/admin/overview status=401 ms=3.6
+INFO:     127.0.0.1:63131 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=0d8c1233-84d4-474c-914a-c1acd5dc7233 method=GET path=/api/v1/admin/overview status=401 ms=4.4
+INFO:     127.0.0.1:63138 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=b74fd2fd-9c12-42a7-a4b5-58e2ed0e3d08 method=GET path=/api/v1/admin/overview status=401 ms=4.5
+INFO:     127.0.0.1:63140 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=c86a743c-85db-44d1-bc04-538ebf9fd93e method=GET path=/api/v1/projects status=401 ms=2.8
+INFO:     127.0.0.1:63169 - "GET /api/v1/projects HTTP/1.1" 401 Unauthorized
+req_id=584db0a0-3c73-43a4-84f8-c722fbbbcce9 method=GET path=/api/v1/projects status=401 ms=3.0
+INFO:     127.0.0.1:63171 - "GET /api/v1/projects HTTP/1.1" 401 Unauthorized
+req_id=fdefddc3-9d51-42e5-95cd-2c523e3bd14f method=GET path=/api/v1/admin/overview status=401 ms=3.6
+INFO:     127.0.0.1:63174 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=1eed8bfe-a749-4710-bb9b-ecb99631fe8d method=GET path=/api/v1/admin/overview status=401 ms=2.2
+INFO:     127.0.0.1:63177 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+[email] to=ruhalchodary@gmail.com subject=Verify your email
+body=http://localhost:3000/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNjAwMGY4NC03ZjMxLTRlYWMtYTg0MS0yOTQ2MmZjOTM3NDQiLCJ0eXBlIjoiZW1haWxfdmVyaWZpY2F0aW9uIiwiaWF0IjoxNzg0MjY3MTI2LCJleHAiOjE3ODQzNTM1MjZ9.23HhxHO3mvPtEQyUvmth1RCX1nmbbw-oyWy-gbDOAYY
+
+req_id=12771c1f-1b36-46a9-bef4-4e1ea173398f method=POST path=/api/v1/auth/register status=201 ms=199.0
+INFO:     127.0.0.1:63366 - "POST /api/v1/auth/register HTTP/1.1" 201 Created
+req_id=5845debd-5c50-466f-bc61-4bbc0273ad83 method=POST path=/api/v1/auth/login status=401 ms=171.0
+INFO:     127.0.0.1:63458 - "POST /api/v1/auth/login HTTP/1.1" 401 Unauthorized
+req_id=f35fa087-adda-4076-a72d-4fe593cb67e7 method=POST path=/api/v1/auth/login status=403 ms=270.5
+INFO:     127.0.0.1:63507 - "POST /api/v1/auth/login HTTP/1.1" 403 Forbidden
+req_id=1be28e44-540b-48e9-bc4a-9759cbcbcbb7 method=GET path=/api/v1/admin/overview status=401 ms=2.9
+INFO:     127.0.0.1:63594 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=568b7c00-6c1c-4fa6-9e1d-c16f8a023422 method=GET path=/api/v1/admin/overview status=401 ms=9.6
+INFO:     127.0.0.1:63596 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=62f86310-eded-41b7-a547-d519678363d7 method=POST path=/api/v1/auth/login status=200 ms=198.2
+INFO:     127.0.0.1:63945 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63947 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:63950 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:63961 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+req_id=c22180a0-c65e-4168-b16a-f306be0632b2 method=GET path=/api/v1/admin/overview status=200 ms=2117.8
+INFO:     127.0.0.1:64082 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64952 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:64961 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:64965 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+req_id=f9051487-aa0d-40d5-a8d0-960f37ccdd66 method=POST path=/api/v1/auth/login status=200 ms=150.8
+INFO:     127.0.0.1:64967 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64969 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:64974 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:64979 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:64981 - "GET /api/v1/projects HTTP/1.1" 500 Internal Server Error
+req_id=6a8ea8e4-54c5-46a2-bbe5-4433678f60e5 method=GET path=/api/v1/admin/overview status=401 ms=2.3
+INFO:     127.0.0.1:65015 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=9f37abed-30d2-4e0a-9931-e26506805344 method=GET path=/api/v1/admin/overview status=401 ms=4.9
+INFO:     127.0.0.1:65017 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=652e3252-e850-4bab-b124-af5565da7330 method=POST path=/api/v1/auth/refresh status=200 ms=48.9
+INFO:     127.0.0.1:65019 - "POST /api/v1/auth/refresh HTTP/1.1" 200 OK
+req_id=96a5dfd2-e826-47c1-a672-b001fa5dbc32 method=GET path=/api/v1/admin/overview status=200 ms=2047.3
+INFO:     127.0.0.1:65021 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=b800d4bb-ae23-4425-8144-db73552e281f method=GET path=/api/v1/admin/overview status=200 ms=2051.4
+INFO:     127.0.0.1:65026 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=d769089f-c5ea-4566-9eda-e56430941059 method=GET path=/api/v1/admin/jobs status=200 ms=20.1
+INFO:     127.0.0.1:65053 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=6ee0b5dd-1d24-465e-bf08-04ebfc1a601e method=GET path=/api/v1/admin/jobs status=200 ms=7.8
+INFO:     127.0.0.1:65056 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=cab321f2-10dc-4500-9ef9-1cbfd62558a7 method=GET path=/api/v1/admin/users status=200 ms=25.0
+INFO:     127.0.0.1:65117 - "GET /api/v1/admin/users HTTP/1.1" 200 OK
+req_id=efecd103-ff61-4110-8cf2-019885151c3d method=GET path=/api/v1/admin/workers status=200 ms=2442.9
+INFO:     127.0.0.1:65108 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=f7a90268-d1da-4e76-9d4f-9343e0a0164e method=GET path=/api/v1/admin/workers status=200 ms=2051.0
+INFO:     127.0.0.1:65125 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=6668151a-0a43-4f1c-9f59-a1c267b14bfb method=GET path=/api/v1/admin/jobs status=200 ms=8.7
+INFO:     127.0.0.1:65199 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=b848f192-9f68-46e4-92a3-11e9c0ab731c method=GET path=/api/v1/admin/jobs status=200 ms=10.6
+INFO:     127.0.0.1:65202 - "GET /api/v1/admin/jobs HTTP/1.1" 200 OK
+req_id=34df6051-60c6-4daf-9d74-e27738676017 method=GET path=/api/v1/admin/overview status=200 ms=2036.0
+INFO:     127.0.0.1:65187 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=2007ad22-197e-4b93-9c32-ab3746b90654 method=GET path=/api/v1/admin/workers status=200 ms=2037.5
+INFO:     127.0.0.1:65193 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=140f86ae-c51e-45fb-b818-e760f9413412 method=GET path=/api/v1/admin/overview status=200 ms=2066.0
+INFO:     127.0.0.1:65206 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=7c754467-f2f0-4fd3-9d8a-83e55b245194 method=GET path=/api/v1/admin/workers status=200 ms=2047.3
+INFO:     127.0.0.1:65213 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+  req_id=02b762d0-afce-48d6-8bf7-e1220f4865d7 method=GET path=/api/v1/projects status=200 ms=93.6
+INFO:     127.0.0.1:65493 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=8b4ddc09-bb8e-4229-8691-358530f96bbd method=GET path=/api/v1/admin/overview status=200 ms=2288.5
+INFO:     127.0.0.1:49234 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=3c92e16e-9362-4fc2-a8c1-831f9e293689 method=GET path=/api/v1/admin/overview status=200 ms=2069.7
+INFO:     127.0.0.1:49247 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=7880c510-f679-4198-b919-9a8d8898723d method=GET path=/api/v1/projects status=200 ms=12.7
+INFO:     127.0.0.1:49267 - "GET /api/v1/projects HTTP/1.1" 200 OK
+req_id=4129019d-d02b-4f7d-b9e4-32b2ad45b109 method=GET path=/api/v1/projects/069a9eed-dd28-4d4a-b5cd-d33fb03374be/thumbnail status=200 ms=23.9
+INFO:     127.0.0.1:49270 - "GET /api/v1/projects/069a9eed-dd28-4d4a-b5cd-d33fb03374be/thumbnail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJ0aHVtYm5haWxzIiwia2V5IjoiMDY5YTllZWQtZGQyOC00ZDRhLWI1Y2QtZDMzZmIwMzM3NGJlL3RodW1iLmpwZyIsImV4cCI6MTc4NDI3MjM1N30.ApZrvVQo2HvExaeZu-VswTc0mH6obWAxbcr7pHBR2UE HTTP/1.1" 200 OK
+req_id=46d2825c-0859-415d-9ade-0bebea702ecc method=GET path=/api/v1/projects/b8358832-dad6-4b5c-8cbc-ffaafdd68bc1/thumbnail status=200 ms=51.3
+req_id=268c3bb8-83bd-44be-8821-dcd571975f64 method=GET path=/api/v1/projects/506cb2a2-7e03-4e71-afdc-72a2bb0341c1/thumbnail status=200 ms=50.0
+INFO:     127.0.0.1:49275 - "GET /api/v1/projects/b8358832-dad6-4b5c-8cbc-ffaafdd68bc1/thumbnail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJ0aHVtYm5haWxzIiwia2V5IjoiYjgzNTg4MzItZGFkNi00YjVjLThjYmMtZmZhYWZkZDY4YmMxL3RodW1iLmpwZyIsImV4cCI6MTc4NDI3MjM1N30.LOZ_fPjp94IghGElESdpyzJjr-EBse9-dFjsATE9Mn8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49276 - "GET /api/v1/projects/506cb2a2-7e03-4e71-afdc-72a2bb0341c1/thumbnail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJ0aHVtYm5haWxzIiwia2V5IjoiNTA2Y2IyYTItN2UwMy00ZTcxLWFmZGMtNzJhMmJiMDM0MWMxL3RodW1iLmpwZyIsImV4cCI6MTc4NDI3MjM1N30.7PpWAk-C_xKSvpb1Pxmw1L-dVhd7ajSzvBIoaQIIcO4 HTTP/1.1" 200 OK
+req_id=e06325d7-5dc3-4bce-a7cb-c55ebe1c3efd method=GET path=/api/v1/projects/dd387865-185c-4b08-abb7-d4620d79e973/thumbnail status=200 ms=60.2
+INFO:     127.0.0.1:49277 - "GET /api/v1/projects/dd387865-185c-4b08-abb7-d4620d79e973/thumbnail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJ0aHVtYm5haWxzIiwia2V5IjoiZGQzODc4NjUtMTg1Yy00YjA4LWFiYjctZDQ2MjBkNzllOTczL3RodW1iLmpwZyIsImV4cCI6MTc4NDI3MjM1N30.vsNrMI6cJUvx6XvWgHal1r8ZTFevHlNdltEgqac_cdo HTTP/1.1" 200 OK
+req_id=1c21ef07-ade9-4470-bbd2-2d94c89b3f83 method=GET path=/api/v1/projects/d6ed14e7-3951-4904-a3a1-5025b54ac130/thumbnail status=200 ms=83.9
+INFO:     127.0.0.1:49280 - "GET /api/v1/projects/d6ed14e7-3951-4904-a3a1-5025b54ac130/thumbnail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJ0aHVtYm5haWxzIiwia2V5IjoiZDZlZDE0ZTctMzk1MS00OTA0LWEzYTEtNTAyNWI1NGFjMTMwL3RodW1iLmpwZyIsImV4cCI6MTc4NDI3MjM1N30.sJRB-BptAsKUfO908qjFcDzyV4cRpoa6WH99gTpHF-Q HTTP/1.1" 200 OK
+req_id=2716ae6b-d85c-4776-8a25-a2cce6aa8829 method=GET path=/api/v1/projects/fab6d585-2977-49b7-a039-e4b7a6f09649/thumbnail status=200 ms=99.0
+INFO:     127.0.0.1:49279 - "GET /api/v1/projects/fab6d585-2977-49b7-a039-e4b7a6f09649/thumbnail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJ0aHVtYm5haWxzIiwia2V5IjoiZmFiNmQ1ODUtMjk3Ny00OWI3LWEwMzktZTRiN2E2ZjA5NjQ5L3RodW1iLmpwZyIsImV4cCI6MTc4NDI3MjM1N30.rPDiDIQ366Tvt6gOFuGIArZpriR5rcZd8KNZYmGr_5E HTTP/1.1" 200 OK
+req_id=9eee128a-a8a7-4e59-bc9a-c5e63e7fc93c method=GET path=/api/v1/projects/6414542f-e68b-4ac1-b94b-bb5906ce3c30/thumbnail status=404 ms=10.8
+INFO:     127.0.0.1:49297 - "GET /api/v1/projects/6414542f-e68b-4ac1-b94b-bb5906ce3c30/thumbnail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJ0aHVtYm5haWxzIiwia2V5IjoiNjQxNDU0MmYtZTY4Yi00YWMxLWI5NGItYmI1OTA2Y2UzYzMwL3RodW1iLmpwZyIsImV4cCI6MTc4NDI3MjM1N30.PDy-MSO9FtCUospkCFvWJ7cxmklgHi9id_sPgVLcjh4 HTTP/1.1" 404 Not Found
+req_id=31f19adf-f74d-4264-86d9-d7d28731df1c method=GET path=/api/v1/projects/625edcca-b019-4aac-87a7-470e72014ccc/thumbnail status=404 ms=15.0
+INFO:     127.0.0.1:49296 - "GET /api/v1/projects/625edcca-b019-4aac-87a7-470e72014ccc/thumbnail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJ0aHVtYm5haWxzIiwia2V5IjoiNjI1ZWRjY2EtYjAxOS00YWFjLTg3YTctNDcwZTcyMDE0Y2NjL3RodW1iLmpwZyIsImV4cCI6MTc4NDI3MjM1N30.Lbw20XBAaw8K-21wo4bPgElyEAbJRuf2uEWyGHNrb_w HTTP/1.1" 404 Not Found
+req_id=454e578c-ae22-44e7-b4b7-e6d2d5bb74fd method=POST path=/api/v1/auth/login status=200 ms=167.1
+INFO:     127.0.0.1:49301 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+req_id=8f7a1957-aef0-46ea-bd70-d77431300f0b method=GET path=/api/v1/projects/625edcca-b019-4aac-87a7-470e72014ccc/thumbnail status=404 ms=10.3
+INFO:     127.0.0.1:49306 - "GET /api/v1/projects/625edcca-b019-4aac-87a7-470e72014ccc/thumbnail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJ0aHVtYm5haWxzIiwia2V5IjoiNjI1ZWRjY2EtYjAxOS00YWFjLTg3YTctNDcwZTcyMDE0Y2NjL3RodW1iLmpwZyIsImV4cCI6MTc4NDI3MjM1N30.Lbw20XBAaw8K-21wo4bPgElyEAbJRuf2uEWyGHNrb_w HTTP/1.1" 404 Not Found
+req_id=04f2ff89-8231-413a-ab2d-e13f64e11872 method=GET path=/api/v1/projects/6414542f-e68b-4ac1-b94b-bb5906ce3c30/thumbnail status=404 ms=11.3
+INFO:     127.0.0.1:49307 - "GET /api/v1/projects/6414542f-e68b-4ac1-b94b-bb5906ce3c30/thumbnail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJ0aHVtYm5haWxzIiwia2V5IjoiNjQxNDU0MmYtZTY4Yi00YWMxLWI5NGItYmI1OTA2Y2UzYzMwL3RodW1iLmpwZyIsImV4cCI6MTc4NDI3MjM1N30.PDy-MSO9FtCUospkCFvWJ7cxmklgHi9id_sPgVLcjh4 HTTP/1.1" 404 Not Found
+req_id=025a6b2a-1889-49f4-aec8-b60be9cc4fa6 method=GET path=/api/v1/projects status=200 ms=11.4
+INFO:     127.0.0.1:49312 - "GET /api/v1/projects?status=processing HTTP/1.1" 200 OK
+req_id=1439286b-e547-4a98-bbe4-7079d9d5c61f method=GET path=/api/v1/projects/625edcca-b019-4aac-87a7-470e72014ccc/thumbnail status=404 ms=13.6
+INFO:     127.0.0.1:49316 - "GET /api/v1/projects/625edcca-b019-4aac-87a7-470e72014ccc/thumbnail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJ0aHVtYm5haWxzIiwia2V5IjoiNjI1ZWRjY2EtYjAxOS00YWFjLTg3YTctNDcwZTcyMDE0Y2NjL3RodW1iLmpwZyIsImV4cCI6MTc4NDI3MjM1N30.Lbw20XBAaw8K-21wo4bPgElyEAbJRuf2uEWyGHNrb_w HTTP/1.1" 404 Not Found
+req_id=ff5aa000-c407-4b2e-856f-74187d94f08c method=GET path=/api/v1/projects/6414542f-e68b-4ac1-b94b-bb5906ce3c30/thumbnail status=404 ms=15.0
+INFO:     127.0.0.1:49318 - "GET /api/v1/projects/6414542f-e68b-4ac1-b94b-bb5906ce3c30/thumbnail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJ0aHVtYm5haWxzIiwia2V5IjoiNjQxNDU0MmYtZTY4Yi00YWMxLWI5NGItYmI1OTA2Y2UzYzMwL3RodW1iLmpwZyIsImV4cCI6MTc4NDI3MjM1N30.PDy-MSO9FtCUospkCFvWJ7cxmklgHi9id_sPgVLcjh4 HTTP/1.1" 404 Not Found
+req_id=5df94362-ce9a-4164-9c19-83e680a176d3 method=POST path=/api/v1/uploads/initiate status=201 ms=28.1
+INFO:     127.0.0.1:49332 - "POST /api/v1/uploads/initiate HTTP/1.1" 201 Created
+req_id=48c1f155-b53a-4934-bc0a-3faa35fcc8e5 method=POST path=/api/v1/uploads/a3a91e00-0c03-4278-a12e-07d0c70be149/complete status=200 ms=3126.7
+INFO:     127.0.0.1:49335 - "POST /api/v1/uploads/a3a91e00-0c03-4278-a12e-07d0c70be149/complete HTTP/1.1" 200 OK
+req_id=16d61f6f-966e-4653-862c-45744129856d method=POST path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/compliance status=200 ms=14.4
+INFO:     127.0.0.1:49346 - "POST /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/compliance HTTP/1.1" 200 OK
+req_id=68aaddbf-8ea7-453c-9ddd-d1bdb7a43251 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=7.9
+INFO:     127.0.0.1:49361 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=acd485b5-1062-4a5b-96da-e651ca005a55 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=6.0
+INFO:     127.0.0.1:49363 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=995e2e91-869f-45b5-abeb-7a706ce81610 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/mask status=404 ms=12.7
+INFO:     127.0.0.1:49365 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/mask HTTP/1.1" 404 Not Found
+req_id=746a19f8-f602-4f48-86ab-5e0ed9b2dcdf method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/proxy status=206 ms=4.9
+INFO:     127.0.0.1:49368 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJwcm94aWVzIiwia2V5IjoiNmM4YjQ2ZGMtNjRhNS00NTEyLTk3NDktNDUzNjZlZmQxNTRmL3Byb3h5Lm1wNCIsImV4cCI6MTc4NDI3MjM4N30.ScSMz5lcSz42IbwT2QZvrMJ-iXQXA4ng8uOuolqaI8M HTTP/1.1" 206 Partial Content
+req_id=ee1099cd-0033-4479-93a0-b8266523f32b method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/proxy status=206 ms=8.2
+INFO:     127.0.0.1:49373 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJwcm94aWVzIiwia2V5IjoiNmM4YjQ2ZGMtNjRhNS00NTEyLTk3NDktNDUzNjZlZmQxNTRmL3Byb3h5Lm1wNCIsImV4cCI6MTc4NDI3MjM4N30.ScSMz5lcSz42IbwT2QZvrMJ-iXQXA4ng8uOuolqaI8M HTTP/1.1" 206 Partial Content
+req_id=3e1e3538-22e6-474e-92ba-fb362f2330c3 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=418.6
+INFO:     127.0.0.1:50697 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=5999f7f5-adcf-45fc-87ff-a00f411dff4d method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=22.5
+INFO:     127.0.0.1:50699 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=81ec658e-8c68-45e7-a692-96748a9c9dab method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/mask status=404 ms=19.4
+INFO:     127.0.0.1:50703 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/mask HTTP/1.1" 404 Not Found
+req_id=f7526d8a-a75e-4d67-92f8-43b00e8bd927 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/proxy status=206 ms=18.4
+INFO:     127.0.0.1:50705 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJwcm94aWVzIiwia2V5IjoiNmM4YjQ2ZGMtNjRhNS00NTEyLTk3NDktNDUzNjZlZmQxNTRmL3Byb3h5Lm1wNCIsImV4cCI6MTc4NDI3Mjg3OH0.Do3Hx4pmYz40GY68WiKg3Q0Sy-BdppYZPKF4NFd1r8I HTTP/1.1" 206 Partial Content
+req_id=83761889-fb1e-4157-bbfd-770630b7af90 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=11.6
+INFO:     127.0.0.1:50833 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=e928868e-d9a5-41f6-8939-51c906828eda method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=10.1
+INFO:     127.0.0.1:50835 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=c009fe64-b71f-47ec-8818-f5decd751637 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/proxy status=206 ms=28.5
+INFO:     127.0.0.1:50841 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJwcm94aWVzIiwia2V5IjoiNmM4YjQ2ZGMtNjRhNS00NTEyLTk3NDktNDUzNjZlZmQxNTRmL3Byb3h5Lm1wNCIsImV4cCI6MTc4NDI3MjkzM30.SJwPblUf0rvqMoyoSzYvmKPq_NLIX8CmQfXEIRFoh48 HTTP/1.1" 206 Partial Content
+req_id=19e8ca9f-5b21-47bf-a5a5-3948417341ff method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/mask status=404 ms=51.2
+INFO:     127.0.0.1:50840 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/mask HTTP/1.1" 404 Not Found
+req_id=b394891c-07e7-400c-b8ee-3e03f758487c method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=12.9
+INFO:     127.0.0.1:50877 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=8bd6906a-a626-4c30-a40f-f2923a22d719 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=7.7
+INFO:     127.0.0.1:50879 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=47c4d86c-8c04-4da2-88c8-a9723562d186 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/proxy status=206 ms=13.3
+INFO:     127.0.0.1:50887 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJwcm94aWVzIiwia2V5IjoiNmM4YjQ2ZGMtNjRhNS00NTEyLTk3NDktNDUzNjZlZmQxNTRmL3Byb3h5Lm1wNCIsImV4cCI6MTc4NDI3Mjk3NH0.XUj4TyoGyumeOuDEZybVDXpZp9ZcLKDnUyzi9k1ONUk HTTP/1.1" 206 Partial Content
+req_id=fe012c42-99be-4ccd-9ac8-dcab61e52941 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/mask status=404 ms=18.3
+INFO:     127.0.0.1:50886 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/mask HTTP/1.1" 404 Not Found
+req_id=d596b4ae-0251-4b3c-8eb6-6fbb5a4e542f method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=12.9
+INFO:     127.0.0.1:54753 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=6d8ff0c8-2aef-4a7b-b39f-3df0fed752c4 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=7.0
+INFO:     127.0.0.1:54755 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=31d63d8d-e156-4cf4-bd9c-4432746dc25e method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/mask status=404 ms=8.7
+INFO:     127.0.0.1:54757 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/mask HTTP/1.1" 404 Not Found
+req_id=0a717800-1957-4888-a946-6d7e306c8f39 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/proxy status=206 ms=9.9
+INFO:     127.0.0.1:54762 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJwcm94aWVzIiwia2V5IjoiNmM4YjQ2ZGMtNjRhNS00NTEyLTk3NDktNDUzNjZlZmQxNTRmL3Byb3h5Lm1wNCIsImV4cCI6MTc4NDI3MzkyMH0.ehgEU_wkVpSCAoOUWfa_T94FvNzjzeLP1gs8frzcvwc HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:54772 - "POST /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/analyze?rerun=false HTTP/1.1" 500 Internal Server Error
+req_id=2d1b5e8b-2132-4500-8060-7a6730888565 method=POST path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/analyze status=202 ms=23.5
+INFO:     127.0.0.1:55575 - "POST /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/analyze?rerun=false HTTP/1.1" 202 Accepted
+req_id=6602b3d2-6655-4ade-b038-3a0e1cfdf49e method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=8.5
+INFO:     127.0.0.1:55583 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=335b9ddd-7c40-4dcb-ac21-3762dedae410 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=6.0
+INFO:     127.0.0.1:55585 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=f0f53dc9-a6f7-470f-8892-ab072a4e9788 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/candidates status=404 ms=2.2
+INFO:     127.0.0.1:55588 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f/candidates HTTP/1.1" 404 Not Found
+req_id=357f20dc-3d12-4472-ad82-b93fa46a8177 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=9.3
+INFO:     127.0.0.1:55594 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=da1c436f-93f7-4d49-93e5-9d288ea2cbd5 method=GET path=/api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f status=200 ms=5.7
+INFO:     127.0.0.1:55598 - "GET /api/v1/projects/6c8b46dc-64a5-4512-9749-45366efd154f HTTP/1.1" 200 OK
+req_id=d630be25-06fd-4f4e-b73e-f6a289ecf0b4 method=POST path=/api/v1/uploads/initiate status=201 ms=60.3
+INFO:     127.0.0.1:55614 - "POST /api/v1/uploads/initiate HTTP/1.1" 201 Created
+req_id=b1a04092-dc4e-45b3-a923-dffc6848cc7b method=POST path=/api/v1/uploads/d98beb70-b8bc-4837-b9e3-ef849e892b31/complete status=200 ms=2949.8
+INFO:     127.0.0.1:55617 - "POST /api/v1/uploads/d98beb70-b8bc-4837-b9e3-ef849e892b31/complete HTTP/1.1" 200 OK
+req_id=c222c57c-1917-4664-a7b0-670b90cd95dc method=POST path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/compliance status=200 ms=19.3
+INFO:     127.0.0.1:55627 - "POST /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/compliance HTTP/1.1" 200 OK
+req_id=6f38f964-2b6b-43ab-8ef3-8578f55a8fb8 method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a status=200 ms=7.4
+INFO:     127.0.0.1:55632 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a HTTP/1.1" 200 OK
+req_id=08b3df14-38d6-4c26-a30d-934ff0dea8fd method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a status=200 ms=6.7
+INFO:     127.0.0.1:55635 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a HTTP/1.1" 200 OK
+req_id=fcb399b0-7b3a-4659-b2ce-2f99fc195089 method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/mask status=404 ms=8.0
+INFO:     127.0.0.1:55638 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/mask HTTP/1.1" 404 Not Found
+req_id=b4323911-57da-45db-b24a-2d059ad77292 method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/proxy status=206 ms=5.6
+INFO:     127.0.0.1:55641 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJwcm94aWVzIiwia2V5IjoiMGZlNDM0NmYtZTRiYi00MTIzLThhNjktNzU4ZmI3NDc5OTJhL3Byb3h5Lm1wNCIsImV4cCI6MTc4NDI3Mzk1MH0.u_-fc6Pyn_iLwQpfv_Xr3tsihKysV7q-vszyivPMMzg HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:55645 - "POST /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/analyze?rerun=false HTTP/1.1" 500 Internal Server Error
+req_id=7059c0b9-1530-41d2-88ad-1fb5e3c77c87 method=POST path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/analyze status=202 ms=8.3
+INFO:     127.0.0.1:55650 - "POST /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/analyze?rerun=false HTTP/1.1" 202 Accepted
+req_id=e3c8e52d-515e-451b-807d-2cae3a06cbf5 method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a status=200 ms=7.5
+INFO:     127.0.0.1:55654 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a HTTP/1.1" 200 OK
+req_id=f515ce47-1e1d-4586-9098-90000a5de28c method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a status=200 ms=6.0
+INFO:     127.0.0.1:55657 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a HTTP/1.1" 200 OK
+req_id=a3f15fab-fad8-45c3-97ac-357f6adb50bd method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/candidates status=404 ms=2.1
+INFO:     127.0.0.1:55660 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/candidates HTTP/1.1" 404 Not Found
+req_id=74478e20-decf-4107-a4b7-7f7a3a83b828 method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a status=200 ms=8.3
+INFO:     127.0.0.1:55664 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a HTTP/1.1" 200 OK
+req_id=b64f60f5-7c43-48f7-b619-0f02c1b637c1 method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a status=200 ms=5.8
+INFO:     127.0.0.1:55667 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a HTTP/1.1" 200 OK
+req_id=2100d63b-a9fc-49be-8ea2-6e8c12235f49 method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/mask status=404 ms=10.2
+INFO:     127.0.0.1:55670 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/mask HTTP/1.1" 404 Not Found
+req_id=067b1273-80f7-45af-b3eb-5b1add13892e method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/proxy status=206 ms=7.1
+INFO:     127.0.0.1:55673 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJwcm94aWVzIiwia2V5IjoiMGZlNDM0NmYtZTRiYi00MTIzLThhNjktNzU4ZmI3NDc5OTJhL3Byb3h5Lm1wNCIsImV4cCI6MTc4NDI3Mzk2MH0.6djlA0No-QvkzKG1OljOWJ7vLm6xZPEj2ByIvkwk-cs HTTP/1.1" 206 Partial Content
+req_id=963eb823-9b61-4519-913d-c4517ee3d3eb method=PUT path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/mask status=200 ms=98.0
+INFO:     127.0.0.1:55679 - "PUT /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/mask HTTP/1.1" 200 OK
+req_id=b5299f24-b9b4-4318-b0d6-d240fba01d77 method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a status=200 ms=8.1
+INFO:     127.0.0.1:55685 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a HTTP/1.1" 200 OK
+req_id=f32c7cbb-a0e0-4680-9cd3-274e47e25777 method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a status=200 ms=6.1
+INFO:     127.0.0.1:55688 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a HTTP/1.1" 200 OK
+req_id=fd5e3b94-baf9-4d6e-b804-1db4613e35ab method=POST path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/preview status=502 ms=2474.4
+INFO:     127.0.0.1:55742 - "POST /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/preview HTTP/1.1" 502 Bad Gateway
+req_id=a1bfbf84-34b1-4758-ab99-af1ded5968c6 method=POST path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/preview status=502 ms=1888.7
+INFO:     127.0.0.1:55755 - "POST /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/preview HTTP/1.1" 502 Bad Gateway
+req_id=cc797a69-f75f-4be2-99fe-73f5dca4ef29 method=GET path=/api/v1/admin/overview status=401 ms=524.2
+INFO:     127.0.0.1:58662 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=67d1f364-ec9a-4ddc-ac7e-31b6ff6c96ff method=GET path=/api/v1/admin/overview status=401 ms=3.2
+INFO:     127.0.0.1:58665 - "GET /api/v1/admin/overview HTTP/1.1" 401 Unauthorized
+req_id=172a1f38-ff59-46f6-aa2f-4a99e7843d9d method=POST path=/api/v1/auth/refresh status=200 ms=29.5
+INFO:     127.0.0.1:58667 - "POST /api/v1/auth/refresh HTTP/1.1" 200 OK
+req_id=da4df364-c349-4d42-809c-22c11d45e157 method=GET path=/api/v1/admin/overview status=200 ms=2043.3
+INFO:     127.0.0.1:58669 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=e1f45d49-b0bf-4316-997f-c9477bddd889 method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a status=401 ms=4.8
+INFO:     127.0.0.1:58688 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a HTTP/1.1" 401 Unauthorized
+req_id=69e47da0-4726-4a99-87f2-2c554c4abfae method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a status=401 ms=4.4
+INFO:     127.0.0.1:58690 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a HTTP/1.1" 401 Unauthorized
+req_id=c7ef7f63-b331-4cbd-8402-2c036e45a105 method=GET path=/api/v1/admin/overview status=200 ms=2043.0
+INFO:     127.0.0.1:58676 - "GET /api/v1/admin/overview HTTP/1.1" 200 OK
+req_id=41d958a7-9a57-4b0c-9dde-30d38cb6f1a1 method=POST path=/api/v1/auth/refresh status=200 ms=32.2
+INFO:     127.0.0.1:58693 - "POST /api/v1/auth/refresh HTTP/1.1" 200 OK
+req_id=c6d31d12-4e0d-4584-a29b-58aa045d3e77 method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a status=200 ms=5.8
+INFO:     127.0.0.1:58696 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a HTTP/1.1" 200 OK
+req_id=f3d6fb68-250e-4b48-93dd-062a66a9b524 method=GET path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a status=200 ms=5.7
+INFO:     127.0.0.1:58699 - "GET /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a HTTP/1.1" 200 OK
+req_id=9d4f527c-6fbb-4eec-b532-57aa1603c31c method=POST path=/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/preview status=502 ms=2177.7
+INFO:     127.0.0.1:58704 - "POST /api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/preview HTTP/1.1" 502 Bad Gateway
+req_id=0ec00110-fdaf-43c2-87fb-20c04291e3c8 method=GET path=/api/v1/admin/workers status=200 ms=2051.0
+INFO:     127.0.0.1:58714 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=ec0de3ef-519a-49a5-9663-a4e2f6d9ecf6 method=GET path=/api/v1/admin/workers status=200 ms=2031.3
+INFO:     127.0.0.1:58726 - "GET /api/v1/admin/workers HTTP/1.1" 200 OK
+req_id=134ec8b2-8d0f-407c-ba26-0f7e45090c6d method=GET path=/health status=200 ms=3.1
+INFO:     127.0.0.1:58876 - "GET /health HTTP/1.1" 200 OK
+req_id=8b4acf0f-b25c-42b3-992b-df662488708e method=GET path=/health/db status=404 ms=0.7
+INFO:     127.0.0.1:58949 - "GET /health/db HTTP/1.1" 404 Not Found
+req_id=e34046d3-8608-4144-9e9b-575806f63b00 method=GET path=/health/redis status=200 ms=2430.3
+INFO:     127.0.0.1:58949 - "GET /health/redis HTTP/1.1" 200 OK
+req_id=69832c0b-ccb8-4b79-b3d7-2f22e014e1ad method=GET path=/health/workers status=200 ms=4.2
+INFO:     127.0.0.1:58949 - "GET /health/workers HTTP/1.1" 200 OK

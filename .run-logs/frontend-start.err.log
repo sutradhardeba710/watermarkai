@@ -1,0 +1,539 @@
+(node:1768) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Failed to proxy http://localhost:8000/api/v1/auth/login Error: socket hang up
+    at Socket.socketCloseListener (node:_http_client:491:27)
+    at Socket.emit (node:events:530:35)
+    at TCP.<anonymous> (node:net:346:12)
+    at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+  code: 'ECONNRESET'
+}
+Error: socket hang up
+    at Socket.socketCloseListener (node:_http_client:491:27)
+    at Socket.emit (node:events:530:35)
+    at TCP.<anonymous> (node:net:346:12)
+    at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+  code: 'ECONNRESET'
+}
+Watchpack Error (initial scan): Error: EINVAL: invalid argument, lstat 'C:\System Volume Information'
+Watchpack Error (initial scan): Error: EINVAL: invalid argument, lstat 'C:\swapfile.sys'
+Watchpack Error (initial scan): Error: EINVAL: invalid argument, lstat 'C:\System Volume Information'
+Watchpack Error (initial scan): Error: EINVAL: invalid argument, lstat 'C:\swapfile.sys'
+Watchpack Error (stats): Error: EINVAL: invalid argument, lstat 'C:\swapfile.sys'
+Watchpack Error (stats): Error: EINVAL: invalid argument, lstat 'C:\swapfile.sys'
+ ⨯ ./app/layout.tsx
+Error: 
+  [31mx[0m Unexpected token ```. Expected identifier, string literal, numeric literal or [ for the computed key
+   ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\layout.tsx[0m:4:1]
+ [2m4[0m | 
+ [2m5[0m | export const metadata: Metadata = {
+ [2m6[0m |   title: "ClearFrame - Authorized Video Cleanup",
+ [2m7[0m |   description: "AI-assisted video cleanup for footage you own or are licensed to edit.",`r`n  metadataBase: new URL("http://localhost:3000"),`r`n  openGraph: { title: "ClearFrame — Authorized Video Cleanup", description: "Reviewable, frame-accurate cleanup for footage you own or are licensed to edit.", type: "website" },`r`n  twitter: { card: "summary_large_image", title: "ClearFrame — Authorized Video Cleanup", description: "AI-assisted cleanup for authorized edits only." },
+   : [31;1m                                                                                        ^[0m
+ [2m8[0m | };
+ [2m9[0m | 
+ [2m9[0m | export default function RootLayout({ children }: { children: React.ReactNode }) {
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/layout.tsx
+Watchpack Error (initial scan): Error: EINVAL: invalid argument, lstat 'C:\System Volume Information'
+Watchpack Error (initial scan): Error: EINVAL: invalid argument, lstat 'C:\swapfile.sys'
+ ⨯ ./app/layout.tsx
+Error: 
+  [31mx[0m Unexpected token ```. Expected identifier, string literal, numeric literal or [ for the computed key
+   ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\layout.tsx[0m:4:1]
+ [2m4[0m | 
+ [2m5[0m | export const metadata: Metadata = {
+ [2m6[0m |   title: "ClearFrame - Authorized Video Cleanup",
+ [2m7[0m |   description: "AI-assisted video cleanup for footage you own or are licensed to edit.",`r`n  metadataBase: new URL("http://localhost:3000"),`r`n  openGraph: { title: "ClearFrame — Authorized Video Cleanup", description: "Reviewable, frame-accurate cleanup for footage you own or are licensed to edit.", type: "website" },`r`n  twitter: { card: "summary_large_image", title: "ClearFrame — Authorized Video Cleanup", description: "AI-assisted cleanup for authorized edits only." },
+   : [31;1m                                                                                        ^[0m
+ [2m8[0m | };
+ [2m9[0m | 
+ [2m9[0m | export default function RootLayout({ children }: { children: React.ReactNode }) {
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/layout.tsx
+ ⨯ ./app/layout.tsx
+Error: 
+  [31mx[0m Unexpected token ```. Expected identifier, string literal, numeric literal or [ for the computed key
+   ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\layout.tsx[0m:4:1]
+ [2m4[0m | 
+ [2m5[0m | export const metadata: Metadata = {
+ [2m6[0m |   title: "ClearFrame - Authorized Video Cleanup",
+ [2m7[0m |   description: "AI-assisted video cleanup for footage you own or are licensed to edit.",`n  metadataBase: new URL("http://localhost:3000"),`n  openGraph: { title: "ClearFrame â€” Authorized Video Cleanup", description: "Reviewable, frame-accurate cleanup for footage you own or are licensed to edit.", type: "website" },`n  twitter: { card: "summary_large_image", title: "ClearFrame â€” Authorized Video Cleanup", description: "AI-assisted cleanup for authorized edits only." },
+   : [31;1m                                                                                        ^[0m
+ [2m8[0m | };
+ [2m9[0m | 
+ [2m9[0m | export default function RootLayout({ children }: { children: React.ReactNode }) {
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/layout.tsx
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ ./app/admin/page.tsx
+Error: 
+  [31mx[0m Expected ';', '}' or <eof>
+    ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\admin\page.tsx[0m:2:1]
+ [2m 2[0m |     
+ [2m 3[0m |     import { useEffect, useState } from "react";
+ [2m 4[0m |     import { useRouter } from "next/navigation";
+ [2m 5[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m import Link from "next/link";`nimport { AlertTriangle, FolderKanban, LogOut, Settings, Shield, Sparkles, Upload } from "lucide-react";
+ [2m 6[0m | [31;1m|[0m   
+ [2m 7[0m | [31;1m|[0m   import { useHydrateAuth } from "@/features/auth/useHydrateAuth";
+ [2m 8[0m | [31;1m|[0m   import { useAuthStore } from "@/features/auth/authStore";
+ [2m 9[0m | [31;1m|[0m   import { adminApi } from "@/services/admin";
+ [2m10[0m | [31;1m|[0m   import type {
+ [2m11[0m | [31;1m|[0m     AbuseReportSummary,
+ [2m12[0m | [31;1m|[0m     AdminJob,
+ [2m13[0m | [31;1m|[0m     AdminOverview,
+ [2m14[0m | [31;1m|[0m     AdminUser,
+ [2m15[0m | [31;1m|[0m     AuditEntry,
+ [2m16[0m | [31;1m|[0m     SystemConfig,
+ [2m17[0m | [31;1m|[0m     WorkerInfo,
+ [2m18[0m | [31;1m|[0m   } from "@/types";
+ [2m19[0m | [31;1m|[0m   
+ [2m20[0m | [31;1m|[0m   type Tab = "overview" | "jobs" | "workers" | "users" | "settings" | "audit" | "abuse";
+ [2m21[0m | [31;1m|[0m   
+ [2m22[0m | [31;1m|[0m   const TABS: { id: Tab; label: string }[] = [
+ [2m23[0m | [31;1m|[0m     { id: "overview", label: "Overview" },
+ [2m24[0m | [31;1m|[0m     { id: "jobs", label: "Jobs" },
+ [2m25[0m | [31;1m|[0m     { id: "workers", label: "Workers" },
+ [2m26[0m | [31;1m|[0m     { id: "users", label: "Users" },
+ [2m27[0m | [31;1m|[0m     { id: "settings", label: "Settings" },
+ [2m28[0m | [31;1m|[0m     { id: "audit", label: "Audit" },
+ [2m29[0m | [31;1m|[0m     { id: "abuse", label: "Abuse" },
+ [2m30[0m | [31;1m|[0m   ];
+ [2m31[0m | [31;1m|[0m   
+ [2m32[0m | [31;1m|[0m   export default function AdminPage() {
+ [2m33[0m | [31;1m|[0m     useHydrateAuth();
+ [2m34[0m | [31;1m|[0m     const router = useRouter();
+ [2m35[0m | [31;1m|[0m     const user = useAuthStore((s) => s.user);
+ [2m36[0m | [31;1m|[0m     const ready = useAuthStore((s) => !!s.accessToken);
+ [2m37[0m | [31;1m|[0m     const [tab, setTab] = useState<Tab>("overview");
+ [2m38[0m | [31;1m|[0m   
+ [2m39[0m | [31;1m|[0m     useEffect(() => {
+ [2m40[0m | [31;1m|[0m       if (!ready) return;
+ [2m41[0m | [31;1m|[0m       if (!user || user.role !== "admin") router.replace("/dashboard");
+ [2m42[0m | [31;1m|[0m     }, [ready, user, router]);
+ [2m43[0m | [31;1m|[0m   
+ [2m44[0m | [31;1m|[0m     if (!ready || !user || user.role !== "admin") return null;
+ [2m45[0m | [31;1m|[0m   
+ [2m46[0m | [31;1m|[0m     return (
+ [2m47[0m | [31;1m|[0m       <main className="min-h-dvh bg-[#0a0b0f] text-white lg:pl-64"><aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-white/[.07] bg-[#0d0f14] px-4 py-6 lg:flex"><Link href="/" className="flex items-center gap-2.5 text-lg font-semibold"><span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#4f7cff] to-[#6d5ef7]"><Sparkles className="h-5 w-5" /></span>ClearFrame</Link><nav className="mt-10 space-y-1 text-sm"><Link href="/dashboard" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white"><FolderKanban className="h-4 w-4" />Projects</Link><Link href="/upload" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white"><Upload className="h-4 w-4" />Upload</Link><Link href="/admin" className="flex items-center gap-3 rounded-xl bg-white/10 px-3 py-2.5 font-medium text-white"><Shield className="h-4 w-4 text-[#9eb4ff]" />Admin</Link><Link href="#" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white"><Settings className="h-4 w-4" />Settings</Link></nav></aside><div className="mx-auto max-w-6xl px-6 py-8">
+ [2m48[0m | [31;1m|[0m         <header className="flex items-center justify-between">
+ [2m49[0m | [31;1m|[0m           <div>
+ [2m50[0m | [31;1m|[0m             <h1 className="text-2xl font-bold tracking-tight">Admin</h1>
+ [2m51[0m | [31;1m|[0m             <p className="text-sm text-white/50">System overview, jobs, workers, and configuration.</p>
+ [2m52[0m | [31;1m|[0m           </div>
+ [2m53[0m | [31;1m|[0m           <Link href="/dashboard" className="text-sm text-[#9eb4ff] hover:text-[#b7c7ff]">
+ [2m54[0m | [31;1m|[0m             ← Back to dashboard
+ [2m55[0m | [31;1m|[0m           </Link>
+ [2m56[0m | [31;1m|[0m         </header>
+ [2m57[0m | [31;1m|[0m   
+ [2m58[0m | [31;1m|[0m         <nav className="mt-6 flex flex-wrap gap-1.5 border-b border-white/10">
+ [2m59[0m | [31;1m|[0m           {TABS.map((t) => (
+ [2m60[0m | [31;1m|[0m             <button
+ [2m61[0m | [31;1m|[0m               key={t.id}
+ [2m62[0m | [31;1m|[0m               onClick={() => setTab(t.id)}
+ [2m63[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m             className={`rounded-t-md px-3 py-2 text-sm font-medium ${
+    : [31;1m`[0m[31;1m---[0m[33;1m                        ^^^^^^^[0m
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mThis is the expression part of an expression statement[0m
+ [2m64[0m |                   tab === t.id ? "border-b-2 border-brand-600 text-[#b7c7ff]" : "text-white/50 hover:text-white"
+ [2m65[0m |                 }`}
+ [2m65[0m |               >
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/admin/page.tsx
+ ⨯ ./app/admin/page.tsx
+Error: 
+  [31mx[0m Expected ';', '}' or <eof>
+    ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\admin\page.tsx[0m:2:1]
+ [2m 2[0m |     
+ [2m 3[0m |     import { useEffect, useState } from "react";
+ [2m 4[0m |     import { useRouter } from "next/navigation";
+ [2m 5[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m import Link from "next/link";`nimport { AlertTriangle, FolderKanban, LogOut, Settings, Shield, Sparkles, Upload } from "lucide-react";
+ [2m 6[0m | [31;1m|[0m   
+ [2m 7[0m | [31;1m|[0m   import { useHydrateAuth } from "@/features/auth/useHydrateAuth";
+ [2m 8[0m | [31;1m|[0m   import { useAuthStore } from "@/features/auth/authStore";
+ [2m 9[0m | [31;1m|[0m   import { adminApi } from "@/services/admin";
+ [2m10[0m | [31;1m|[0m   import type {
+ [2m11[0m | [31;1m|[0m     AbuseReportSummary,
+ [2m12[0m | [31;1m|[0m     AdminJob,
+ [2m13[0m | [31;1m|[0m     AdminOverview,
+ [2m14[0m | [31;1m|[0m     AdminUser,
+ [2m15[0m | [31;1m|[0m     AuditEntry,
+ [2m16[0m | [31;1m|[0m     SystemConfig,
+ [2m17[0m | [31;1m|[0m     WorkerInfo,
+ [2m18[0m | [31;1m|[0m   } from "@/types";
+ [2m19[0m | [31;1m|[0m   
+ [2m20[0m | [31;1m|[0m   type Tab = "overview" | "jobs" | "workers" | "users" | "settings" | "audit" | "abuse";
+ [2m21[0m | [31;1m|[0m   
+ [2m22[0m | [31;1m|[0m   const TABS: { id: Tab; label: string }[] = [
+ [2m23[0m | [31;1m|[0m     { id: "overview", label: "Overview" },
+ [2m24[0m | [31;1m|[0m     { id: "jobs", label: "Jobs" },
+ [2m25[0m | [31;1m|[0m     { id: "workers", label: "Workers" },
+ [2m26[0m | [31;1m|[0m     { id: "users", label: "Users" },
+ [2m27[0m | [31;1m|[0m     { id: "settings", label: "Settings" },
+ [2m28[0m | [31;1m|[0m     { id: "audit", label: "Audit" },
+ [2m29[0m | [31;1m|[0m     { id: "abuse", label: "Abuse" },
+ [2m30[0m | [31;1m|[0m   ];
+ [2m31[0m | [31;1m|[0m   
+ [2m32[0m | [31;1m|[0m   export default function AdminPage() {
+ [2m33[0m | [31;1m|[0m     useHydrateAuth();
+ [2m34[0m | [31;1m|[0m     const router = useRouter();
+ [2m35[0m | [31;1m|[0m     const user = useAuthStore((s) => s.user);
+ [2m36[0m | [31;1m|[0m     const ready = useAuthStore((s) => !!s.accessToken);
+ [2m37[0m | [31;1m|[0m     const [tab, setTab] = useState<Tab>("overview");
+ [2m38[0m | [31;1m|[0m   
+ [2m39[0m | [31;1m|[0m     useEffect(() => {
+ [2m40[0m | [31;1m|[0m       if (!ready) return;
+ [2m41[0m | [31;1m|[0m       if (!user || user.role !== "admin") router.replace("/dashboard");
+ [2m42[0m | [31;1m|[0m     }, [ready, user, router]);
+ [2m43[0m | [31;1m|[0m   
+ [2m44[0m | [31;1m|[0m     if (!ready || !user || user.role !== "admin") return null;
+ [2m45[0m | [31;1m|[0m   
+ [2m46[0m | [31;1m|[0m     return (
+ [2m47[0m | [31;1m|[0m       <main className="min-h-dvh bg-[#0a0b0f] text-white lg:pl-64"><aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-white/[.07] bg-[#0d0f14] px-4 py-6 lg:flex"><Link href="/" className="flex items-center gap-2.5 text-lg font-semibold"><span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#4f7cff] to-[#6d5ef7]"><Sparkles className="h-5 w-5" /></span>ClearFrame</Link><nav className="mt-10 space-y-1 text-sm"><Link href="/dashboard" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white"><FolderKanban className="h-4 w-4" />Projects</Link><Link href="/upload" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white"><Upload className="h-4 w-4" />Upload</Link><Link href="/admin" className="flex items-center gap-3 rounded-xl bg-white/10 px-3 py-2.5 font-medium text-white"><Shield className="h-4 w-4 text-[#9eb4ff]" />Admin</Link><Link href="#" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white"><Settings className="h-4 w-4" />Settings</Link></nav></aside><div className="mx-auto max-w-6xl px-6 py-8">
+ [2m48[0m | [31;1m|[0m         <header className="flex items-center justify-between">
+ [2m49[0m | [31;1m|[0m           <div>
+ [2m50[0m | [31;1m|[0m             <h1 className="text-2xl font-bold tracking-tight">Admin</h1>
+ [2m51[0m | [31;1m|[0m             <p className="text-sm text-white/50">System overview, jobs, workers, and configuration.</p>
+ [2m52[0m | [31;1m|[0m           </div>
+ [2m53[0m | [31;1m|[0m           <Link href="/dashboard" className="text-sm text-[#9eb4ff] hover:text-[#b7c7ff]">
+ [2m54[0m | [31;1m|[0m             ← Back to dashboard
+ [2m55[0m | [31;1m|[0m           </Link>
+ [2m56[0m | [31;1m|[0m         </header>
+ [2m57[0m | [31;1m|[0m   
+ [2m58[0m | [31;1m|[0m         <nav className="mt-6 flex flex-wrap gap-1.5 border-b border-white/10">
+ [2m59[0m | [31;1m|[0m           {TABS.map((t) => (
+ [2m60[0m | [31;1m|[0m             <button
+ [2m61[0m | [31;1m|[0m               key={t.id}
+ [2m62[0m | [31;1m|[0m               onClick={() => setTab(t.id)}
+ [2m63[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m             className={`rounded-t-md px-3 py-2 text-sm font-medium ${
+    : [31;1m`[0m[31;1m---[0m[33;1m                        ^^^^^^^[0m
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mThis is the expression part of an expression statement[0m
+ [2m64[0m |                   tab === t.id ? "border-b-2 border-brand-600 text-[#b7c7ff]" : "text-white/50 hover:text-white"
+ [2m65[0m |                 }`}
+ [2m65[0m |               >
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/admin/page.tsx
+ ⨯ ./app/admin/page.tsx
+Error: 
+  [31mx[0m Expected ';', '}' or <eof>
+    ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\admin\page.tsx[0m:2:1]
+ [2m 2[0m |     
+ [2m 3[0m |     import { useEffect, useState } from "react";
+ [2m 4[0m |     import { useRouter } from "next/navigation";
+ [2m 5[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m import Link from "next/link";`nimport { AlertTriangle, FolderKanban, LogOut, Settings, Shield, Sparkles, Upload } from "lucide-react";
+ [2m 6[0m | [31;1m|[0m   
+ [2m 7[0m | [31;1m|[0m   import { useHydrateAuth } from "@/features/auth/useHydrateAuth";
+ [2m 8[0m | [31;1m|[0m   import { useAuthStore } from "@/features/auth/authStore";
+ [2m 9[0m | [31;1m|[0m   import { adminApi } from "@/services/admin";
+ [2m10[0m | [31;1m|[0m   import type {
+ [2m11[0m | [31;1m|[0m     AbuseReportSummary,
+ [2m12[0m | [31;1m|[0m     AdminJob,
+ [2m13[0m | [31;1m|[0m     AdminOverview,
+ [2m14[0m | [31;1m|[0m     AdminUser,
+ [2m15[0m | [31;1m|[0m     AuditEntry,
+ [2m16[0m | [31;1m|[0m     SystemConfig,
+ [2m17[0m | [31;1m|[0m     WorkerInfo,
+ [2m18[0m | [31;1m|[0m   } from "@/types";
+ [2m19[0m | [31;1m|[0m   
+ [2m20[0m | [31;1m|[0m   type Tab = "overview" | "jobs" | "workers" | "users" | "settings" | "audit" | "abuse";
+ [2m21[0m | [31;1m|[0m   
+ [2m22[0m | [31;1m|[0m   const TABS: { id: Tab; label: string }[] = [
+ [2m23[0m | [31;1m|[0m     { id: "overview", label: "Overview" },
+ [2m24[0m | [31;1m|[0m     { id: "jobs", label: "Jobs" },
+ [2m25[0m | [31;1m|[0m     { id: "workers", label: "Workers" },
+ [2m26[0m | [31;1m|[0m     { id: "users", label: "Users" },
+ [2m27[0m | [31;1m|[0m     { id: "settings", label: "Settings" },
+ [2m28[0m | [31;1m|[0m     { id: "audit", label: "Audit" },
+ [2m29[0m | [31;1m|[0m     { id: "abuse", label: "Abuse" },
+ [2m30[0m | [31;1m|[0m   ];
+ [2m31[0m | [31;1m|[0m   
+ [2m32[0m | [31;1m|[0m   export default function AdminPage() {
+ [2m33[0m | [31;1m|[0m     useHydrateAuth();
+ [2m34[0m | [31;1m|[0m     const router = useRouter();
+ [2m35[0m | [31;1m|[0m     const user = useAuthStore((s) => s.user);
+ [2m36[0m | [31;1m|[0m     const ready = useAuthStore((s) => !!s.accessToken);
+ [2m37[0m | [31;1m|[0m     const [tab, setTab] = useState<Tab>("overview");
+ [2m38[0m | [31;1m|[0m   
+ [2m39[0m | [31;1m|[0m     useEffect(() => {
+ [2m40[0m | [31;1m|[0m       if (!ready) return;
+ [2m41[0m | [31;1m|[0m       if (!user || user.role !== "admin") router.replace("/dashboard");
+ [2m42[0m | [31;1m|[0m     }, [ready, user, router]);
+ [2m43[0m | [31;1m|[0m   
+ [2m44[0m | [31;1m|[0m     if (!ready || !user || user.role !== "admin") return null;
+ [2m45[0m | [31;1m|[0m   
+ [2m46[0m | [31;1m|[0m     return (
+ [2m47[0m | [31;1m|[0m       <main className="min-h-dvh bg-[#0a0b0f] text-white lg:pl-64"><aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-white/[.07] bg-[#0d0f14] px-4 py-6 lg:flex"><Link href="/" className="flex items-center gap-2.5 text-lg font-semibold"><span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#4f7cff] to-[#6d5ef7]"><Sparkles className="h-5 w-5" /></span>ClearFrame</Link><nav className="mt-10 space-y-1 text-sm"><Link href="/dashboard" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white"><FolderKanban className="h-4 w-4" />Projects</Link><Link href="/upload" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white"><Upload className="h-4 w-4" />Upload</Link><Link href="/admin" className="flex items-center gap-3 rounded-xl bg-white/10 px-3 py-2.5 font-medium text-white"><Shield className="h-4 w-4 text-[#9eb4ff]" />Admin</Link><Link href="#" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white"><Settings className="h-4 w-4" />Settings</Link></nav></aside><div className="mx-auto max-w-6xl px-6 py-8">
+ [2m48[0m | [31;1m|[0m         <header className="flex items-center justify-between">
+ [2m49[0m | [31;1m|[0m           <div>
+ [2m50[0m | [31;1m|[0m             <h1 className="text-2xl font-bold tracking-tight">Admin</h1>
+ [2m51[0m | [31;1m|[0m             <p className="text-sm text-white/50">System overview, jobs, workers, and configuration.</p>
+ [2m52[0m | [31;1m|[0m           </div>
+ [2m53[0m | [31;1m|[0m           <Link href="/dashboard" className="text-sm text-[#9eb4ff] hover:text-[#b7c7ff]">
+ [2m54[0m | [31;1m|[0m             ← Back to dashboard
+ [2m55[0m | [31;1m|[0m           </Link>
+ [2m56[0m | [31;1m|[0m         </header>
+ [2m57[0m | [31;1m|[0m   
+ [2m58[0m | [31;1m|[0m         <nav className="mt-6 flex flex-wrap gap-1.5 border-b border-white/10">
+ [2m59[0m | [31;1m|[0m           {TABS.map((t) => (
+ [2m60[0m | [31;1m|[0m             <button
+ [2m61[0m | [31;1m|[0m               key={t.id}
+ [2m62[0m | [31;1m|[0m               onClick={() => setTab(t.id)}
+ [2m63[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m             className={`rounded-t-md px-3 py-2 text-sm font-medium ${
+    : [31;1m`[0m[31;1m---[0m[33;1m                        ^^^^^^^[0m
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mThis is the expression part of an expression statement[0m
+ [2m64[0m |                   tab === t.id ? "border-b-2 border-brand-600 text-[#b7c7ff]" : "text-white/50 hover:text-white"
+ [2m65[0m |                 }`}
+ [2m65[0m |               >
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/admin/page.tsx
+ ⨯ ./app/admin/page.tsx
+Error: 
+  [31mx[0m Unexpected token `main`. Expected jsx identifier
+    ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\admin\page.tsx[0m:45:1]
+ [2m45[0m |   if (!ready || !user || user.role !== "admin") return null;
+ [2m46[0m | 
+ [2m47[0m |   return (
+ [2m48[0m |     <main className="min-h-dvh bg-[#0a0b0f] text-white lg:pl-64"><aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-white/[.07] bg-[#0d0f14] px-4 py-6 lg:flex"><Link href="/" className="flex items-center gap-2.5 text-lg font-semibold"><span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#4f7cff] to-[#6d5ef7]"><Sparkles className="h-5 w-5" /></span>ClearFrame</Link><nav className="mt-10 space-y-1 text-sm"><Link href="/dashboard" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white"><FolderKanban className="h-4 w-4" />Projects</Link><Link href="/upload" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white"><Upload className="h-4 w-4" />Upload</Link><Link href="/admin" className="flex items-center gap-3 rounded-xl bg-white/10 px-3 py-2.5 font-medium text-white"><Shield className="h-4 w-4 text-[#9eb4ff]" />Admin</Link><Link href="#" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white"><Settings className="h-4 w-4" />Settings</Link></nav></aside><div className="mx-auto max-w-6xl px-6 py-8">
+    : [31;1m     ^^^^[0m
+ [2m49[0m |       <header className="flex items-center justify-between">
+ [2m50[0m |         <div>
+ [2m50[0m |           <h1 className="text-2xl font-bold tracking-tight">Admin</h1>
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/admin/page.tsx
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ ./app/admin/page.tsx
+Error: 
+  [31mx[0m Unexpected token `div`. Expected jsx identifier
+     ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\admin\page.tsx[0m:112:1]
+ [2m112[0m |   ];
+ [2m113[0m |   const stalled = data.gpu_workers === 0 && data.queue_length > 0;
+ [2m114[0m |   return (
+ [2m115[0m |     <div>
+     : [31;1m     ^^^[0m
+ [2m116[0m |       {stalled && <div role="alert" className="mb-5 flex items-start gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-amber-100"><AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" /><div><p className="font-semibold">No active workers — jobs are stalling in the queue</p><p className="mt-1 text-sm text-amber-100/70">There are {data.queue_length} queued jobs and no GPU workers reporting online. Check the Workers tab or restart the Celery worker.</p></div></div>}
+ [2m117[0m |       <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+ [2m117[0m |       {cards.map((c) => (
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/admin/page.tsx
+ ⨯ ./app/admin/page.tsx
+Error: 
+  [31mx[0m Unexpected token `div`. Expected jsx identifier
+     ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\admin\page.tsx[0m:112:1]
+ [2m112[0m |   ];
+ [2m113[0m |   const stalled = data.gpu_workers === 0 && data.queue_length > 0;
+ [2m114[0m |   return (
+ [2m115[0m |     <div>
+     : [31;1m     ^^^[0m
+ [2m116[0m |       {stalled && <div role="alert" className="mb-5 flex items-start gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-amber-100"><AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" /><div><p className="font-semibold">No active workers — jobs are stalling in the queue</p><p className="mt-1 text-sm text-amber-100/70">There are {data.queue_length} queued jobs and no GPU workers reporting online. Check the Workers tab or restart the Celery worker.</p></div></div>}
+ [2m117[0m |       <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+ [2m117[0m |       {cards.map((c) => (
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/admin/page.tsx
+ ⨯ ./app/admin/page.tsx
+Error: 
+  [31mx[0m Unexpected token `div`. Expected jsx identifier
+     ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\admin\page.tsx[0m:112:1]
+ [2m112[0m |   ];
+ [2m113[0m |   const stalled = data.gpu_workers === 0 && data.queue_length > 0;
+ [2m114[0m |   return (
+ [2m115[0m |     <div>
+     : [31;1m     ^^^[0m
+ [2m116[0m |       {stalled && <div role="alert" className="mb-5 flex items-start gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-amber-100"><AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" /><div><p className="font-semibold">No active workers â€” jobs are stalling in the queue</p><p className="mt-1 text-sm text-amber-100/70">There are {data.queue_length} queued jobs and no GPU workers reporting online. Check the Workers tab or restart the Celery worker.</p></div></div>}
+ [2m117[0m |       <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+ [2m117[0m |       {cards.map((c) => (
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/admin/page.tsx
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ Error: The default export is not a React Component in page: "/admin"
+    at async Promise.all (index 0)
+    at async Promise.all (index 0)
+digest: "2844780438"
+ ⨯ Error: The default export is not a React Component in page: "/admin"
+    at async Promise.all (index 0)
+    at async Promise.all (index 0)
+digest: "2844780438"
+ ⨯ Error: The default export is not a React Component in page: "/admin"
+    at async Promise.all (index 0)
+    at async Promise.all (index 0)
+digest: "510132528"
+ ⨯ Error: The default export is not a React Component in page: "/admin"
+    at async Promise.all (index 0)
+    at async Promise.all (index 0)
+digest: "510132528"
+ ⨯ Error: The default export is not a React Component in page: "/admin"
+    at async Promise.all (index 0)
+    at async Promise.all (index 0)
+digest: "2844780438"
+ ⨯ Error: The default export is not a React Component in page: "/admin"
+    at async Promise.all (index 0)
+    at async Promise.all (index 0)
+digest: "2844780438"
+ ⨯ ./app/projects/[id]/result/page.tsx
+Error: 
+  [31mx[0m Unexpected token `main`. Expected jsx identifier
+     ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\projects\[id]\result\page.tsx[0m:238:1]
+ [2m238[0m |   }
+ [2m239[0m | 
+ [2m240[0m |   return (
+ [2m241[0m |     <main className="mx-auto max-w-5xl px-6 py-8">
+     : [31;1m     ^^^^[0m
+ [2m242[0m |       <div className="flex items-center justify-between">
+ [2m243[0m |         <div>
+ [2m243[0m |           <h1 className="text-2xl font-bold tracking-tight">{project.title || project.original_filename}</h1>
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/projects/[id]/result/page.tsx
+ ⨯ ./app/projects/[id]/result/page.tsx
+Error: 
+  [31mx[0m Unexpected token `main`. Expected jsx identifier
+     ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\projects\[id]\result\page.tsx[0m:238:1]
+ [2m238[0m |   }
+ [2m239[0m | 
+ [2m240[0m |   return (
+ [2m241[0m |     <main className="mx-auto max-w-5xl px-6 py-8">
+     : [31;1m     ^^^^[0m
+ [2m242[0m |       <div className="flex items-center justify-between">
+ [2m243[0m |         <div>
+ [2m243[0m |           <h1 className="text-2xl font-bold tracking-tight">{project.title || project.original_filename}</h1>
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/projects/[id]/result/page.tsx
+ ⨯ ./app/projects/[id]/result/page.tsx
+Error: 
+  [31mx[0m Unexpected token `main`. Expected jsx identifier
+     ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\projects\[id]\result\page.tsx[0m:238:1]
+ [2m238[0m |   }
+ [2m239[0m | 
+ [2m240[0m |   return (
+ [2m241[0m |     <main className="mx-auto max-w-5xl px-6 py-8">
+     : [31;1m     ^^^^[0m
+ [2m242[0m |       <div className="flex items-center justify-between">
+ [2m243[0m |         <div>
+ [2m243[0m |           <h1 className="text-2xl font-bold tracking-tight">{project.title || project.original_filename}</h1>
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/projects/[id]/result/page.tsx
+ ⨯ ./app/projects/[id]/result/page.tsx
+Error: 
+  [31mx[0m Unexpected token `main`. Expected jsx identifier
+     ,-[[36;1;4mC:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\app\projects\[id]\result\page.tsx[0m:238:1]
+ [2m238[0m |   }
+ [2m239[0m | 
+ [2m240[0m |   return (
+ [2m241[0m |     <main className="mx-auto max-w-5xl px-6 py-8">
+     : [31;1m     ^^^^[0m
+ [2m242[0m |       <div className="flex items-center justify-between">
+ [2m243[0m |         <div>
+ [2m243[0m |           <h1 className="text-2xl font-bold tracking-tight">{project.title || project.original_filename}</h1>
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/projects/[id]/result/page.tsx
+Failed to proxy http://localhost:8000/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/preview Error: socket hang up
+    at Socket.socketCloseListener (node:_http_client:491:27)
+    at Socket.emit (node:events:530:35)
+    at TCP.<anonymous> (node:net:346:12)
+    at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+  code: 'ECONNRESET'
+}
+Error: socket hang up
+    at Socket.socketCloseListener (node:_http_client:491:27)
+    at Socket.emit (node:events:530:35)
+    at TCP.<anonymous> (node:net:346:12)
+    at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+  code: 'ECONNRESET'
+}
+Failed to proxy http://localhost:8000/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/preview Error: socket hang up
+    at Socket.socketCloseListener (node:_http_client:491:27)
+    at Socket.emit (node:events:530:35)
+    at TCP.<anonymous> (node:net:346:12)
+    at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+  code: 'ECONNRESET'
+}
+Error: socket hang up
+    at Socket.socketCloseListener (node:_http_client:491:27)
+    at Socket.emit (node:events:530:35)
+    at TCP.<anonymous> (node:net:346:12)
+    at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+  code: 'ECONNRESET'
+}
+Failed to proxy http://localhost:8000/api/v1/projects/0fe4346f-e4bb-4123-8a69-758fb747992a/preview Error: socket hang up
+    at Socket.socketCloseListener (node:_http_client:491:27)
+    at Socket.emit (node:events:530:35)
+    at TCP.<anonymous> (node:net:346:12)
+    at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+  code: 'ECONNRESET'
+}
+Error: socket hang up
+    at Socket.socketCloseListener (node:_http_client:491:27)
+    at Socket.emit (node:events:530:35)
+    at TCP.<anonymous> (node:net:346:12)
+    at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+  code: 'ECONNRESET'
+}

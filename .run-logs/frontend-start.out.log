@@ -1,0 +1,320 @@
+
+> vwa-frontend@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.5
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 5.6s
+ ○ Compiling / ...
+ ✓ Compiled / in 17.5s (1429 modules)
+ GET / 200 in 9363ms
+ GET / 200 in 1339ms
+ GET / 200 in 18914ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 3.8s (751 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 4037ms
+ ○ Compiling /register ...
+ ✓ Compiled /register in 2.9s (1625 modules)
+ GET / 200 in 262ms
+ ✓ Compiled /icon.svg in 460ms (889 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 646ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 600ms (1661 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 5.2s (1861 modules)
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 1828ms (1871 modules)
+ ✓ Compiled /icon.svg in 282ms (946 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 395ms
+ ✓ Compiled /projects/[id]/result in 501ms (1907 modules)
+ ✓ Compiled in 4.1s (1891 modules)
+ ✓ Compiled in 2.4s (1877 modules)
+ GET /register 200 in 410ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 668ms (950 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 891ms
+ ✓ Compiled in 3.6s (1891 modules)
+ ✓ Compiled in 872ms (1891 modules)
+ GET /login 200 in 212ms
+ ✓ Compiled /icon.svg in 330ms (950 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 513ms
+ GET /login 200 in 197ms
+ GET /icon.svg?b0511cdd96efddde 200 in 19ms
+ GET /login 200 in 45ms
+ GET /login 200 in 59ms
+ GET /login 200 in 58ms
+ GET /login 200 in 68ms
+ GET /login 200 in 79ms
+ GET /login 200 in 88ms
+ GET /login 200 in 73ms
+ GET /login 200 in 81ms
+ GET /login 200 in 66ms
+ GET /login 200 in 78ms
+ GET /login 200 in 88ms
+ GET /icon.svg?b0511cdd96efddde 200 in 14ms
+ GET /login 200 in 67ms
+ GET /icon.svg?b0511cdd96efddde 200 in 16ms
+ GET /login 200 in 64ms
+ GET /login 200 in 50ms
+ GET /login 200 in 68ms
+ GET /login 200 in 88ms
+ GET /login 200 in 91ms
+ GET /login 200 in 79ms
+ GET /login 200 in 71ms
+ GET /login 200 in 46ms
+ GET /login 200 in 51ms
+ GET /login 200 in 63ms
+ GET /login 200 in 74ms
+ GET /login 200 in 70ms
+ GET /icon.svg?b0511cdd96efddde 200 in 16ms
+ ✓ Compiled in 2.9s (1891 modules)
+ ✓ Compiled in 2.3s (1891 modules)
+ ✓ Compiled in 1617ms (1891 modules)
+ GET /register 200 in 233ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 941ms (950 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 1141ms
+ ✓ Compiled in 3s (1939 modules)
+ GET /dashboard 200 in 193ms
+ GET /dashboard 200 in 56ms
+ ✓ Compiled /icon.svg in 368ms (974 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 1010ms
+ GET /dashboard 200 in 194ms
+ GET /icon.svg?b0511cdd96efddde 200 in 29ms
+ ○ Compiling /upload ...
+ ✓ Compiled /upload in 1539ms (1963 modules)
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 636ms (1971 modules)
+ ✓ Compiled in 3.5s (1544 modules)
+ ✓ Compiled in 3.3s (1544 modules)
+ GET /dashboard 200 in 208ms
+ GET /upload 200 in 43ms
+ ✓ Compiled /admin in 324ms (548 modules)
+ GET /admin 200 in 515ms
+ ○ Compiling /forgot-password ...
+ ✓ Compiled /forgot-password in 897ms (1541 modules)
+ GET /forgot-password 200 in 1003ms
+ ○ Compiling /_error ...
+ GET /dashboard 500 in 50ms
+ GET /_next/static/webpack/e975fa46f47cfaa7.webpack.hot-update.json 500 in 1882ms
+ GET /dashboard 500 in 34ms
+ ✓ Compiled /_not-found in 3.2s (1537 modules)
+ GET /_next/static/webpack/e975fa46f47cfaa7.webpack.hot-update.json 404 in 3638ms
+ GET /dashboard 200 in 276ms
+ GET /admin 200 in 64ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 1103ms (573 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 1267ms
+ ○ Compiling /_error ...
+ GET /admin 500 in 48ms
+ GET /_next/static/webpack/e975fa46f47cfaa7.webpack.hot-update.json 500 in 1480ms
+ GET /admin 500 in 33ms
+ ✓ Compiled /_not-found in 3.3s (1539 modules)
+ GET /_next/static/webpack/e975fa46f47cfaa7.webpack.hot-update.json 404 in 3796ms
+ GET /admin 200 in 154ms
+ GET /admin 200 in 50ms
+ ○ Compiling /_error ...
+ GET /admin 500 in 42ms
+ GET /_next/static/webpack/e975fa46f47cfaa7.webpack.hot-update.json 500 in 1911ms
+ GET /admin 500 in 36ms
+ ✓ Compiled /_not-found in 2.1s (1545 modules)
+ GET /_next/static/webpack/e975fa46f47cfaa7.webpack.hot-update.json 404 in 2437ms
+ GET /admin 500 in 112ms
+ ✓ Compiled in 975ms (1545 modules)
+ GET /admin 500 in 249ms
+ ✓ Compiled in 928ms (1545 modules)
+ GET /admin 500 in 101ms
+ ✓ Compiled in 3.5s (1536 modules)
+ GET /admin 200 in 464ms
+ GET /admin 200 in 40ms
+ GET /admin 200 in 84ms
+ ✓ Compiled in 2.4s (1550 modules)
+ GET /admin 200 in 190ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1782ms (951 modules)
+ GET / 200 in 2070ms
+ ✓ Compiled in 2.7s (1951 modules)
+ ✓ Compiled in 2.4s (1955 modules)
+ GET /upload 200 in 229ms
+ GET /upload 200 in 112ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 1303ms (978 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 1472ms
+ GET /upload 200 in 241ms
+ GET /upload 200 in 62ms
+ GET /icon.svg?b0511cdd96efddde 200 in 16ms
+ GET /admin 200 in 62ms
+ GET /icon.svg?b0511cdd96efddde 200 in 21ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 534ms (983 modules)
+ ✓ Compiled in 6.7s (1955 modules)
+ ✓ Compiled in 3s (1955 modules)
+ ✓ Compiled in 2.6s (1955 modules)
+ GET /admin 200 in 191ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 1120ms (978 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 1284ms
+ ✓ Compiled in 2.1s (1985 modules)
+ ✓ Compiled in 1199ms (1955 modules)
+ ✓ Compiled in 2.2s (1955 modules)
+ ✓ Compiled in 957ms (1955 modules)
+ GET /admin 200 in 170ms
+ ✓ Compiled /icon.svg in 315ms (978 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 438ms
+ GET /admin 200 in 181ms
+ GET /icon.svg?b0511cdd96efddde 200 in 33ms
+ ✓ Compiled in 2.8s (1955 modules)
+ GET /dashboard 200 in 209ms
+ ✓ Compiled /login in 448ms (978 modules)
+ ✓ Compiled (983 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 2379ms
+ ○ Compiling /register ...
+ ✓ Compiled /register in 1051ms (954 modules)
+ ○ Compiling /forgot-password ...
+ ✓ Compiled /forgot-password in 751ms (958 modules)
+ ✓ Compiled in 2.3s (1937 modules)
+ ✓ Compiled in 805ms (1007 modules)
+ GET / 200 in 582ms
+ GET / 200 in 342ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 1109ms (974 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 1282ms
+ GET /icon.svg?b0511cdd96efddde 200 in 35ms
+ ✓ Compiled /upload in 492ms (982 modules)
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 527ms (988 modules)
+ ✓ Compiled in 3.2s (1956 modules)
+ GET /dashboard 200 in 211ms
+ GET /admin 200 in 87ms
+ GET /admin 200 in 68ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 585ms (979 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 718ms
+ GET /admin 200 in 197ms
+ GET /icon.svg?b0511cdd96efddde 200 in 40ms
+ GET / 200 in 248ms
+ GET /icon.svg?b0511cdd96efddde 200 in 35ms
+ ✓ Compiled /register in 473ms (984 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 106ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 4.8s (1990 modules)
+ GET /_next/static/chunks/app/LayoutGroupContext.mjs.map 404 in 3670ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 5192ms
+ GET /register 200 in 134ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 94ms
+ GET /icon.svg?b0511cdd96efddde 200 in 107ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 935ms (985 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 28ms
+ GET /admin 200 in 165ms
+ GET /icon.svg?b0511cdd96efddde 200 in 46ms
+ GET /icon.svg?b0511cdd96efddde 200 in 33ms
+ ✓ Compiled in 2.8s (1984 modules)
+ GET / 200 in 347ms
+ ✓ Compiled in 892ms (1940 modules)
+ GET /dashboard 200 in 411ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 846ms (977 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 1408ms
+ ○ Compiling /upload ...
+ ✓ Compiled /upload in 882ms (984 modules)
+ GET /admin 200 in 247ms
+ GET /icon.svg?b0511cdd96efddde 200 in 43ms
+ GET /admin 200 in 491ms
+ GET /icon.svg?b0511cdd96efddde 200 in 98ms
+ GET /dashboard 200 in 152ms
+ GET /icon.svg?b0511cdd96efddde 200 in 40ms
+ ○ Compiling /projects/[id] ...
+ ✓ Compiled /projects/[id] in 3.6s (1595 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 40ms
+ ✓ Compiled in 2.6s (1552 modules)
+ ✓ Compiled in 1443ms (1552 modules)
+ ✓ Compiled in 1131ms (1554 modules)
+ ✓ Compiled in 3s (1584 modules)
+ ✓ Compiled in 1644ms (1584 modules)
+ ✓ Compiled in 2.2s (1584 modules)
+ ✓ Compiled in 1148ms (1029 modules)
+ GET /projects/6c8b46dc-64a5-4512-9749-45366efd154f 200 in 506ms
+ ○ Compiling /projects/[id]/candidates ...
+ ✓ Compiled /projects/[id]/candidates in 2.3s (1585 modules)
+ GET /upload 200 in 354ms
+ ✓ Compiled /projects/[id]/result in 421ms (566 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 1732ms (966 modules)
+ GET / 200 in 2110ms
+ GET /admin 200 in 332ms
+ GET /projects/0fe4346f-e4bb-4123-8a69-758fb747992a/result 200 in 133ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 893ms (989 modules)
+ GET /icon.svg?b0511cdd96efddde 200 in 1101ms
+ GET /projects/0fe4346f-e4bb-4123-8a69-758fb747992a/result 200 in 809ms
+ GET /icon.svg?b0511cdd96efddde 200 in 82ms
+ ✓ Compiled in 3.2s (1993 modules)
+ ✓ Compiled in 943ms (1034 modules)
+ ○ Compiling /upload ...
+ ✓ Compiled /upload in 582ms (966 modules)
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 1151ms (979 modules)
+ ✓ Compiled in 826ms (1034 modules)
+ ✓ Compiled in 3.3s (2029 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 3.7s (2017 modules)
+ ✓ Compiled in 1337ms (2031 modules)
+[react-compare-slider] register CSS property: TypeError: CSS.registerProperty is not a function
+    at eval (webpack-internal:///(ssr)/./node_modules/react-compare-slider/dist/hooks-Ca9jngmy.mjs:8:31)
+    at eval (webpack-internal:///(ssr)/./node_modules/react-compare-slider/dist/hooks-Ca9jngmy.mjs:8:264)
+    at (ssr)/./node_modules/react-compare-slider/dist/hooks-Ca9jngmy.mjs (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\.next\server\vendor-chunks\react-compare-slider.js:30:1)
+    at __webpack_require__ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(ssr)/./node_modules/react-compare-slider/dist/index.mjs:13:77)
+    at (ssr)/./node_modules/react-compare-slider/dist/index.mjs (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\.next\server\vendor-chunks\react-compare-slider.js:40:1)
+    at __webpack_require__ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\.next\server\webpack-runtime.js:33:42)
+    at eval (webpack-internal:///(ssr)/./components/PreviewApproveScreen.tsx:23:79)
+    at (ssr)/./components/PreviewApproveScreen.tsx (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\.next\server\app\projects\[id]\result\page.js:294:1)
+    at Object.__webpack_require__ [as require] (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\.next\server\webpack-runtime.js:33:42)
+    at require (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:39:19729)
+    at C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:108279
+    at eo (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:108464)
+    at G (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:107037)
+    at nY (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:12:56631)
+    at a_ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:47501)
+    at aj (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:53793)
+    at aC (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:52874)
+    at a_ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:50095)
+    at aj (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:53793)
+    at aC (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:52874)
+    at a_ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:50095)
+    at aw (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:45321)
+    at a_ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:49776)
+    at ab (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:11808)
+    at C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:16871
+    at aw (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:16908)
+    at a_ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:49776)
+    at ac (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:11400)
+    at aw (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:14707)
+    at a_ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:49776)
+    at ab (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:11808)
+    at C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:16871
+    at aw (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:16908)
+    at a_ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:49776)
+    at aw (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:42922)
+    at a_ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:49776)
+    at ab (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:11808)
+    at C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:16871
+    at aw (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:16908)
+    at a_ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:49776)
+    at aw (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:42922)
+    at a_ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:49776)
+    at ab (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:11808)
+    at C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:16871
+    at aw (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:16908)
+    at a_ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:49776)
+    at aw (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:42922)
+    at a_ (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:49776)
+    at ab (C:\Users\deba_pc.com\OneDrive\Desktop\New folder (2)\video-watermark-ai\frontend\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:35:11808)
+ GET /projects/smoke-test/result 200 in 303ms
+ ○ Compiling /upload ...
+ ✓ Compiled /upload in 739ms (988 modules)
+ ○ Compiling /projects/[id]/candidates ...
+ ✓ Compiled /projects/[id]/candidates in 1374ms (993 modules)

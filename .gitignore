@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+.next/
+out/
+build/
+.env*.local
+
+# Local storage volume (SRS STORAGE-002 dev buckets)
+.storage/
+backend/.storage/
+workers/.storage/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Model weights cache (downloaded at runtime)
+*.pt
+*.onnx
+weights/

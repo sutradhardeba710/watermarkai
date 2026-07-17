@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-[#0a0b0f] text-white antialiased;
+}
+
+/* FE-003: dark editor workspace token, applied where the mask editor mounts */
+.workspace-dark {
+  @apply bg-slate-900 text-slate-100;
+}
+
+@keyframes scan-line {
+  0%, 100% { transform: translateY(0); opacity: .35; }
+  50% { transform: translateY(6rem); opacity: 1; }
+}
+
+.scan-line {
+  animation: scan-line 2.4s ease-in-out infinite;
+}
+
+.faq-answer {
+  display: grid !important;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: grid-template-rows 260ms cubic-bezier(.22, 1, .36, 1),
+    opacity 200ms ease-out, transform 260ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.faq-answer > div {
+  overflow: hidden;
+}
+
+details[open] > .faq-answer {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; }
+  .scan-line { animation: none; }
+  .faq-answer { transition: none; }
+}
+
+
+/* Keep auth fields dark even when the browser autofills them. */
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #16181f inset;
+  -webkit-text-fill-color: #fff;
+  caret-color: #fff;
+}
+
+
+
+
+::selection { background: rgba(79,124,255,.35); color: #fff; }
+
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+
+@keyframes auth-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.auth-entrance { animation: auth-rise 420ms cubic-bezier(.22,1,.36,1) both; }
+@media (prefers-reduced-motion: reduce) { .auth-entrance { animation: none; } }
+
+@keyframes mask-scan-pass {
+  0% { transform: translateY(-2px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(72vh); opacity: 0; }
+}
+
+.mask-scan-line {
+  animation: mask-scan-pass 1.8s cubic-bezier(.4, 0, .2, 1) infinite;
+}
+
+.editor-range {
+  height: 6px;
+  appearance: none;
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+
+.editor-range::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+  appearance: none;
+  border: 3px solid #0a0b0f;
+  border-radius: 999px;
+  background: #67e8f9;
+  box-shadow: 0 0 0 1px rgba(103, 232, 249, .55), 0 0 16px rgba(34, 211, 238, .35);
+}
+
+.editor-range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 3px solid #0a0b0f;
+  border-radius: 999px;
+  background: #67e8f9;
+  box-shadow: 0 0 0 1px rgba(103, 232, 249, .55), 0 0 16px rgba(34, 211, 238, .35);
+}
+
+.editor-range:focus-visible {
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, .28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mask-scan-line { animation: none; transform: translateY(36vh); }
+}

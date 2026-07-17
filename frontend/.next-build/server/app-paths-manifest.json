@@ -1,0 +1,16 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/forgot-password/page": "app/forgot-password/page.js",
+  "/icon.svg/route": "app/icon.svg/route.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/projects/[id]/candidates/page": "app/projects/[id]/candidates/page.js",
+  "/projects/[id]/page": "app/projects/[id]/page.js",
+  "/projects/[id]/result/page": "app/projects/[id]/result/page.js",
+  "/register/page": "app/register/page.js",
+  "/reset-password/page": "app/reset-password/page.js",
+  "/upload/page": "app/upload/page.js",
+  "/verify-email/page": "app/verify-email/page.js"
+}

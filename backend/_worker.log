@@ -1,0 +1,26 @@
+ 
+ -------------- celery@DESKTOP-4S9QSD0 v5.6.3 (recovery)
+--- ***** ----- 
+-- ******* ---- Windows-10-10.0.19045-SP0 2026-07-16 20:19:49
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         vwa:0x21519e4b250
+- ** ---------- .> transport:   redis://localhost:6379/1
+- ** ---------- .> results:     redis://localhost:6379/2
+- *** --- * --- .> concurrency: 2 (solo)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> detection        exchange=celery(direct) key=detection
+                .> encoding         exchange=celery(direct) key=encoding
+                .> processing       exchange=celery(direct) key=processing
+
+[tasks]
+  . workers.tasks.maintenance.cleanup_expired_artifacts
+  . workers.tasks.maintenance.emit_metrics_snapshot
+  . workers.tasks.processing.process_video
+
+[2026-07-16 20:19:51,536: INFO/MainProcess] Connected to redis://localhost:6379/1
+[2026-07-16 20:19:53,586: INFO/MainProcess] mingle: searching for neighbors
+[2026-07-16 20:20:00,723: INFO/MainProcess] mingle: all alone
+[2026-07-16 20:20:10,883: INFO/MainProcess] celery@DESKTOP-4S9QSD0 ready.

@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vwa-backend
+    restart: always
+    env_file:
+      - ./backend/.env.production
+    ports:
+      - "8000:8000"
+    command: ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+    volumes:
+      - ./.run-logs:/app/.run-logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    profiles:
+      - api
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vwa-worker
+    restart: always
+    env_file:
+      - ./backend/.env.production
+    # Using default prefork on Linux
+    command: ["python", "-m", "celery", "-A", "workers.celery_app", "worker", "-Q", "detection,processing,encoding", "--loglevel=info"]
+    volumes:
+      - ./.run-logs:/app/.run-logs
+    profiles:
+      - worker
+
+  beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vwa-beat
+    restart: always
+    env_file:
+      - ./backend/.env.production
+    command: ["python", "-m", "celery", "-A", "workers.celery_app", "beat", "--loglevel=info"]
+    volumes:
+      - ./.run-logs:/app/.run-logs
+    profiles:
+      - worker

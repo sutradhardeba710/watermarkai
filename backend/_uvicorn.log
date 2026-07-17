@@ -1,0 +1,24 @@
+INFO:     Will watch for changes in these directories: ['C:\\Users\\deba_pc.com\\OneDrive\\Desktop\\New folder (2)\\video-watermark-ai']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [3180] using WatchFiles
+INFO:     Started server process [13024]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+req_id=8acdadb8-2ab2-4615-8258-f9bd83268009 method=POST path=/api/v1/auth/login status=200 ms=209.1
+INFO:     127.0.0.1:49239 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+req_id=465f2591-644c-45a9-852b-5ca53c1cf5f5 method=POST path=/api/v1/uploads/initiate status=201 ms=21.7
+INFO:     127.0.0.1:49246 - "POST /api/v1/uploads/initiate HTTP/1.1" 201 Created
+req_id=7bc8b875-68b0-4480-9d44-f17cec47f324 method=POST path=/api/v1/uploads/34b827a1-01d8-48d4-b467-e146029d0a0a/complete status=200 ms=485.5
+INFO:     127.0.0.1:49258 - "POST /api/v1/uploads/34b827a1-01d8-48d4-b467-e146029d0a0a/complete HTTP/1.1" 200 OK
+req_id=4ac9f500-3a6c-4ff0-8e68-8947bebd3829 method=GET path=/api/v1/projects/b8358832-dad6-4b5c-8cbc-ffaafdd68bc1 status=200 ms=7.2
+INFO:     127.0.0.1:49276 - "GET /api/v1/projects/b8358832-dad6-4b5c-8cbc-ffaafdd68bc1 HTTP/1.1" 200 OK
+req_id=b62ba371-7b42-4fdc-91f3-9fd0cbdc8ffd method=GET path=/api/v1/projects/b8358832-dad6-4b5c-8cbc-ffaafdd68bc1/proxy status=200 ms=6.5
+INFO:     127.0.0.1:49284 - "GET /api/v1/projects/b8358832-dad6-4b5c-8cbc-ffaafdd68bc1/proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidWNrZXQiOiJwcm94aWVzIiwia2V5IjoiYjgzNTg4MzItZGFkNi00YjVjLThjYmMtZmZhYWZkZDY4YmMxL3Byb3h5Lm1wNCIsImV4cCI6MTc4NDIxMzkxOH0.iXKzM1lJyOaumwUboldwUqtMAfrkWjNMHdGEBL_IybY HTTP/1.1" 200 OK
+req_id=40816f30-ab7b-4da2-8d1a-3c632788d116 method=GET path=/ status=200 ms=3.8
+INFO:     127.0.0.1:49439 - "GET / HTTP/1.1" 200 OK
+req_id=ef1e7b93-64af-4a56-87b8-1eb365b96213 method=GET path=/openapi.json status=200 ms=310.3
+INFO:     127.0.0.1:49467 - "GET /openapi.json HTTP/1.1" 200 OK
+req_id=de1b538a-695d-4885-99be-a3008d29d9ca method=POST path=/api/v1/projects/d6ed14e7-3951-4904-a3a1-5025b54ac130/process status=401 ms=447.3
+INFO:     127.0.0.1:57563 - "POST /api/v1/projects/d6ed14e7-3951-4904-a3a1-5025b54ac130/process HTTP/1.1" 401 Unauthorized
+WARNING:  WatchFiles detected changes in 'scripts\cleanup_stale_jobs.py'. Reloading...
+ 
