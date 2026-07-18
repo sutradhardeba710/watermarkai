@@ -1,0 +1,32 @@
+name: Deploy backend to production EC2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "workers/**"
+      - "ai-models/**"
+      - "docker-compose.prod.yml"
+      - "docker-compose.local.yml"
+      - "scripts/deploy-backend.sh"
+      - ".github/workflows/deploy-backend.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-backend-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Rebuild and restart backend services
+    runs-on: [self-hosted, linux, x64, vwa-production]
+    timeout-minutes: 30
+
+    steps:
+      - name: Deploy the pushed commit on EC2
+        working-directory: /home/ubuntu/watermarkai
+        run: bash scripts/deploy-backend.sh "${{ github.sha }}"
