@@ -31,6 +31,12 @@ if [[ -n "$EXPECTED_SHA" ]] && [[ "$(git rev-parse HEAD)" != "$EXPECTED_SHA" ]];
 fi
 
 COMPOSE=(docker compose -f docker-compose.prod.yml)
+if [[ -f docker-compose.local.yml ]]; then
+  COMPOSE+=(-f docker-compose.local.yml)
+fi
+# The tracked production stack uses profiles for the API and worker services.
+# Activating them is harmless for compose files that do not define profiles.
+COMPOSE+=(--profile api --profile worker)
 
 "${COMPOSE[@]}" config >/dev/null
 "${COMPOSE[@]}" build backend frontend
