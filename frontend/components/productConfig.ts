@@ -1,0 +1,10 @@
+import type { LucideIcon } from "lucide-react";
+import { FileCheck2, Layers3, ScanSearch, ShieldCheck, Workflow } from "lucide-react";
+
+export type ProductFeature = { slug: string; title: string; shortTitle: string; description: string; benefit: string; href: string; icon: LucideIcon; eyebrow: string; bullets: string[] };
+export const productFeatures: ProductFeature[] = [
+  { slug: "ai-detection", title: "Catch every mark automatically", shortTitle: "AI Detection", description: "Surface likely logos, subtitles, timestamps, and overlays for review before you decide what to do next.", benefit: "AI proposes. You decide.", href: "/product/ai-detection", icon: ScanSearch, eyebrow: "Find the regions worth reviewing", bullets: ["Confidence-ranked regions", "Human confirmation before processing", "Hand-off to manual masking"] },
+  { slug: "manual-masking", title: "Frame-accurate control when it matters", shortTitle: "Manual Masking", description: "Draw, adjust, and refine masks when automation needs a precise human hand.", benefit: "Precision without the black box.", href: "/product/manual-masking", icon: Layers3, eyebrow: "Guide the work with intent", bullets: ["Draw and adjust regions", "Per-frame refinements", "Start from an AI proposal"] },
+  { slug: "temporal-tracking", title: "Keep every region locked across motion", shortTitle: "Temporal Tracking", description: "Keep selected regions aligned as footage moves, pans, and cuts between scenes.", benefit: "Less frame-by-frame busywork.", href: "/product/temporal-tracking", icon: Workflow, eyebrow: "Follow the footage", bullets: ["Motion-aware region alignment", "Scene-cut awareness", "Consistent results across frames"] },
+  { slug: "review-export", title: "Review before you commit", shortTitle: "Review & Export", description: "Compare a short preview, approve the result, then export with original audio carried through.", benefit: "A deliberate gate before the full render.", href: "/product/review-export", icon: FileCheck2, eyebrow: "Make the final call", bullets: ["Preview before full render", "Original audio preserved", "Controlled output downloads"] },
+];

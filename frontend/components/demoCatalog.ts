@@ -1,0 +1,9 @@
+export type DemoCategory = "Logos" | "Subtitles" | "Timestamps" | "Moving overlays" | "Screen recordings";
+export type DemoItem = { id: string; title: string; category: DemoCategory; tag: string; duration: string; posterSrc: string; beforeSrc: string; afterSrc: string; thumbnailSrc: string };
+export const demoCatalog: DemoItem[] = [
+  { id: "logo-removal", title: "Coastal interview", category: "Logos", tag: "Logo removal", duration: "01:08", posterSrc: "/demo/owned-after.png", beforeSrc: "/demo/owned-before.png", afterSrc: "/demo/owned-after.png", thumbnailSrc: "/demo/owned-after.png" },
+  { id: "subtitle-cleanup", title: "Subtitle cleanup", category: "Subtitles", tag: "Subtitle cleanup", duration: "00:42", posterSrc: "/demo/owned-after.png", beforeSrc: "/demo/owned-before.png", afterSrc: "/demo/owned-after.png", thumbnailSrc: "/demo/owned-before.png" },
+  { id: "timestamp-removal", title: "Field notes", category: "Timestamps", tag: "Timestamp removal", duration: "00:56", posterSrc: "/demo/owned-after.png", beforeSrc: "/demo/owned-before.png", afterSrc: "/demo/owned-after.png", thumbnailSrc: "/demo/owned-after.png" },
+  { id: "moving-watermark", title: "Moving watermark", category: "Moving overlays", tag: "Temporal tracking", duration: "01:21", posterSrc: "/demo/owned-after.png", beforeSrc: "/demo/owned-before.png", afterSrc: "/demo/owned-after.png", thumbnailSrc: "/demo/owned-before.png" },
+  { id: "screen-recording", title: "Screen recording", category: "Screen recordings", tag: "Overlay cleanup", duration: "00:38", posterSrc: "/demo/owned-after.png", beforeSrc: "/demo/owned-before.png", afterSrc: "/demo/owned-after.png", thumbnailSrc: "/demo/owned-after.png" },
+];

@@ -1,4 +1,4 @@
-name: Deploy backend to production EC2
+name: Deploy production stack to EC2
 
 on:
   push:
@@ -7,6 +7,9 @@ on:
       - "backend/**"
       - "workers/**"
       - "ai-models/**"
+      - "frontend/**"
+      - "Caddyfile"
+      - "Dockerfile"
       - "docker-compose.prod.yml"
       - "docker-compose.local.yml"
       - "scripts/deploy-backend.sh"
@@ -17,12 +20,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: production-backend-deploy
+  group: production-stack-deploy
   cancel-in-progress: false
 
 jobs:
   deploy:
-    name: Rebuild and restart backend services
+    name: Rebuild and restart production services
     runs-on: [self-hosted, linux, x64, vwa-production]
     timeout-minutes: 30
 
