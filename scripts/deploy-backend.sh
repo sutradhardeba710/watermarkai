@@ -54,10 +54,18 @@ COMPOSE+=(--profile api --profile worker)
 "${COMPOSE[@]}" build backend frontend
 "${COMPOSE[@]}" run --rm backend python -m alembic -c alembic.ini upgrade head
 "${COMPOSE[@]}" up -d --no-deps --force-recreate backend frontend
-"${COMPOSE[@]}" up -d caddy
+# Force-recreate caddy so it re-reads the bind-mounted Caddyfile. A plain
+# `up -d caddy` is a no-op when only the mounted config changed, leaving the
+# old reverse-proxy config (e.g. HTTP-only) running.
+"${COMPOSE[@]}" up -d --no-deps --force-recreate caddy
 
+# Health-check the containers directly over the Docker network. We no longer
+# probe http://localhost through Caddy because Caddy now answers only for the
+# configured domain (a Host: localhost request would not match and would fail
+# even when the app is healthy). The backend image has curl available.
 for attempt in {1..18}; do
-  if curl -fsS http://localhost/health >/dev/null && curl -fsS http://localhost/ >/dev/null; then
+  if "${COMPOSE[@]}" exec -T backend curl -fsS http://localhost:8000/health >/dev/null 2>&1 \
+     && "${COMPOSE[@]}" exec -T backend curl -fsS http://frontend:3000/ >/dev/null 2>&1; then
     echo "Production stack deployment succeeded: $(git rev-parse --short HEAD)"
     exit 0
   fi
