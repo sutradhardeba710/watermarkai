@@ -25,7 +25,7 @@ WORKDIR /app
 # ── Python dependencies (layer-cached unless pyproject.toml changes) ──────────
 COPY backend/pyproject.toml ./pyproject.toml
 RUN pip install --no-cache-dir --upgrade pip \
- && pip install --no-cache-dir .
+ && pip install --no-cache-dir ".[billing]"
 
 # ── Application source ────────────────────────────────────────────────────────
 # backend/ contents → /app/  (gives us /app/app/, /app/migrations/, /app/alembic.ini)

@@ -1,12 +1,15 @@
 # ─── VWA Caddy reverse proxy ──────────────────────────────────────────────────
-# Default: HTTP-only on port 80 (works with an IP address, no domain needed).
+# HTTPS with a real domain. Caddy automatically obtains & renews a Let's Encrypt
+# TLS certificate for the hostname(s) below.
 #
-# To enable HTTPS with a real domain, replace ":80" with your domain:
-#   yourdomain.com {
-#       ...
-#   }
-# Caddy will automatically obtain a Let's Encrypt TLS certificate.
-# Ensure port 443 is open in your EC2 security group and DNS A-record points here.
+# Requirements:
+#   • DNS A-record for pdf-cropper.site  → this server's public IP (65.0.179.69)
+#   • DNS A-record for www.pdf-cropper.site → same IP  (optional, redirected)
+#   • EC2 security group: ports 80 AND 443 open to 0.0.0.0/0
+#
+# Port 80 must stay open — Caddy uses it for the ACME HTTP challenge and to
+# redirect http→https. Nothing about the app's branding or routing changes;
+# only the hostname is set so TLS can be issued.
 # ─────────────────────────────────────────────────────────────────────────────
 
 {
@@ -15,7 +18,12 @@
     # admin off
 }
 
-:80 {
+# Redirect www → apex (keeps a single canonical host)
+www.pdf-cropper.site {
+    redir https://pdf-cropper.site{uri} permanent
+}
+
+pdf-cropper.site {
     # ── Backend API ───────────────────────────────────────────────────────────
     handle /api/* {
         reverse_proxy backend:8000
