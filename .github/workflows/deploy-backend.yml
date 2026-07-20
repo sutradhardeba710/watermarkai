@@ -49,6 +49,10 @@ jobs:
           if [[ -f backend/.env.production ]]; then
             cp backend/.env.production "$LIVE_ENV"
             echo "Saved live secrets to $LIVE_ENV"
+            # Remove the working-tree copy so `git reset --hard` can't be blocked
+            # by "Entry not uptodate" (the on-disk secrets differ from the index
+            # entry at the host's current commit). It's safely backed up above.
+            rm -f backend/.env.production
           fi
 
           if ! git diff --quiet || ! git diff --cached --quiet; then
