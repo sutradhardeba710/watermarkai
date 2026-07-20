@@ -47,12 +47,27 @@ def _validate_geometry(kind: str, geometry: dict[str, Any], w: int, h: int) -> N
             if r <= 0:
                 raise ValueError("stroke radius must be positive")
             # a stroke may clip the frame; that's fine, the per-frame painter masks.
+    elif kind == "multi":
+        # composite of simple shapes: {"shapes": [{"tool": ..., "geometry": {...}}]}
+        shapes = geometry.get("shapes")
+        if not isinstance(shapes, list) or not shapes:
+            raise ValueError("multi requires non-empty shapes[]")
+        for shape in shapes:
+            if not isinstance(shape, dict):
+                raise ValueError("shape must be an object")
+            sub_tool = shape.get("tool")
+            if sub_tool == "multi":
+                raise ValueError("multi shapes cannot nest")
+            sub_geo = shape.get("geometry")
+            if not isinstance(sub_geo, dict):
+                raise ValueError("shape needs a geometry object")
+            _validate_geometry(sub_tool, sub_geo, w, h)
     else:
         raise ValueError(f"unknown mask tool '{kind}'")
 
 
 class MaskRequest(BaseModel):
-    tool: str = Field(..., description="rectangle | polygon | brush")
+    tool: str = Field(..., description="rectangle | polygon | brush | multi")
     geometry: dict[str, Any]
     width: int = Field(..., ge=1)
     height: int = Field(..., ge=1)
@@ -66,8 +81,8 @@ class MaskRequest(BaseModel):
     @field_validator("tool")
     @classmethod
     def _tool_ok(cls, v: str) -> str:
-        if v not in {"rectangle", "polygon", "brush"}:
-            raise ValueError("tool must be rectangle | polygon | brush")
+        if v not in {"rectangle", "polygon", "brush", "multi"}:
+            raise ValueError("tool must be rectangle | polygon | brush | multi")
         return v
 
     def validate_geometry(self, frame_w: int, frame_h: int) -> None:

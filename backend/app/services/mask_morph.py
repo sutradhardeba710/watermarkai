@@ -172,20 +172,8 @@ def _kernel(sigma: int) -> list[float]:
     return [w / s for w in wts]
 
 
-def resolve_mask(
-    tool: str,
-    geometry: dict,
-    frame_w: int,
-    frame_h: int,
-    mask_expansion: int = 0,
-    mask_feathering: int = 0,
-    temporal_smoothing: bool = False,
-) -> list[list[float]]:
-    """Convert a stored mask JSON into a morphology-applied alpha grid (SRS
-    MASK-004). Phase 5 ingests the returned grid (or its cv2 equivalent) as the
-    per-frame inpaint mask. temporal_smoothing is a static-mask no-op (MASK-005).
-    """
-    grid = empty_grid(frame_w, frame_h)
+def _paint_tool(grid: list[list[int]], tool: str, geometry: dict, frame_w: int, frame_h: int) -> None:
+    """Paint one shape (or a `multi` composite) into the binary grid."""
     if tool == "rectangle":
         paint_rectangle(
             grid,
@@ -202,6 +190,27 @@ def resolve_mask(
     elif tool == "brush":
         for s in geometry.get("strokes", []):
             paint_disc(grid, float(s.get("x", 0)), float(s.get("y", 0)), float(s.get("r", 1)), frame_w, frame_h)
+    elif tool == "multi":
+        # Composite mask: {"shapes": [{"tool": ..., "geometry": {...}}, ...]}
+        for sub in geometry.get("shapes", []):
+            _paint_tool(grid, sub.get("tool", ""), sub.get("geometry", {}) or {}, frame_w, frame_h)
+
+
+def resolve_mask(
+    tool: str,
+    geometry: dict,
+    frame_w: int,
+    frame_h: int,
+    mask_expansion: int = 0,
+    mask_feathering: int = 0,
+    temporal_smoothing: bool = False,
+) -> list[list[float]]:
+    """Convert a stored mask JSON into a morphology-applied alpha grid (SRS
+    MASK-004). Phase 5 ingests the returned grid (or its cv2 equivalent) as the
+    per-frame inpaint mask. temporal_smoothing is a static-mask no-op (MASK-005).
+    """
+    grid = empty_grid(frame_w, frame_h)
+    _paint_tool(grid, tool, geometry, frame_w, frame_h)
 
     morph = dilate_or_erode(grid, mask_expansion)
     return feather(morph, mask_feathering)

@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { Toaster } from "sonner";
+import { AuthHydrator } from "@/features/auth/AuthHydrator";
 
 export function Providers({ children }: { children: ReactNode }) {
   const [client] = useState(
@@ -15,6 +16,7 @@ export function Providers({ children }: { children: ReactNode }) {
   );
   return (
     <QueryClientProvider client={client}>
+      <AuthHydrator />
       {children}
       <Toaster position="top-right" theme="dark" richColors />
     </QueryClientProvider>

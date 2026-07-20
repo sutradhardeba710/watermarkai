@@ -72,6 +72,7 @@ class UserPublic(BaseModel):
     email: EmailStr
     full_name: str
     role: str
+    admin_role: Optional[str] = None
     email_verified: bool
     account_status: str
     created_at: datetime

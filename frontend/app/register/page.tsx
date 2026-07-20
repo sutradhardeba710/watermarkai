@@ -1,14 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthCard, FieldError, NamedLink } from "@/components/AuthCard";
 import { authApi } from "@/services/auth";
+import { useAuthStore } from "@/features/auth/authStore";
 import { isStrongPassword, STRENGTH_MSG } from "@/utils/password";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const hydrated = useAuthStore((s) => s.hydrated);
+  const hasSession = useAuthStore((s) => !!s.accessToken && !!s.user);
+  // Already logged in — the signup form makes no sense; go to the app.
+  useEffect(() => {
+    if (hydrated && hasSession) router.replace("/dashboard");
+  }, [hydrated, hasSession, router]);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

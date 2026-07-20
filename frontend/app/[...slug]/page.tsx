@@ -39,7 +39,7 @@ export default function SeoMarketingPage({ params }: Props) {
     isPartOf: { "@type": "WebSite", name: "ClearFrame", url: siteUrl },
   };
 
-  return <main className="min-h-screen bg-[#0a0b0f] text-[#f5f6fa]">
+  return <main className="min-h-screen bg-[#07080f] text-[#f5f6fa]">
     <Navbar />
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
     <article>
@@ -52,7 +52,7 @@ export default function SeoMarketingPage({ params }: Props) {
           <p className="mt-7 max-w-3xl text-lg leading-8 text-white/65 sm:text-xl">{page.intro}</p>
         </div>
       </header>
-      <section className="bg-[#f6f7fa] py-20 text-[#111318] sm:py-28">
+      <section className="bg-[#f6f7fa] py-20 text-[#0c0e1a] sm:py-28">
         <div className="mx-auto grid max-w-5xl gap-5 px-5 sm:px-8 lg:grid-cols-2">
           {page.sections.map((section) => <section key={section.title} className="rounded-3xl border border-slate-200 bg-white p-7 shadow-[0_12px_35px_rgba(21,24,31,.06)] sm:p-8">
             <h2 className="text-2xl font-semibold tracking-[-.03em]">{section.title}</h2>
@@ -61,7 +61,7 @@ export default function SeoMarketingPage({ params }: Props) {
           </section>)}
         </div>
       </section>
-      <section className="px-5 py-20 sm:px-8 sm:py-24"><div className="mx-auto flex max-w-5xl flex-col items-start justify-between gap-8 rounded-3xl border border-white/10 bg-[#16181f] p-8 sm:flex-row sm:items-center sm:p-10"><div><h2 className="text-3xl font-semibold tracking-[-.04em]">Start an authorized video project.</h2><p className="mt-3 text-white/55">Create an account, upload footage you can legally edit, and review the result before export.</p></div><Link href="/signup" className="shrink-0 rounded-full bg-gradient-to-r from-[#4f7cff] to-[#6d5ef7] px-6 py-3.5 font-semibold text-white">Create an account</Link></div></section>
+      <section className="px-5 py-20 sm:px-8 sm:py-24"><div className="mx-auto flex max-w-5xl flex-col items-start justify-between gap-8 rounded-3xl border border-white/10 bg-[#10121f] p-8 sm:flex-row sm:items-center sm:p-10"><div><h2 className="text-3xl font-semibold tracking-[-.04em]">Start an authorized video project.</h2><p className="mt-3 text-white/55">Create an account, upload footage you can legally edit, and review the result before export.</p></div><Link href="/signup" className="shrink-0 rounded-full bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-6 py-3.5 font-semibold text-white">Create an account</Link></div></section>
     </article>
     <Footer />
   </main>;

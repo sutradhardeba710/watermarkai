@@ -1,20 +1,32 @@
+# ─── VWA Caddy reverse proxy ──────────────────────────────────────────────────
+# Default: HTTP-only on port 80 (works with an IP address, no domain needed).
+#
+# To enable HTTPS with a real domain, replace ":80" with your domain:
+#   yourdomain.com {
+#       ...
+#   }
+# Caddy will automatically obtain a Let's Encrypt TLS certificate.
+# Ensure port 443 is open in your EC2 security group and DNS A-record points here.
+# ─────────────────────────────────────────────────────────────────────────────
+
 {
-	# Global options
-	# admin off
+    # Global options
+    # Uncomment to disable admin API (not needed in production):
+    # admin off
 }
 
 :80 {
-	# Route /api and /health to the backend
-	handle_path /api/* {
-		reverse_proxy backend:8000
-	}
-	
-	handle_path /health/* {
-		reverse_proxy backend:8000
-	}
+    # ── Backend API ───────────────────────────────────────────────────────────
+    handle /api/* {
+        reverse_proxy backend:8000
+    }
 
-	# Route everything else to the frontend
-	handle {
-		reverse_proxy frontend:3000
-	}
+    handle /health* {
+        reverse_proxy backend:8000
+    }
+
+    # ── Frontend (Next.js) ────────────────────────────────────────────────────
+    handle {
+        reverse_proxy frontend:3000
+    }
 }

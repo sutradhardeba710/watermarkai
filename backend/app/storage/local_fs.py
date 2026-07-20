@@ -29,7 +29,9 @@ class LocalFsStorage(ObjectStorage):
         safe_key = key.replace("\\", "/").lstrip("/")
         p = (self.root / bucket / safe_key).resolve()
         base = (self.root / bucket).resolve()
-        if not str(p).startswith(str(base)):
+        # Path.is_relative_to (not str.startswith) so a sibling directory that
+        # shares the bucket's name as a prefix (e.g. `outputs_evil`) can't pass.
+        if p != base and not p.is_relative_to(base):
             raise ValueError(f"unsafe key escapes bucket: {key}")
         p.parent.mkdir(parents=True, exist_ok=True)
         return p

@@ -20,6 +20,7 @@ from app.api.detection import project_router as detection_project_router
 from app.api.files import router as files_router
 from app.api.health import router as health_router
 from app.api.masks import router as masks_router
+from app.api.payments import router as payments_router, credits_router, plans_router
 from app.api.preview import router as preview_router
 from app.api.processing import jobs_router as jobs_router
 from app.api.processing import project_router as processing_project_router
@@ -62,6 +63,13 @@ def create_app() -> FastAPI:
         openapi_url="/openapi.json",
     )
 
+    # PRD §26.6 — enforce admin-configured maintenance mode (503 for
+    # non-exempt traffic while enabled). Added FIRST (innermost) so the 503
+    # response still passes through CORSMiddleware and RequestIdMiddleware —
+    # browsers must be able to read the maintenance payload cross-origin.
+    from app.core.maintenance import MaintenanceMiddleware
+    app.add_middleware(MaintenanceMiddleware)
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
@@ -96,10 +104,26 @@ def create_app() -> FastAPI:
     app.include_router(detection_candidate_router, prefix=settings.api_prefix)
     app.include_router(files_router, prefix=settings.api_prefix)
     app.include_router(admin_router, prefix=settings.api_prefix)
+    app.include_router(payments_router, prefix=settings.api_prefix)
+    app.include_router(credits_router, prefix=settings.api_prefix)
+    app.include_router(plans_router, prefix=settings.api_prefix)
 
     @app.get("/")
     def root() -> dict:
         return {"name": settings.app_name, "version": "0.1.0", "docs": "/docs"}
+
+    @app.on_event("startup")
+    def _seed_plans() -> None:
+        """Ensure the plan catalog rows exist in the database on every startup."""
+        try:
+            from app.core.db import SessionLocal
+            from app.services.payment_service import seed_plans
+            with SessionLocal() as db:
+                seed_plans(db)
+                db.commit()
+        except Exception as exc:  # noqa: BLE001 — DB may not exist in CI
+            import logging as _log
+            _log.getLogger(__name__).warning("Plan seed skipped: %s", exc)
 
     return app
 

@@ -22,6 +22,15 @@ def health() -> dict:
     return _ok({"service": get_settings().app_name, "environment": get_settings().environment})
 
 
+@router.get("/maintenance")
+def health_maintenance() -> dict:
+    """Public maintenance status — the frontend maintenance page polls this to
+    show the message and auto-recover when the window ends."""
+    from app.core.maintenance import public_state
+
+    return public_state()
+
+
 @router.get("/database")
 def health_database() -> dict:
     try:

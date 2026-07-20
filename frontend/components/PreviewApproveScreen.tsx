@@ -21,6 +21,7 @@ import { ReactCompareSlider, ReactCompareSliderHandle } from "react-compare-slid
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
+import { WorkflowStepper } from "@/components/WorkflowStepper";
 import { useHydrateAuth } from "@/features/auth/useHydrateAuth";
 import { ApiError } from "@/services/api";
 import { downloadApi, pollJob, previewApi, processApi } from "@/services/process";
@@ -28,7 +29,6 @@ import { projectsApi } from "@/services/projects";
 import type { JobStatus, PreviewResponse, VideoProject } from "@/types";
 
 const DURATIONS: Array<3 | 5 | 10> = [3, 5, 10];
-const PHASES = ["Upload", "Detect", "Mask", "Track", "Preview", "Export"];
 
 export default function PreviewApproveScreen() {
   useHydrateAuth();
@@ -120,38 +120,76 @@ export default function PreviewApproveScreen() {
     }
   }, [building, duration, project, projectId, start]);
 
+  const watchJob = useCallback(async (jobId: string) => {
+    const controller = new AbortController();
+    abortRef.current = controller;
+    const finished = await pollJob(jobId, setJob, {
+      signal: controller.signal,
+      intervalMs: 1500,
+    });
+    if (finished.status !== "completed") {
+      throw new Error(finished.error_message || `Processing ended: ${finished.status}`);
+    }
+    const refreshed = await projectsApi.get(projectId);
+    setProject(refreshed);
+    toast.success(`${refreshed.original_filename || "Your video"} is ready to download.`);
+  }, [projectId]);
+
   const beginProcessing = useCallback(async () => {
     if (!project || approving) return;
     setConfirming(false);
     setApproving(true);
     setError(null);
-    router.replace(`/projects/${projectId}/result?processing=1`, { scroll: false });
-    toast.message("Full-resolution processing started.");
     try {
+      // Start the job FIRST — only claim success once the backend accepted it
+      // (a 402 INSUFFICIENT_CREDITS here must not show a fake processing screen).
       const response = await processApi.start(projectId);
-      const controller = new AbortController();
-      abortRef.current = controller;
-      const finished = await pollJob(response.job_id, setJob, {
-        signal: controller.signal,
-        intervalMs: 1500,
-      });
-      if (finished.status !== "completed") {
-        throw new Error(finished.error_message || `Processing ended: ${finished.status}`);
-      }
-      const refreshed = await projectsApi.get(projectId);
-      setProject(refreshed);
-      toast.success(`${refreshed.original_filename || "Your video"} is ready to download.`);
+      router.replace(`/projects/${projectId}/result?processing=1`, { scroll: false });
+      toast.message("Full-resolution processing started.");
+      await watchJob(response.job_id);
     } catch (reason) {
       if ((reason as Error)?.name !== "AbortError") {
         const apiError = reason as ApiError;
-        const message = apiError?.message || "Processing could not be completed.";
+        const code = (apiError as { code?: string })?.code;
+        const message = code === "INSUFFICIENT_CREDITS"
+          ? (apiError?.message || "Not enough credits.") + " Upgrade your plan or wait for the daily reset."
+          : apiError?.message || "Processing could not be completed.";
         setError(message);
         toast.error(message);
       }
     } finally {
       setApproving(false);
     }
-  }, [approving, project, projectId, router]);
+  }, [approving, project, projectId, router, watchJob]);
+
+  // Resume watching an in-flight job after a reload / session bounce so the
+  // page reflects real progress instead of the stale pre-processing state.
+  useEffect(() => {
+    if (!project || approving) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const jobs = await processApi.listProjectJobs(projectId);
+        const active = jobs.find((j) =>
+          j.job_type === "process" &&
+          ["created", "processing_queued", "processing", "encoding"].includes(j.status),
+        );
+        if (!active || cancelled) return;
+        setApproving(true);
+        try {
+          await watchJob(active.id);
+        } finally {
+          if (!cancelled) setApproving(false);
+        }
+      } catch {
+        // Non-fatal: resume is best-effort.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project?.id]);
 
   const download = useCallback(async () => {
     if (!project) return;
@@ -183,10 +221,10 @@ export default function PreviewApproveScreen() {
     }
   }, [project, projectId]);
 
-  const clipUrl = useMemo(
-    () => project?.preview_url || (preview ? previewApi.clipUrl(projectId) : null),
-    [preview, project?.preview_url, projectId],
-  );
+  // Only the signed URL from the project payload works in a <video src> —
+  // the tokenless /preview-clip route needs an Authorization header, which
+  // media elements can't send, so falling back to it just rendered a 401.
+  const clipUrl = project?.preview_url || null;
   const beforeClipUrl = project?.before_preview_url || project?.proxy_url || null;
   const beforeTimeOffset = project?.before_preview_url ? 0 : start;
 
@@ -249,7 +287,7 @@ export default function PreviewApproveScreen() {
   return (
     <AppShell title="Preview and approve" eyebrow="Project workflow">
       <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
-        <PhaseStepper />
+        <WorkflowStepper current={4} />
 
         <header className="mt-8 flex flex-wrap items-start justify-between gap-5">
           <div className="min-w-0">
@@ -265,7 +303,7 @@ export default function PreviewApproveScreen() {
           <Link href="/dashboard" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-sm text-white/60 transition hover:bg-white/5 hover:text-white">Back to projects</Link>
         </header>
 
-        <section className="mt-7 rounded-2xl border border-white/10 bg-[#16181f] p-5 sm:p-6">
+        <section className="mt-7 rounded-2xl border border-white/10 bg-[#10121f] p-5 sm:p-6">
           <div className="flex flex-wrap items-end gap-5">
             <label htmlFor="preview-start" className="block text-sm font-medium text-white/70">
               Start (seconds)
@@ -288,7 +326,7 @@ export default function PreviewApproveScreen() {
                     key={option}
                     onClick={() => setDuration(option)}
                     aria-pressed={duration === option}
-                    className={`min-h-9 min-w-14 rounded-lg px-3 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f7cff] ${duration === option ? "bg-gradient-to-r from-[#4f7cff] to-[#6d5ef7] text-white shadow-lg" : "text-white/50 hover:bg-white/5 hover:text-white"}`}
+                    className={`min-h-9 min-w-14 rounded-lg px-3 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f7cff] ${duration === option ? "bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] text-white shadow-lg" : "text-white/50 hover:bg-white/5 hover:text-white"}`}
                   >
                     {option}s
                   </button>
@@ -305,7 +343,7 @@ export default function PreviewApproveScreen() {
                 type="button"
                 onClick={() => void buildPreview()}
                 disabled={building}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#4f7cff] to-[#6d5ef7] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_28px_rgba(79,124,255,.24)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_28px_rgba(79,124,255,.24)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {building ? <><LoaderCircle className="h-4 w-4 animate-spin motion-reduce:animate-none" />Building {buildProgress}%</> : <><Sparkles className="h-4 w-4" />{hasPreview ? "Rebuild preview" : "Build preview"}</>}
               </button>
@@ -347,7 +385,7 @@ export default function PreviewApproveScreen() {
         )}
 
         <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_1.25fr]">
-          <section className="rounded-2xl border border-white/10 bg-[#16181f] p-5 sm:p-6">
+          <section className="rounded-2xl border border-white/10 bg-[#10121f] p-5 sm:p-6">
             <div className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 text-emerald-300" /><h3 className="font-semibold">What stays preserved</h3></div>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <Preserved label="Original audio" value={project.has_audio === false ? "No source audio" : "Preserved"} />
@@ -357,7 +395,7 @@ export default function PreviewApproveScreen() {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#16181f] to-[#11152a] p-5 sm:p-6">
+          <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#10121f] to-[#11152a] p-5 sm:p-6">
             <div className="flex items-start gap-3"><Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-[#9eb4ff]" /><div><h3 className="font-semibold">Ready for the full-resolution render?</h3><p className="mt-2 max-w-2xl text-sm leading-6 text-white/55">We will process all {project.duration?.toFixed(1) || "?"} seconds at full resolution. This usually takes {estimatedTime}. You will be notified when the cleaned video is ready.</p></div></div>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               {project.status === "completed" ? (
@@ -376,7 +414,7 @@ export default function PreviewApproveScreen() {
 
       {confirming && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-4 backdrop-blur-sm" onMouseDown={(event) => { if (event.currentTarget === event.target) setConfirming(false); }}>
-          <section role="dialog" aria-modal="true" aria-labelledby="approve-title" className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#16181f] p-6 shadow-2xl">
+          <section role="dialog" aria-modal="true" aria-labelledby="approve-title" className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#10121f] p-6 shadow-2xl">
             <div className="flex items-start justify-between gap-4"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-400/15 text-emerald-300"><Film className="h-5 w-5" /></div><button type="button" onClick={() => setConfirming(false)} aria-label="Close confirmation" className="grid h-11 w-11 place-items-center rounded-xl text-white/45 hover:bg-white/5 hover:text-white"><X className="h-5 w-5" /></button></div>
             <h2 id="approve-title" className="mt-5 text-xl font-semibold">Process the full video?</h2>
             <p className="mt-3 text-sm leading-6 text-white/55">ClearFrame will render all {project.duration?.toFixed(1) || "?"} seconds at {project.width || "?"} x {project.height || "?"}. Estimated time: {estimatedTime}.</p>
@@ -389,20 +427,6 @@ export default function PreviewApproveScreen() {
   );
 }
 
-function PhaseStepper() {
-  return (
-    <section className="rounded-2xl border border-white/10 bg-[#111318] p-4 sm:p-5" aria-label="Project workflow progress">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
-        {PHASES.map((phase, index) => {
-          const complete = index < 4;
-          const active = index === 4;
-          return <div key={phase} aria-current={active ? "step" : undefined} className={`flex min-h-12 items-center gap-3 rounded-xl border px-3 py-2 text-sm ${active ? "border-[#4f7cff]/45 bg-[#4f7cff]/15 text-white" : complete ? "border-emerald-400/15 bg-emerald-400/[.06] text-white/70" : "border-white/[.07] text-white/35"}`}><span className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-semibold ${active ? "bg-gradient-to-r from-[#4f7cff] to-[#6d5ef7] text-white" : complete ? "bg-emerald-400/15 text-emerald-300" : "bg-white/5"}`}>{complete ? <Check className="h-4 w-4" /> : index + 1}</span>{phase}</div>;
-        })}
-      </div>
-    </section>
-  );
-}
-
 function VideoPane({ label, videoRef, src, loop }: { label: string; videoRef: React.RefObject<HTMLVideoElement>; src: string; loop: boolean }) {
   return <div className="relative h-full w-full bg-black"><video ref={videoRef} src={src} aria-label={`${label} preview`} autoPlay loop={loop} muted playsInline className="h-full w-full object-contain" /></div>;
 }
@@ -412,7 +436,7 @@ function PreviewEmpty({ onBuild }: { onBuild: () => void }) {
 }
 
 function PreviewBuilding({ progress }: { progress: number }) {
-  return <div className="relative grid min-h-[360px] place-items-center overflow-hidden px-6 py-14 text-center sm:aspect-video sm:min-h-0" aria-live="polite"><div className="absolute inset-0 animate-pulse bg-[linear-gradient(110deg,#0a0b0f_20%,#15192a_45%,#0a0b0f_70%)] bg-[length:220%_100%] motion-reduce:animate-none" /><div className="relative z-10 w-full max-w-md"><div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-[#4f7cff]/15 text-[#9eb4ff]"><LoaderCircle className="h-6 w-6 animate-spin motion-reduce:animate-none" /></div><h3 className="mt-5 text-lg font-semibold">Rendering your comparison</h3><p className="mt-2 text-sm text-white/45">Applying the saved mask to this preview window.</p><div className="mt-6 h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-[#4f7cff] via-cyan-400 to-[#6d5ef7] transition-[width] duration-300 motion-reduce:transition-none" style={{ width: `${progress}%` }} /></div><p className="mt-2 font-mono text-xs text-white/45">{progress}%</p></div></div>;
+  return <div className="relative grid min-h-[360px] place-items-center overflow-hidden px-6 py-14 text-center sm:aspect-video sm:min-h-0" aria-live="polite"><div className="absolute inset-0 animate-pulse bg-[linear-gradient(110deg,#07080f_20%,#15192a_45%,#07080f_70%)] bg-[length:220%_100%] motion-reduce:animate-none" /><div className="relative z-10 w-full max-w-md"><div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-[#4f7cff]/15 text-[#9eb4ff]"><LoaderCircle className="h-6 w-6 animate-spin motion-reduce:animate-none" /></div><h3 className="mt-5 text-lg font-semibold">Rendering your comparison</h3><p className="mt-2 text-sm text-white/45">Applying the saved mask to this preview window.</p><div className="mt-6 h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-[#4f7cff] via-cyan-400 to-[#6d5ef7] transition-[width] duration-300 motion-reduce:transition-none" style={{ width: `${progress}%` }} /></div><p className="mt-2 font-mono text-xs text-white/45">{progress}%</p></div></div>;
 }
 
 function MetadataBadge({ children }: { children: React.ReactNode }) {

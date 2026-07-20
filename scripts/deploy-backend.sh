@@ -21,9 +21,21 @@ if [[ ! -f backend/.env.production ]]; then
   exit 1
 fi
 
+# ── Preserve the server-side production secrets across the pull ────────────────
+# backend/.env.production lives only on this host (it is git-ignored and must
+# never be committed). A pull that changes or removes the tracked copy would
+# otherwise clobber the real secrets, so back them up and restore afterwards.
+ENV_BACKUP="$(mktemp)"
+cp backend/.env.production "$ENV_BACKUP"
+trap 'rm -f "$ENV_BACKUP"' EXIT
+
 git fetch --prune origin
 git checkout main
+# Drop any working-tree state for the secrets file so an ff-only pull can never
+# be blocked (or the file deleted) by it; we restore the real file immediately.
+git checkout -- backend/.env.production 2>/dev/null || true
 git pull --ff-only origin main
+cp "$ENV_BACKUP" backend/.env.production
 
 if [[ -n "$EXPECTED_SHA" ]] && [[ "$(git rev-parse HEAD)" != "$EXPECTED_SHA" ]]; then
   echo "Expected commit $EXPECTED_SHA but EC2 is at $(git rev-parse HEAD)."

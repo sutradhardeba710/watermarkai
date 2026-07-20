@@ -1,91 +1,84 @@
-"use client";
+import type { Metadata } from "next";
 
-import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer-motion";
-import { useState } from "react";
-import MarketingSections from "@/components/MarketingSections";
-import Navbar from "@/components/Navbar";
-import DemoShowcase from "@/components/DemoShowcase";
-import Footer from "@/components/Footer";
-import Pricing from "@/components/Pricing";
+import { MarketingHeader } from "@/components/marketing/MarketingHeader";
+import { HeroSection } from "@/components/marketing/HeroSection";
+import { VideoComparisonShowcase } from "@/components/marketing/VideoComparisonShowcase";
+import { WorkflowSection } from "@/components/marketing/WorkflowSection";
+import { BenefitsSection } from "@/components/marketing/BenefitsSection";
+import { UseCasesSection } from "@/components/marketing/UseCasesSection";
+import { QualityComparison } from "@/components/marketing/QualityComparison";
+import { FeatureGrid } from "@/components/marketing/FeatureGrid";
+import { PricingSection } from "@/components/marketing/PricingSection";
+import { TrustAndComplianceSection } from "@/components/marketing/TrustAndComplianceSection";
+import { FAQSection } from "@/components/marketing/FAQSection";
+import { FinalCTA } from "@/components/marketing/FinalCTA";
+import { MarketingFooter } from "@/components/marketing/MarketingFooter";
+import { faqItems } from "@/components/marketing/content";
 
-const ease = [0.22, 1, 0.36, 1] as const;
-const reveal: Variants = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease } } };
-const steps = [
-  ["01", "Upload footage", "Bring an MP4, MOV, or WebM that you own or are licensed to edit."],
-  ["02", "Detect or mask", "Review AI suggestions, or define the exact area yourself."],
-  ["03", "Preview changes", "Compare a short render before you approve the full job."],
-  ["04", "Export clean", "Download a reviewed result with original audio preserved."],
-];
-const features = [
-  ["AI detection", "Surface likely logos, subtitles, timestamps, and overlays for review."],
-  ["Manual precision", "Draw and adjust frame-accurate masks when automation needs guidance."],
-  ["Temporal tracking", "Keep selected regions aligned across moving footage and cuts."],
-  ["Review before export", "Validate a short preview before committing to a full render."],
-];
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
-function Icon({ type }: { type: "spark" | "play" | "shield" | "scan" | "frame" | "wave" }) {
-  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
-  if (type === "play") return <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" {...common}><path d="m9 7 7 5-7 5V7Z" /></svg>;
-  if (type === "shield") return <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" {...common}><path d="M12 3 5.5 6v5c0 4.2 2.8 8 6.5 10 3.7-2 6.5-5.8 6.5-10V6L12 3Z" /><path d="m9 12 2 2 4-4" /></svg>;
-  if (type === "scan") return <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" {...common}><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10" /></svg>;
-  if (type === "frame") return <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" {...common}><rect x="4" y="5" width="16" height="14" rx="2" /><path d="m8 15 2.5-3 2 2 1.5-2 2 3" /></svg>;
-  if (type === "wave") return <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" {...common}><path d="M3 12h2l2-6 4 12 3-9 2 3h5" /></svg>;
-  return <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" {...common}><path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z" /></svg>;
+export const metadata: Metadata = {
+  title: "ClearFrame — AI Video Cleanup with Manual Mask Control",
+  description:
+    "Detect and remove unwanted logos, timestamps, subtitles, and overlays from videos you own or are authorized to edit. Review masks, preview results, and export cleaned footage.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "ClearFrame — AI Video Cleanup with Manual Mask Control",
+    description:
+      "Detect and remove unwanted overlays from footage you own or are licensed to edit. Review the mask, preview the result, and export cleaned video.",
+    url: "/",
+    siteName: "ClearFrame",
+    type: "website",
+    images: [{ url: "/demo/owned-after.png", width: 1200, height: 630, alt: "ClearFrame video cleanup preview" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ClearFrame — AI Video Cleanup with Manual Mask Control",
+    description: "Remove unwanted overlays from footage you own or are authorized to edit.",
+    images: ["/demo/owned-after.png"],
+  },
+};
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: "ClearFrame",
+      url: siteUrl,
+      description: "AI video cleanup with manual mask control for authorized footage.",
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faqItems.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a },
+      })),
+    },
+  ],
+};
+
+export default function HomePage() {
+  return (
+    <main id="top" className="min-h-screen overflow-hidden bg-[#07080f] text-[#f5f6fa]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+      />
+      <MarketingHeader />
+      <HeroSection />
+      <VideoComparisonShowcase />
+      <WorkflowSection />
+      <BenefitsSection />
+      <UseCasesSection />
+      <QualityComparison />
+      <FeatureGrid />
+      <PricingSection />
+      <TrustAndComplianceSection />
+      <FAQSection />
+      <FinalCTA />
+      <MarketingFooter />
+    </main>
+  );
 }
-
-function MotionSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const reduce = useReducedMotion();
-  return <motion.section className={className} variants={reveal} initial={false} whileInView="visible" viewport={{ once: true, margin: "-100px" }} transition={reduce ? { duration: 0 } : undefined}>{children}</motion.section>;
-}
-
-function Demo() {
-  const [split, setSplit] = useState(52);
-  const reduce = useReducedMotion();
-  return <div id="demo" className="scroll-mt-24 relative mx-auto w-full max-w-2xl">
-    <div className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#16181f] p-3 shadow-[0_32px_100px_rgba(0,0,0,.45)]">
-      <div className="overflow-hidden rounded-[1.2rem] border border-white/5">
-        <div className="flex items-center justify-between border-b border-white/10 bg-[#111318] px-5 py-3 text-xs"><span className="font-medium text-white">coastal-interview.mov</span><span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2.5 py-1 font-medium text-cyan-200">AI tracking active</span></div>
-        <div className="relative aspect-[16/10] select-none overflow-hidden bg-gradient-to-br from-[#171d38] via-[#0e1322] to-[#211741]">
-          <img src="/demo/owned-after.png" alt="Clean result on owned sample footage" className="absolute inset-0 h-full w-full object-cover" />
-          <div className="absolute inset-y-0 left-0 w-full bg-[linear-gradient(125deg,transparent_22%,rgba(255,255,255,.07)_22%,transparent_23%,transparent_56%,rgba(255,255,255,.05)_56%,transparent_57%)]" />
-          <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - split}% 0 0)` }}><img src="/demo/owned-before.png" alt="Owned sample footage with creator overlay" className="absolute inset-0 h-full w-full object-cover" /><div className="absolute inset-0 bg-[linear-gradient(125deg,rgba(3,8,20,.12),rgba(20,80,125,.05))]" /><div className="absolute right-[20%] top-[20%] grid h-[34%] w-[27%] place-items-center border-2 border-dashed border-cyan-300 bg-cyan-300/10"><span className="rounded bg-[#0a0b0f]/80 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-cyan-200">Watermark</span><span className={reduce ? "" : "scan-line absolute inset-x-0 h-px bg-cyan-200 shadow-[0_0_18px_3px_rgba(34,211,238,.85)]"} /></div></div>
-          <div className="absolute inset-y-0 w-px bg-white shadow-[0_0_0_1px_rgba(10,11,15,.6)]" style={{ left: `${split}%` }}><span className="absolute -left-4 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-[#111318] text-cyan-200 shadow-lg"><span className="h-3 w-px bg-current" /></span></div>
-          <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between"><div><p className="text-[10px] font-semibold uppercase tracking-[.2em] text-white/60">Sample edit on owned footage</p><p className="mt-1 text-lg font-semibold text-white">Move the handle to compare</p></div><span className="rounded-lg bg-black/30 px-2 py-1 text-xs text-white/70">00:42 / 01:08</span></div>
-          <input aria-label="Compare before and after" type="range" min="10" max="90" value={split} onChange={(event) => setSplit(Number(event.target.value))} className="absolute inset-0 z-10 h-full w-full cursor-ew-resize opacity-0" />
-        </div>
-        <div className="flex items-center gap-3 bg-[#111318] px-5 py-4"><button aria-label="Play demo" className="grid h-9 w-9 place-items-center rounded-full bg-white text-[#0a0b0f]"><Icon type="play" /></button><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10"><motion.div className="h-full rounded-full bg-gradient-to-r from-[#4f7cff] to-[#22d3ee]" animate={reduce ? {} : { width: ["38%", "68%", "38%"] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} /></div></div>
-      </div>
-    </div>
-    <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white shadow-xl backdrop-blur-xl sm:block"><p className="font-medium">Manual control when you need it</p><p className="mt-1 text-xs text-white/55">Fine-tune every mask, frame by frame.</p></div>
-  </div>;
-}
-
-export default function Page() {
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
-  return <main id="top" className="min-h-screen overflow-hidden bg-[#0a0b0f] text-[#f5f6fa]">
-    <Navbar />
-    <section className="relative isolate mx-auto max-w-7xl px-5 pb-24 pt-16 sm:px-8 sm:pt-24 lg:px-10 lg:pb-32"><div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[44rem] bg-[radial-gradient(ellipse_at_top,rgba(79,124,255,.19),transparent_60%)]" /><div className="pointer-events-none absolute inset-0 -z-10 opacity-30 [background-image:linear-gradient(rgba(255,255,255,.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.035)_1px,transparent_1px)] [background-size:52px_52px] [mask-image:linear-gradient(to_bottom,black,transparent_80%)]" /><div className="grid items-center gap-16 lg:grid-cols-[.88fr_1.12fr]"><motion.div variants={reveal} initial={false} animate="visible"><p className="inline-flex rounded-full border border-[#4f7cff]/35 bg-[#4f7cff]/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[.16em] text-[#b7c7ff]">Authorized video cleanup</p><h1 className="mt-7 max-w-2xl text-5xl font-semibold leading-[.96] tracking-[-.045em] sm:text-6xl lg:text-7xl">Refine the footage <span className="bg-gradient-to-r from-[#4f7cff] to-[#22d3ee] bg-clip-text text-transparent">that&apos;s yours.</span></h1><p className="mt-7 max-w-xl text-lg leading-8 text-[#9ca3af] sm:text-xl">AI-assisted detection, frame-accurate manual control, and a reviewable workflow for the videos you own or are licensed to edit.</p><div className="mt-9 flex flex-col gap-3 sm:flex-row"><Link href="/register" className="rounded-full bg-gradient-to-r from-[#4f7cff] to-[#6d5ef7] px-6 py-3.5 text-center font-semibold text-white shadow-[0_10px_30px_rgba(79,124,255,.32)] transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:ring-offset-2 focus:ring-offset-[#0a0b0f]">Create a free account</Link><a href="#workflow" className="rounded-full border border-white/15 bg-white/[.03] px-6 py-3.5 text-center font-semibold text-white transition hover:border-white/30 hover:bg-white/[.07]">See how it works</a></div><div className="mt-8 flex flex-wrap gap-2 text-xs font-medium text-white/65"><span className="rounded-full border border-white/10 bg-white/[.03] px-3 py-2">No credit card</span><span className="rounded-full border border-white/10 bg-white/[.03] px-3 py-2">Original audio preserved</span><span className="rounded-full border border-white/10 bg-white/[.03] px-3 py-2">Authorized use only</span></div></motion.div><motion.div variants={reveal} initial={false} animate="visible" transition={{ delay: 0.12 }}><Demo /></motion.div></div></section>
-    <DemoShowcase />
-    <section id="formats" className="scroll-mt-24 border-y border-white/[.07] bg-[#111318]"><div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-5 px-5 py-6 sm:px-8 lg:px-10"><p className="text-sm font-medium text-white/55">Works with your workflow</p><div className="flex flex-wrap gap-2 text-xs font-semibold text-white/75"><span className="rounded-lg border border-white/10 bg-white/[.04] px-4 py-2">MP4</span><span className="rounded-lg border border-white/10 bg-white/[.04] px-4 py-2">MOV</span><span className="rounded-lg border border-white/10 bg-white/[.04] px-4 py-2">WebM</span><span className="rounded-lg border border-white/10 bg-white/[.04] px-4 py-2">Original audio</span></div></div></section>
-    <MotionSection className="bg-[#f7f8fb] py-24 text-[#111318] sm:py-32" ><div id="workflow" className="scroll-mt-24 mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"><p className="text-xs font-semibold uppercase tracking-[.18em] text-[#4f7cff]">A deliberate workflow</p><h2 className="mt-4 max-w-2xl text-4xl font-semibold tracking-[-.04em] sm:text-5xl">Automation where it helps. Control where it matters.</h2><ol className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{steps.map(([number, title, copy], index) => <motion.li key={number} initial={false} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1, duration: 0.45, ease }} className="relative rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_25px_rgba(21,24,31,.05)]"><span className="text-xs font-semibold tracking-widest text-[#4f7cff]">{number}</span><div className="my-7 h-px bg-gradient-to-r from-[#4f7cff] to-[#22d3ee]" /><h3 className="text-lg font-semibold">{title}</h3><p className="mt-2 text-sm leading-6 text-slate-600">{copy}</p></motion.li>)}</ol></div></MotionSection>
-    <MotionSection className="bg-[#0a0b0f] py-24 sm:py-32"><div id="capabilities" className="scroll-mt-24 mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"><span id="solutions" className="block scroll-mt-24" aria-hidden="true" /><div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr]"><div><p className="text-xs font-semibold uppercase tracking-[.18em] text-[#b7c7ff]">Purpose-built tools</p><h2 className="mt-4 text-4xl font-semibold tracking-[-.04em] sm:text-5xl">A better way to review every frame.</h2><p className="mt-5 max-w-md leading-7 text-[#9ca3af]">ClearFrame helps you move faster without hiding the important decisions behind a black box.</p></div><div className="grid gap-4 sm:grid-cols-2">{features.map(([title, copy], index) => <motion.article key={title} whileHover={{ y: -6 }} transition={{ duration: 0.25 }} className="group rounded-2xl border border-white/[.08] bg-[#16181f] p-6 shadow-[0_12px_35px_rgba(0,0,0,.2)] hover:border-[#4f7cff]/55 hover:shadow-[0_12px_35px_rgba(79,124,255,.13)]"><span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-[#4f7cff]/25 to-[#6d5ef7]/20 text-[#b7c7ff]">{index === 0 ? <Icon type="scan" /> : index === 1 ? <Icon type="frame" /> : index === 2 ? <Icon type="wave" /> : <Icon type="shield" />}</span><h3 className="mt-5 font-semibold text-white">{title}</h3><p className="mt-2 text-sm leading-6 text-white/55">{copy}</p></motion.article>)}</div></div></div></MotionSection>
-    <Pricing compact />
-    <MotionSection className="bg-[#111318] py-24 sm:py-32"><div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"><div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#151a35] via-[#16181f] to-[#24194c] px-7 py-14 sm:px-14"><div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[#4f7cff]/25 blur-3xl" /><div className="relative max-w-2xl"><p className="text-xs font-semibold uppercase tracking-[.18em] text-[#b7c7ff]">Authorized use only</p><h2 className="mt-4 text-4xl font-semibold tracking-[-.04em] sm:text-5xl">Start with the footage you have the right to edit.</h2><p className="mt-5 leading-7 text-white/65">ClearFrame is for your own videos or footage you are licensed to modify. Removing third-party ownership marks, paid stock watermarks, or DRM-protected content is prohibited.</p><Link href="/register" className="mt-8 inline-block rounded-full bg-gradient-to-r from-[#4f7cff] to-[#6d5ef7] px-6 py-3.5 font-semibold text-white shadow-[0_10px_30px_rgba(79,124,255,.32)] transition hover:brightness-110">Create your account</Link></div></div></div></MotionSection>
-    <MarketingSections />
-    <Footer />
-  </main>;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-

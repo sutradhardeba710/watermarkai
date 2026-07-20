@@ -15,6 +15,8 @@ reused for the analyze job id — same ``job_events:{id}`` namespace.
 """
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -32,10 +34,13 @@ from app.schemas.candidates import (
     CandidateListResponse,
     CandidateResponse,
 )
-from app.services.compliance import gate_unconfirmed
+from app.services.compliance import gate_processing_allowed, gate_unconfirmed
 
 project_router = APIRouter(prefix="/projects", tags=["detection"])
 candidate_router = APIRouter(prefix="/candidates", tags=["detection"])
+
+# Same stale window as the /process route (see app/api/processing.py).
+_STALE_QUEUE_SECONDS = 300
 
 
 def _owned_project(db: Session, project_id: str, user: User) -> VideoProject:
@@ -47,13 +52,33 @@ def _owned_project(db: Session, project_id: str, user: User) -> VideoProject:
 
 def _active_analyze(db: Session, project_id: str):
     """Existing analyze jobs that are still running. Used to keep the
-    enqueue idempotent."""
+    enqueue idempotent.
+
+    Mirrors ``_active_job`` on the process route: a queued analyze job older
+    than the stale window whose Celery message was lost would otherwise be
+    returned forever, permanently blocking re-analysis. Stale ones are
+    cancelled (no refund — analyze jobs never cost credits).
+    """
     jobs = proc_repo.list_jobs_for_project(db, project_id)
+    now = datetime.now(timezone.utc)
     for j in jobs:
-        if j.job_type == JobType.analyze and j.status in (
-            JobState.created, JobState.processing_queued, JobState.analyzing,
-        ):
+        if j.job_type != JobType.analyze:
+            continue
+        if j.status == JobState.analyzing:
             return j
+        if j.status in (JobState.created, JobState.processing_queued):
+            created = j.created_at
+            if created is not None and created.tzinfo is None:
+                created = created.replace(tzinfo=timezone.utc)
+            if created is not None and (now - created) < timedelta(seconds=_STALE_QUEUE_SECONDS):
+                return j
+            proc_repo.transition(
+                db, j, JobState.cancelled,
+                stage=j.current_stage,
+                error_code="STALE_QUEUED",
+                error_message="Enqueued but never picked up by a worker; re-run analysis to retry.",
+            )
+            db.commit()
     return None
 
 
@@ -77,6 +102,8 @@ def enqueue_analyze(
                        "Project has not finished uploading yet.", 409)
     # LEGAL-003: gate analyze + process behind ownership confirmation.
     gate_unconfirmed(upload_repo.has_confirmation(db, p.id))
+    # PRD §9.5: moderation flags (locked / restricted / legal hold) block analysis.
+    gate_processing_allowed(p)
 
     existing = _active_analyze(db, p.id)
     if existing is not None:
@@ -100,10 +127,29 @@ def enqueue_analyze(
     # Imported lazily so a missing Celery import doesn't crash the route layer
     # in tests that bypass the broker. Import workers.celery_app first so the
     # @shared_task binds to our app (broker_url/queues); see app/api/processing.py.
-    import workers.celery_app  # noqa: F401
-    from workers.tasks.detection import analyze_video
+    try:
+        import workers.celery_app  # noqa: F401
+        from workers.tasks.detection import analyze_video
 
-    analyze_video.apply_async(args=(job.id, p.id), queue="detection")
+        analyze_video.apply_async(
+            args=(job.id, p.id),
+            queue="detection",
+            # Fail fast on a dead broker instead of hanging on kombu's default
+            # connection-retry loop (same rationale as the /process route).
+            retry=True,
+            retry_policy={"max_retries": 2, "interval_start": 0, "interval_step": 0.5, "interval_max": 1},
+        )
+    except Exception:  # noqa: BLE001 — celery optional in dev
+        # Without this the job row stays processing_queued forever and every
+        # later /analyze returns the dead job, so the project can never be
+        # re-analyzed.
+        proc_repo.transition(db, job, JobState.failed, stage="dispatch",
+                             error_code="BROKER_UNAVAILABLE",
+                             error_message="Could not enqueue job: Celery broker unavailable.")
+        p.status = ProjectStatus.uploaded
+        db.commit()
+        raise AppError("BROKER_UNAVAILABLE",
+                       "Analysis queue is not available. Please try again shortly.", 503)
     return AnalyzeResponse(job_id=job.id, project_id=p.id,
                            status=job.status.value)
 

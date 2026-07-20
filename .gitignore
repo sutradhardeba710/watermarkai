@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 .venv/
 .env
+
+# Production secrets — NEVER commit
+backend/.env.production
+.env.production
+*.pem
+*.key
 *.egg-info/
 .pytest_cache/
 .ruff_cache/

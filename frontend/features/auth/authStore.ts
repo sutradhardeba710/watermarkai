@@ -7,6 +7,7 @@ export interface AuthUser {
   email: string;
   full_name: string;
   role: "user" | "admin";
+  admin_role?: string | null;
   email_verified: boolean;
   account_status: string;
   created_at: string;
@@ -16,6 +17,7 @@ interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   user: AuthUser | null;
+  hydrated: boolean;
   setAuth: (access: string, refresh: string, user: AuthUser) => void;
   setUser: (user: AuthUser) => void;
   clear: () => void;
@@ -30,6 +32,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   accessToken: null,
   refreshToken: null,
   user: null,
+  hydrated: false,
   setAuth: (access, refresh, user) => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem(ACCESS_KEY, access);
@@ -60,10 +63,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (access && userRaw) {
       try {
         const user = JSON.parse(userRaw) as AuthUser;
-        set({ accessToken: access, refreshToken: refresh, user });
+        set({ accessToken: access, refreshToken: refresh, user, hydrated: true });
       } catch {
         get().clear();
+        set({ hydrated: true });
       }
+    } else {
+      set({ hydrated: true });
     }
   },
 }));

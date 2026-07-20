@@ -35,14 +35,14 @@ import workers.ai_models_paths  # noqa: F401 — alias ai_models / ai_model_inte
 from app.core.config import get_settings
 from app.core.db import SessionLocal
 from app.core.errors import AppError
-from app.models import JobState, QualityMode, VideoProject, WatermarkMask
+from app.models import JobState, QualityMode, User, VideoProject, WatermarkMask
 from app.repositories import processing as proc_repo
 from app.repositories import uploads as upload_repo
 from app.services import encode as encode_svc
 from app.services import normalize
 from app.services.mask_render import StaticMaskCache
 from app.storage.factory import get_storage
-from workers.common import isolated_tempdir, job_lock
+from workers.common import LockBusy, isolated_tempdir, job_lock
 
 settings = get_settings()
 ORIGINAL_BUCKET = "originals"
@@ -57,10 +57,18 @@ OUTPUT_NAME = "output.mp4"
 # ---------------------------------------------------------------------------
 
 
-def _redis():
-    import redis
+_redis_client = None
 
-    return redis.from_url(settings.redis_url)
+
+def _redis():
+    """Cached module-level client — publish_event runs once per frame, and a
+    fresh connection per call means one TCP handshake per frame."""
+    global _redis_client
+    if _redis_client is None:
+        import redis
+
+        _redis_client = redis.from_url(settings.redis_url)
+    return _redis_client
 
 
 def publish_event(job_id: str, event: dict[str, Any]) -> None:
@@ -148,20 +156,28 @@ def run_pipeline(job_id: str, project_id: str, *, dry_run_path: str | None = Non
                                          error_code="MASK_MISSING", message="No mask saved."))
             return
 
-        # created -> processing_queued is the caller's enqueue-time move; here
-        # we move queued -> processing under the lock.
-        proc_repo.transition(db, job, JobState.processing_queued, stage="queued")
-        db.commit()
+        # The job is already `processing_queued` — the /process route set it
+        # there before dispatching. The real queued -> processing move happens
+        # inside _execute_job under the lock (stage="extract").
+        #
+        # We must NOT re-transition to processing_queued here: with
+        # task_acks_late=True, a worker that dies/reloads mid-job has its message
+        # redelivered while the DB row is still `processing`. Trying to move
+        # processing -> processing_queued then raises "illegal job transition"
+        # and the task crash-loops through every retry, leaving the UI stuck on
+        # "Queued · 0%". Guard terminal states instead so redelivery is a clean
+        # no-op rather than a reprocess.
+        if job.status in (JobState.completed, JobState.failed, JobState.cancelled, JobState.expired):
+            return
 
         with job_lock(job_id, wid, ttl_seconds=settings.job_timeout_seconds) as got:
             if not got:
-                proc_repo.mark_failed(db, job, "LOCK_BUSY",
-                                      "Another worker is already processing this job.")
-                db.commit()
-                publish_event(job_id, _event("failed", 100, terminal=True,
-                                             error_code="LOCK_BUSY",
-                                             message="Job already held by another worker."))
-                return
+                # Another worker holds the lock — or a crashed worker left a
+                # stale one behind (its TTL will expire). Don't fail the job:
+                # with acks-late redelivery the retry either finds the other
+                # worker finished it (terminal guard above) or acquires the
+                # lock once the TTL lapses.
+                raise LockBusy(job_id)
             _execute_job(db, job, project, mask, wid, dry_run_path=dry_run_path)
     finally:
         db.close()
@@ -184,11 +200,15 @@ def _execute_job(db, job, project, mask, wid: str, *, dry_run_path: str | None) 
             audio_path = work / AUDIO_NAME
             has_audio = _try_remux_audio(src_path, audio_path)
 
-            # Frame extraction
+            # Frame extraction. Extract and encode must use the SAME rate: if
+            # project.fps is unknown, extracting at native rate but encoding at
+            # the 25fps fallback stretches/shrinks the output and fails the
+            # ±100ms duration validation.
+            fps = float(project.fps or 25.0)
             frames_dir = work / FRAMES_DIR_NAME
             frames_dir.mkdir(parents=True, exist_ok=True)
             normalize.run_ffmpeg(
-                encode_svc.extract_frames_args(src_path, frames_dir, fps=project.fps)
+                encode_svc.extract_frames_args(src_path, frames_dir, fps=fps)
             )
             frame_paths = _ls_frames(frames_dir)
             total = len(frame_paths)
@@ -221,7 +241,7 @@ def _execute_job(db, job, project, mask, wid: str, *, dry_run_path: str | None) 
                 encode_svc.encode_args(
                     inpainted_dir,
                     out_local,
-                    fps=float(project.fps or 25.0),
+                    fps=fps,
                     audio_path=audio_arg,
                     audio_codec=audio_codec,
                     output_codec=settings.output_codec,
@@ -280,8 +300,12 @@ def _inpaint_all(db, job_id, job, project, frame_paths, mask_u8, out_dir) -> Non
     for idx, fp in enumerate(frame_paths):
         frame = cv2.imread(str(fp), cv2.IMREAD_COLOR)
         if frame is None:
+            # Copy the original frame through so the numbered sequence has no
+            # gap — the image2 demuxer stops at the first missing index, which
+            # would truncate the output and fail the duration validation.
             publish_event(job_id, _event("inpaint", job.progress,
                                          warnings=[f"unreadable frame {fp.name}"]))
+            shutil.copyfile(str(fp), str(out_dir / fp.name))
             continue
         if mask_u8.shape[:2] != frame.shape[:2]:
             mask_u8 = cv2.resize(mask_u8, (frame.shape[1], frame.shape[0]),
@@ -309,12 +333,24 @@ def _new_inpainter():
 
 
 def _try_remux_audio(src: Path, dst_audio: Path) -> bool:
+    """Extract the source audio for the final mux (ENCODE-004).
+
+    Try a lossless stream copy first (AAC sources); when the codec can't live
+    in the .aac container (webm Vorbis/Opus, MOV PCM) fall back to an AAC
+    re-encode instead of silently dropping the track. Only when both fail do
+    we treat the source as having no usable audio.
+    """
     try:
         normalize.run_ffmpeg(encode_svc.remux_audio_args(src, dst_audio))
+        if dst_audio.exists() and dst_audio.stat().st_size > 0:
+            return True
+    except AppError:
+        pass
+    try:
+        normalize.run_ffmpeg(encode_svc.transcode_audio_aac_args(src, dst_audio))
         return dst_audio.exists() and dst_audio.stat().st_size > 0
     except AppError:
-        # No audio (or incompatible) — fall back to muxing no audio. ENCODE-004
-        # callers pass audio_codec="aac" only when the codec is copy-incompatible.
+        # genuinely no audio stream — mux without audio
         return False
 
 
@@ -331,11 +367,40 @@ def _validate_output(path: Path) -> dict:
 
 
 def _fail(db, job, project, code: str, msg: str, *, stage: str | None = None) -> None:
+    already_terminal = job.status in (
+        JobState.completed, JobState.failed, JobState.cancelled, JobState.expired
+    )
     proc_repo.mark_failed(db, job, code, msg, stage=stage)
     proc_repo.fail_project(db, project)
+    if not already_terminal:
+        _refund_job_credits(db, job)
     db.commit()
     publish_event(job.id, _event("failed", 100, terminal=True,
                                  error_code=code, message=msg))
+
+
+def _refund_job_credits(db, job) -> None:
+    """The user was charged at enqueue time and nothing was delivered — return
+    the credits. At most one refund per job (admin retries don't re-charge, so
+    a second failure must not mint a second refund). Best-effort: a refund
+    problem must never mask the underlying job failure."""
+    try:
+        from app.models import CreditTransaction
+        from app.services.payment_service import CREDITS_PER_JOB, refund_credits
+
+        already = (
+            db.query(CreditTransaction)
+            .filter(CreditTransaction.job_id == job.id, CreditTransaction.source == "refund")
+            .first()
+        )
+        if already is not None:
+            return
+        user = db.get(User, job.user_id)
+        if user is not None:
+            refund_credits(db, user=user, cost=CREDITS_PER_JOB,
+                           project_id=job.project_id, job_id=job.id)
+    except Exception:  # noqa: BLE001 — never let the refund break the failure path
+        pass
 
 
 # ---------------------------------------------------------------------------
@@ -350,6 +415,10 @@ def process_video(self, job_id: str, project_id: str, dry_run_path: str | None =
     retries/terminal state back to Celery."""
     try:
         run_pipeline(job_id, project_id, dry_run_path=dry_run_path)
+    except LockBusy as exc:
+        # Someone else owns the job right now (or a crashed worker's stale
+        # lock is waiting out its TTL). Retry later rather than failing.
+        raise self.retry(exc=exc, countdown=120)
     except Exception as exc:  # noqa: BLE001 — final safety net; pipeline handles its own failures
         # The DB row is already marked failed in run_pipeline; bubble the retry.
         raise self.retry(exc=exc, countdown=2 * (self.request.retries + 1))

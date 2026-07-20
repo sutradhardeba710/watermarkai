@@ -93,7 +93,18 @@ export const uploadsApi = {
           });
         },
       })
-      .then((r) => r.data);
+      .then((r) => r.data)
+      .catch((err) => {
+        // Mirror the shared client's BE-004 envelope unwrap so callers can
+        // show the backend's actual message (415 invalid container, 413 too
+        // large, quota, …) instead of a generic axios error.
+        const body = err?.response?.data;
+        if (body?.error) {
+          err.message = body.error.message || err.message;
+          err.code = body.error.code;
+        }
+        throw err;
+      });
   },
 
   // The BE-004 envelope unwraps on the shared `api` client, but the raw axios

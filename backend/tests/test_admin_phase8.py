@@ -211,7 +211,7 @@ def test_plan_cleanup_soft_deleted_drops_all_artifacts():
     )
     actions = retention.plan_project_cleanup(p, retention.RetentionPolicy(), now=now, is_deleted=True)
     buckets = {a.bucket for a in actions}
-    assert buckets == {"original", "proxy", "preview", "outputs"}
+    assert buckets == {"originals", "proxies", "previews", "outputs"}
     assert all(a.reason == "project_deleted" for a in actions)
 
 
@@ -220,7 +220,7 @@ def test_plan_cleanup_original_expired_after_window():
     old = now - timedelta(hours=30)
     p = _Proj(id="p2", input_storage_key="in.mp4", created_at=old)
     actions = retention.plan_project_cleanup(p, retention.RetentionPolicy(), now=now)
-    assert any(a.bucket == "original" and a.reason == "original_expired" for a in actions)
+    assert any(a.bucket == "originals" and a.reason == "original_expired" for a in actions)
 
 
 def test_plan_cleanup_keeps_fresh_original():
@@ -262,8 +262,8 @@ def test_plan_cleanup_failed_short_window_for_temp():
     )
     actions = retention.plan_project_cleanup(p, retention.RetentionPolicy(), now=now)
     buckets = {a.bucket for a in actions}
-    assert {"proxy", "preview"} <= buckets
-    assert all(a.reason == "failed_temp" for a in actions if a.bucket in ("proxy", "preview"))
+    assert {"proxies", "previews"} <= buckets
+    assert all(a.reason == "failed_temp" for a in actions if a.bucket in ("proxies", "previews"))
 
 
 def test_plan_cleanup_failed_recent_temp_kept():
@@ -275,7 +275,7 @@ def test_plan_cleanup_failed_recent_temp_kept():
     )
     actions = retention.plan_project_cleanup(p, retention.RetentionPolicy(), now=now)
     # proxy also expires on the 24h preview window from created_at — 1h < 24h, so kept
-    assert not any(a.bucket == "proxy" and a.reason == "failed_temp" for a in actions)
+    assert not any(a.bucket == "proxies" and a.reason == "failed_temp" for a in actions)
 
 
 def test_plan_cleanup_skips_missing_keys():

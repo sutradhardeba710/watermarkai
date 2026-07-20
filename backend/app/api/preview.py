@@ -41,7 +41,7 @@ from app.schemas.preview import (
 )
 from app.services import normalize
 from app.services import preview as preview_svc
-from app.services.compliance import gate_unconfirmed
+from app.services.compliance import gate_downloads_allowed, gate_processing_allowed, gate_unconfirmed
 from app.storage.factory import get_storage
 
 settings = get_settings()
@@ -97,6 +97,9 @@ def create_preview(
 ) -> PreviewResponse:
     p = _owned_ready_project(db, project_id, user)
     gate_unconfirmed(upload_repo.has_confirmation(db, p.id))
+    # PRD §9.5: moderation flags block preview generation too — a preview is
+    # a (small) processed artifact of the source.
+    gate_processing_allowed(p)
     mask = _require_mask(db, p.id)
 
     start, duration = _resolve_window(body, p)
@@ -214,6 +217,7 @@ def _build_preview_clip(
 @router.get("/{project_id}/preview", response_model=PreviewResponse)
 def get_preview(
     project_id: str,
+    variant: str = Query(default="after", pattern="^(after|before)$"),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ) -> PreviewResponse:
@@ -332,6 +336,8 @@ def issue_download_url(
     p = _owned_ready_project(db, project_id, user)
     if p.status != ProjectStatus.completed or not p.output_storage_key:
         raise AppError("CONFLICT", "Output is not available — process the project first.", 409)
+    # PRD §9.5: locked / downloads-disabled projects must not mint signed URLs.
+    gate_downloads_allowed(p)
 
     b = body or DownloadUrlRequest()
     storage = get_storage()
@@ -391,6 +397,9 @@ def stream_signed_output(
         raise AppError("NOT_FOUND", "Output is not available — process the project first.", 404)
     if p.status != ProjectStatus.completed:
         raise AppError("CONFLICT", "Output is not available — process the project first.", 409)
+    # PRD §9.5: enforce at stream time as well — a token minted before the
+    # moderation flag was set must stop working immediately.
+    gate_downloads_allowed(p)
 
     storage = get_storage()
     from app.storage.local_fs import LocalFsStorage

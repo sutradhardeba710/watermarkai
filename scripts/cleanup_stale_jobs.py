@@ -40,6 +40,7 @@ def main() -> int:
             return 0
 
         for job in stale:
+            prior_status = job.status.value if hasattr(job.status, "value") else job.status
             proc_repo.transition(
                 db, job, JobState.cancelled,
                 stage=job.current_stage,
@@ -52,7 +53,7 @@ def main() -> int:
                 project.status = ProjectStatus.preview_ready
             print(
                 f"cancelled job {job.id} (project {job.project_id}) "
-                f"was {job.status.value if hasattr(job.status, 'value') else job.status}"
+                f"was {prior_status}"
             )
         db.commit()
         print(f"Done. Cancelled {len(stale)} stale job(s).")

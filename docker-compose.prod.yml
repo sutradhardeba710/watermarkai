@@ -1,82 +1,89 @@
+# ─── VWA Production — Backend API ──────────────────────────────────────────────
+#
+# Build context: project root (Dockerfile at repo root)
+# Env:          backend/.env.production
+#
+# Start:  docker compose -f docker-compose.prod.yml up -d
+# Logs:   docker compose -f docker-compose.prod.yml logs -f
+# ─────────────────────────────────────────────────────────────────────────────
 version: '3.8'
 
+x-app-image: &app-image
+  build:
+    context: .
+    dockerfile: Dockerfile
+  env_file:
+    - ./backend/.env.production
+  restart: unless-stopped
+
+x-app-volumes: &app-volumes
+  - storage:/app/.storage
+  - run_logs:/app/.run-logs
+
 services:
+
+  # ── Application ───────────────────────────────────────────────────────────
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    <<: *app-image
     container_name: vwa-backend
-    restart: always
-    env_file:
-      - ./backend/.env.production
-    ports:
-      - "8000:8000"
-    command: ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
-    volumes:
-      - ./.run-logs:/app/.run-logs
+    command:
+      - python
+      - -m
+      - uvicorn
+      - app.main:app
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+      - --workers
+      - "4"
+    volumes: *app-volumes
+    expose:
+      - "8000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-    profiles:
-      - api
-
-  worker:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: vwa-worker
-    restart: always
-    env_file:
-      - ./backend/.env.production
-    # Using default prefork on Linux
-    command: ["python", "-m", "celery", "-A", "workers.celery_app", "worker", "-Q", "detection,processing,encoding", "--loglevel=info"]
-    volumes:
-      - ./.run-logs:/app/.run-logs
-    profiles:
-      - worker
-
-  beat:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: vwa-beat
-    restart: always
-    env_file:
-      - ./backend/.env.production
-    command: ["python", "-m", "celery", "-A", "workers.celery_app", "beat", "--loglevel=info"]
-    volumes:
-      - ./.run-logs:/app/.run-logs
-    profiles:
-      - worker
+      start_period: 40s
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: vwa-frontend
-    restart: always
-    env_file:
-      - ./backend/.env.production
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      # API rewrite target inside Docker network
+      - NEXT_PUBLIC_API_URL=http://backend:8000
     expose:
       - "3000"
+    depends_on:
+      backend:
+        condition: service_healthy
 
+  # ── Reverse proxy + TLS ───────────────────────────────────────────────────
   caddy:
     image: caddy:2-alpine
     container_name: vwa-caddy
-    restart: always
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
+      - "443:443/udp"     # HTTP/3
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
       - backend
       - frontend
 
+# ── Named volumes ─────────────────────────────────────────────────────────────
 volumes:
+  storage:
+  run_logs:
   caddy_data:
   caddy_config:

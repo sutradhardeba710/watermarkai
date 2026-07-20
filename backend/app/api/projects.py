@@ -46,7 +46,11 @@ def list_projects(
     """DASH-001..004: list user's projects with optional filter/search."""
     qry = db.query(VideoProject).filter(VideoProject.user_id == user.id, VideoProject.deleted == False)  # noqa: E712
     if status_filter:
-        qry = qry.filter(VideoProject.status == status_filter)
+        try:
+            status_enum = ProjectStatus(status_filter)
+        except ValueError:
+            raise AppError("VALIDATION_ERROR", f"Unknown status filter '{status_filter}'.", 422)
+        qry = qry.filter(VideoProject.status == status_enum)
     if q:
         like = f"%{q}%"
         qry = qry.filter((VideoProject.title.ilike(like)) | (VideoProject.original_filename.ilike(like)))

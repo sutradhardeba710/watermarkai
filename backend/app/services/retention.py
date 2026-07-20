@@ -29,8 +29,8 @@ class RetentionPolicy:
 
 @dataclass(frozen=True)
 class CleanupAction:
-    """One artifact to delete. ``bucket`` is the storage logical bucket
-    (original | proxy | preview | outputs | frames); ``key`` is the storage key."""
+    """One artifact to delete. ``bucket`` is the storage bucket name
+    (originals | proxies | previews | outputs); ``key`` is the storage key."""
 
     project_id: str
     bucket: str
@@ -72,16 +72,23 @@ def plan_project_cleanup(
     dataclass / dict-wrapper can stand in for the ORM row in tests.
 
     Rules:
+      * A project under legal hold is never cleaned (the flag "blocks retention
+        cleanup and file deletion" — PRD §18), even if soft-deleted.
       * If the project is soft-deleted, drop every artifact (all buckets).
       * original  + proxy  + preview: expired after their window from created_at.
       * output: expired after its window from completed_at (only if completed).
       * failed: the project's temp artifacts (proxy/preview) expire on the
         short failed window once the project is in the failed state.
+      * originals/proxies are kept while a job could still need them: projects
+        actively processing (or queued/awaiting review) keep their source.
     """
     ref = _utc(now)
     cut = cutoffs(policy, now=ref)
     actions: list[CleanupAction] = []
     pid = _attr(project, "id", "")
+
+    if _attr(project, "legal_hold", False):
+        return actions
 
     def _older(ts_attr: str, cutoff: datetime) -> bool:
         ts = _attr(project, ts_attr, None)
@@ -93,9 +100,9 @@ def plan_project_cleanup(
 
     if is_deleted or _attr(project, "deleted", False):
         for bucket, key_attr in (
-            ("original", "input_storage_key"),
-            ("proxy", "proxy_storage_key"),
-            ("preview", "preview_storage_key"),
+            ("originals", "input_storage_key"),
+            ("proxies", "proxy_storage_key"),
+            ("previews", "preview_storage_key"),
             ("outputs", "output_storage_key"),
         ):
             k = _attr(project, key_attr, None)
@@ -106,14 +113,25 @@ def plan_project_cleanup(
     status = _attr(project, "status", None)
     status_val = status.value if hasattr(status, "value") else status
 
+    # A queued/active/awaiting-approval project still needs its source: the
+    # worker downloads the original at execution time, so expiring it here
+    # would fail the in-flight job ("never in-flight ones" — module contract).
+    _ACTIVE = {
+        "processing_queued", "processing", "encoding", "analyzing",
+        "preview_queued", "preview_processing", "preview_ready", "awaiting_review",
+    }
+    source_in_use = status_val in _ACTIVE
+
     # original + proxy + preview expire off created_at
     for bucket, key_attr, reason in (
-        ("original", "input_storage_key", "original_expired"),
-        ("proxy", "proxy_storage_key", "preview_expired"),
-        ("preview", "preview_storage_key", "preview_expired"),
+        ("originals", "input_storage_key", "original_expired"),
+        ("proxies", "proxy_storage_key", "preview_expired"),
+        ("previews", "preview_storage_key", "preview_expired"),
     ):
+        if source_in_use and bucket in ("originals", "proxies"):
+            continue
         k = _attr(project, key_attr, None)
-        if k and _older("created_at", cut["original" if bucket == "original" else "preview"]):
+        if k and _older("created_at", cut["original" if bucket == "originals" else "preview"]):
             actions.append(CleanupAction(pid, bucket, k, reason))
 
     # output expires off completed_at
@@ -124,7 +142,7 @@ def plan_project_cleanup(
     # failed-job temp artifacts expire on the short failed window
     if status_val == "failed":
         failed_cut = cut["failed"]
-        for bucket, key_attr in (("proxy", "proxy_storage_key"), ("preview", "preview_storage_key")):
+        for bucket, key_attr in (("proxies", "proxy_storage_key"), ("previews", "preview_storage_key")):
             k = _attr(project, key_attr, None)
             if k and _older("created_at", failed_cut):
                 actions.append(CleanupAction(pid, bucket, k, "failed_temp"))

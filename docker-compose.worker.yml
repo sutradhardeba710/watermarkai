@@ -1,0 +1,57 @@
+# ─── VWA Production — Worker EC2 ───────────────────────────────────────────────
+#
+# Build context: project root (Dockerfile at repo root)
+# Env:          backend/.env.production
+#
+# Start:  docker compose -f docker-compose.worker.yml up -d
+# Logs:   docker compose -f docker-compose.worker.yml logs -f
+# ─────────────────────────────────────────────────────────────────────────────
+version: '3.8'
+
+x-app-image: &app-image
+  build:
+    context: .
+    dockerfile: Dockerfile
+  env_file:
+    - ./backend/.env.production
+  restart: unless-stopped
+
+x-app-volumes: &app-volumes
+  - storage:/app/.storage
+  - run_logs:/app/.run-logs
+
+services:
+  worker:
+    <<: *app-image
+    container_name: vwa-worker
+    command:
+      - python
+      - -m
+      - celery
+      - -A
+      - workers.celery_app
+      - worker
+      - -Q
+      - detection,processing,encoding
+      - --loglevel=info
+      - --concurrency=2
+    volumes: *app-volumes
+
+  beat:
+    <<: *app-image
+    container_name: vwa-beat
+    command:
+      - python
+      - -m
+      - celery
+      - -A
+      - workers.celery_app
+      - beat
+      - --loglevel=info
+    volumes:
+      - run_logs:/app/.run-logs
+
+# ── Named volumes ─────────────────────────────────────────────────────────────
+volumes:
+  storage:
+  run_logs:

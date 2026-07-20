@@ -93,7 +93,13 @@ export default function CandidateReviewPage() {
         if (cancelled) return;
         setProject(loadedProject);
         const existing = await loadCandidates();
-        if (!cancelled && existing.length === 0) void runAnalysis(false);
+        // Auto-run only when the project was never analyzed. A completed
+        // analysis parks the project in awaiting_review — auto-running there
+        // would enqueue a fresh detection job on every visit to this page
+        // whenever the previous run found nothing.
+        if (!cancelled && existing.length === 0 && loadedProject.status !== "awaiting_review") {
+          void runAnalysis(false);
+        }
       } catch (reason) {
         const apiError = reason as ApiError;
         if (!cancelled) setError(apiError?.message || "Unable to load detection results.");
@@ -174,12 +180,12 @@ export default function CandidateReviewPage() {
       {error && <p className="mt-6 rounded-2xl border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">{error}</p>}
 
       {!analyzing && sortedCandidates.length === 0 ? (
-        <section className="mt-8 rounded-2xl border border-white/10 bg-[#16181f] p-8 text-center">
+        <section className="mt-8 rounded-2xl border border-white/10 bg-[#10121f] p-8 text-center">
           <ScanSearch className="mx-auto h-10 w-10 text-cyan-300" />
           <h2 className="mt-4 text-lg font-semibold">{needsManual ? "No reliable watermark found" : "No detection candidates yet"}</h2>
           <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-white/50">{notes || "Run AI detection again, or open the manual editor to draw an exact mask."}</p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <button onClick={() => void runAnalysis(true)} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-[#4f7cff] to-[#6d5ef7] px-5 py-2.5 text-sm font-semibold">
+            <button onClick={() => void runAnalysis(true)} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-5 py-2.5 text-sm font-semibold">
               <ScanSearch className="h-4 w-4" /> Run detection again
             </button>
             <Link href={"/projects/" + projectId} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-white/70 hover:bg-white/5 hover:text-white">
@@ -207,7 +213,7 @@ export default function CandidateReviewPage() {
               const frameHeight = project?.height || 1;
               const box = candidate.bounding_box;
               return (
-                <article key={candidate.id} className="overflow-hidden rounded-2xl border border-white/10 bg-[#16181f] transition hover:border-cyan-300/30">
+                <article key={candidate.id} className="overflow-hidden rounded-2xl border border-white/10 bg-[#10121f] transition hover:border-cyan-300/30">
                   <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-[#0f2032] to-[#171a35]">
                     {project?.thumbnail_url ? <img src={project.thumbnail_url} alt="" className="h-full w-full object-contain" /> : <ScanSearch className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 text-white/20" />}
                     <div
@@ -236,7 +242,7 @@ export default function CandidateReviewPage() {
                     <button
                       onClick={() => void approve(candidate)}
                       disabled={analyzing || approvingId !== null}
-                      className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#4f7cff] to-[#6d5ef7] px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+                      className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {approvingId === candidate.id ? <><LoaderCircle className="h-4 w-4 animate-spin motion-reduce:animate-none" /> Approving...</> : <><CheckCircle2 className="h-4 w-4" /> Approve mask</>}
                     </button>

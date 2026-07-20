@@ -23,6 +23,48 @@ def gate_unconfirmed(confirmed: bool) -> None:
         )
 
 
+def gate_processing_allowed(project) -> None:
+    """PRD §9.5 / §18: admin moderation flags block processing & analysis.
+
+    A locked project (or one under processing restriction / legal hold) must
+    reject analyze, preview, and process requests from its owner.
+    """
+    if getattr(project, "locked", False):
+        raise AppError(
+            "PROJECT_LOCKED",
+            "This project has been locked by moderation and cannot be processed. Contact support.",
+            403,
+        )
+    if getattr(project, "legal_hold", False):
+        raise AppError(
+            "LEGAL_HOLD",
+            "This project is under a legal hold and cannot be processed. Contact support.",
+            403,
+        )
+    if getattr(project, "processing_restricted", False):
+        raise AppError(
+            "PROCESSING_RESTRICTED",
+            "Processing has been restricted for this project by moderation. Contact support.",
+            403,
+        )
+
+
+def gate_downloads_allowed(project) -> None:
+    """PRD §9.5 / §18: locked / downloads-disabled projects reject downloads."""
+    if getattr(project, "locked", False):
+        raise AppError(
+            "PROJECT_LOCKED",
+            "This project has been locked by moderation; downloads are unavailable. Contact support.",
+            403,
+        )
+    if getattr(project, "downloads_disabled", False):
+        raise AppError(
+            "DOWNLOADS_DISABLED",
+            "Downloads have been disabled for this project by moderation. Contact support.",
+            403,
+        )
+
+
 def hash_ip(ip: str | None, salt: str | None = None) -> str | None:
     if not ip:
         return None
@@ -41,4 +83,10 @@ def summarize_ua(user_agent: str | None) -> str | None:
     return f"{browser_part}/{os_part}"
 
 
-__all__ = ["gate_unconfirmed", "hash_ip", "summarize_ua"]
+__all__ = [
+    "gate_unconfirmed",
+    "gate_processing_allowed",
+    "gate_downloads_allowed",
+    "hash_ip",
+    "summarize_ua",
+]

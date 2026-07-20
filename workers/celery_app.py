@@ -14,6 +14,7 @@ import time
 from app.core.config import get_settings
 import workers.ai_models_paths  # noqa: F401 — installs ai_models / ai_model_interfaces aliases
 from celery import Celery
+from celery.schedules import crontab
 from celery.signals import worker_ready
 
 from workers.common import heartbeat
@@ -50,6 +51,16 @@ celery_app.conf.update(
     # retry on startup so a broker that wasn't ready at import time is tolerated.
     broker_pool_limit=0,
     broker_connection_retry_on_startup=True,
+    # Fail fast when the broker is unreachable at publish time. Without a bounded
+    # socket timeout, apply_async on a dead Redis blocks for ~2 minutes (kombu's
+    # default connect + retry) before raising — the Approve button spins the
+    # whole time and finally surfaces a 500. A 5s connect/read timeout plus a
+    # bounded publish-retry policy turns that into a prompt, actionable error.
+    broker_transport_options={
+        "socket_connect_timeout": 5,
+        "socket_timeout": 5,
+    },
+    broker_connection_max_retries=2,
     task_time_limit=settings.job_timeout_seconds,
     task_soft_time_limit=settings.job_timeout_seconds - 60,
     task_default_max_retries=settings.max_retries,
@@ -70,6 +81,12 @@ celery_app.conf.update(
         "emit-metrics-snapshot": {
             "task": "workers.tasks.maintenance.emit_metrics_snapshot",
             "schedule": 60.0,
+        },
+        # BILLING daily credit reset at 00:03 UTC — without this, exhausted
+        # users stay at 402 INSUFFICIENT_CREDITS forever.
+        "reset-daily-credits": {
+            "task": "workers.tasks.maintenance.reset_daily_credits",
+            "schedule": crontab(minute=3, hour=0),
         },
     },
 )

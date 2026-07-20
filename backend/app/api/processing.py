@@ -33,7 +33,8 @@ from app.schemas.processing import (
     ProcessRequest,
     ProcessResponse,
 )
-from app.services.compliance import gate_unconfirmed
+from app.services.compliance import gate_processing_allowed, gate_unconfirmed
+from app.services.payment_service import deduct_credits, refund_credits, CREDITS_PER_JOB
 
 settings = get_settings()
 
@@ -68,32 +69,43 @@ def _require_mask(db: Session, project_id: str):
 _STALE_QUEUE_SECONDS = 300
 
 
-def _active_job(db: Session, project_id: str):
-    """A genuinely-active job already attached to this project.
+def _active_job(db: Session, project_id: str, user: User):
+    """A genuinely-active *process* job already attached to this project.
 
     `processing`/`encoding` jobs are always considered active (a worker owns
-    them). A `created`/`processing_queued` job is active only if it started
-    recently; older ones with `started_at=None` are cancelled here so a fresh
-    Approve can enqueue instead of short-circuiting on a dead row.
+    them). A `created`/`processing_queued` job is active while it is younger
+    than the stale window (queued jobs never have `started_at`, so age is
+    measured from `created_at`). Older ones are treated as dead — the Celery
+    message was lost — and are cancelled *with a credit refund* so a fresh
+    Approve can enqueue without double-charging.
+
+    Analyze jobs are ignored: they share the jobs table but never cost
+    credits, and returning one here would make /process report a detection
+    job as the process job (and refunding a stale one would mint credits the
+    user never spent).
     """
     jobs = proc_repo.list_jobs_for_project(db, project_id)
     now = datetime.now(timezone.utc)
     for j in jobs:
+        if j.job_type != JobType.process:
+            continue
         if j.status in (JobState.processing, JobState.encoding):
             return j
         if j.status in (JobState.created, JobState.processing_queued):
-            started = j.started_at
-            age = (now - started) if started is not None else None
-            if started is not None and age is not None and age < timedelta(seconds=_STALE_QUEUE_SECONDS):
+            created = j.created_at
+            if created is not None and created.tzinfo is None:
+                created = created.replace(tzinfo=timezone.utc)
+            if created is not None and (now - created) < timedelta(seconds=_STALE_QUEUE_SECONDS):
                 return j
-            # Stale: no worker picked it up within the window. Cancel so the
-            # caller enqueues a fresh job.
+            # Stale: no worker picked it up within the window. Cancel and
+            # refund so the caller can enqueue a fresh job without paying twice.
             proc_repo.transition(
                 db, j, JobState.cancelled,
                 stage=j.current_stage,
                 error_code="STALE_QUEUED",
                 error_message="Enqueued but never picked up by a worker; re-approve to retry.",
             )
+            refund_credits(db, user=user, cost=CREDITS_PER_JOB)
             db.commit()
     return None
 
@@ -101,7 +113,7 @@ def _active_job(db: Session, project_id: str):
 @project_router.post("/{project_id}/process", response_model=ProcessResponse)
 def enqueue_process(
     project_id: str,
-    body: ProcessRequest | None,
+    body: ProcessRequest | None = None,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ) -> ProcessResponse:
@@ -109,10 +121,12 @@ def enqueue_process(
 
     # LEGAL-003: gate behind ownership confirmation.
     gate_unconfirmed(upload_repo.has_confirmation(db, p.id))
+    # PRD §9.5: moderation flags (locked / restricted / legal hold) block processing.
+    gate_processing_allowed(p)
     _require_mask(db, p.id)
 
     # Idempotent: one active job per project.
-    existing = _active_job(db, p.id)
+    existing = _active_job(db, p.id, user)
     if existing is not None:
         return ProcessResponse(job_id=existing.id, project_id=p.id, status=existing.status.value)
 
@@ -127,6 +141,10 @@ def enqueue_process(
         output_resolution=overrides.output_resolution if overrides else None,
         preserve_audio=overrides.preserve_audio if overrides else True,
     )
+
+    # BILLING: deduct credits before dispatching. Raises 402 if balance is low.
+    deduct_credits(db, user=user, cost=CREDITS_PER_JOB)
+
     job = proc_repo.create_job(db, p, job_type=JobType.process, quality_mode=quality)
     # created -> processing_queued (legal under _TRANSITIONS).
     proc_repo.transition(db, job, JobState.processing_queued, stage="queued")
@@ -143,10 +161,27 @@ def enqueue_process(
     # None — apply_async raises kombu OperationalError "connection refused" and
     # /process returns 500, leaving the job stuck at processing_queued (UI shows
     # "queued · 0% (0/0 frames)" forever).
-    import workers.celery_app  # noqa: F401 — current-app setup
-    from workers.tasks.processing import process_video
-
-    process_video.apply_async(args=(job.id, p.id), queue="processing")
+    try:
+        import workers.celery_app  # noqa: F401 — current-app setup
+        from workers.tasks.processing import process_video
+        process_video.apply_async(
+            args=(job.id, p.id),
+            queue="processing",
+            # Bound the publish so a dead/unreachable broker fails fast (~a few
+            # seconds) instead of blocking the request for ~2 minutes on kombu's
+            # default connection-retry loop before the except-branch runs.
+            retry=True,
+            retry_policy={"max_retries": 2, "interval_start": 0, "interval_step": 0.5, "interval_max": 1},
+        )
+    except Exception:  # noqa: BLE001 — celery optional in dev
+        # If Celery is unavailable (e.g., broker not running), refund credits
+        # and surface a useful error rather than leaving the user charged.
+        refund_credits(db, user=user, cost=CREDITS_PER_JOB)
+        proc_repo.transition(db, job, JobState.failed, stage="dispatch",
+                             error_code="BROKER_UNAVAILABLE",
+                             error_message="Could not enqueue job: Celery broker unavailable.")
+        db.commit()
+        raise AppError("BROKER_UNAVAILABLE", "Processing queue is not available. Please try again shortly.", 503)
 
     return ProcessResponse(job_id=job.id, project_id=p.id, status=job.status.value)
 
@@ -193,34 +228,48 @@ async def stream_job_events(
         r = _redis_mod.from_url(settings.redis_url)
         key = f"job_events:{job_id}"
 
-        # Replay any history already written, then tail.
-        backlog = r.lrange(key, 0, -1) or []
+        # Replay any history already written, then tail. Reads are
+        # non-destructive (LRANGE from a moving cursor) so events arrive
+        # oldest-first, reconnects/second clients still see the full sequence,
+        # and the sync redis client is only ever called via a worker thread —
+        # BRPOP here would block the whole event loop for its timeout *and*
+        # pop newest-first, delivering the terminal event before the progress
+        # events it should follow.
+        backlog = await asyncio.to_thread(r.lrange, key, 0, -1) or []
         if not backlog:
             # No events yet — emit a synthetic "waiting" tick so the client
             # knows the stream is open before the worker publishes.
             yield _sse_frame({"stage": "queue", "progress": job.progress, "frames_processed": 0,
                               "total_frames": job.total_frames, "warnings": [],
                               "message": "Waiting for worker.", "terminal": False})
+        offset = len(backlog)
         for raw in backlog:
-            yield _sse_frame(json.loads(raw))
-            data = json.loads(raw)
-            if data.get("terminal"):
-                return
-
-        # Tail until terminal or client disconnect.
-        terminal = any(json.loads(raw).get("terminal") for raw in (backlog or []))
-        while not terminal:
-            if await request.is_disconnected():
-                return
-            packed = r.brpop(key, timeout=15)
-            if packed is None:
-                # keep-alive comment so proxies don't drop idle connections.
-                yield b": keep-alive\n\n"
-                continue
-            payload = json.loads(packed[1])
+            payload = json.loads(raw)
             yield _sse_frame(payload)
             if payload.get("terminal"):
                 return
+
+        # Tail until terminal or client disconnect.
+        idle_seconds = 0.0
+        while True:
+            if await request.is_disconnected():
+                return
+            fresh = await asyncio.to_thread(r.lrange, key, offset, -1) or []
+            if not fresh:
+                await asyncio.sleep(1.0)
+                idle_seconds += 1.0
+                if idle_seconds >= 15.0:
+                    # keep-alive comment so proxies don't drop idle connections.
+                    yield b": keep-alive\n\n"
+                    idle_seconds = 0.0
+                continue
+            idle_seconds = 0.0
+            offset += len(fresh)
+            for raw in fresh:
+                payload = json.loads(raw)
+                yield _sse_frame(payload)
+                if payload.get("terminal"):
+                    return
 
     return StreamingResponse(gen(), media_type="text/event-stream",
                              headers={"Cache-Control": "no-cache",

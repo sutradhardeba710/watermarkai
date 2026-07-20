@@ -88,6 +88,14 @@ class Settings(BaseSettings):
     smtp_from: str = "no-reply@vwa.local"
     app_base_url: str = "http://localhost:3000"
 
+    # --- Razorpay (Phase 6 billing) ---
+    razorpay_key_id: str = ""            # rzp_test_XXXX or rzp_live_XXXX
+    razorpay_key_secret: str = ""        # keep secret — never expose client-side
+    razorpay_webhook_secret: str = ""    # set in Razorpay dashboard Webhook settings
+    # Razorpay plan IDs for paid tiers (created in Razorpay dashboard once)
+    razorpay_plan_id_starter: str = ""  # e.g. plan_XXXXXXXXX
+    razorpay_plan_id_pro: str = ""       # e.g. plan_XXXXXXXXX
+
     # --- FFprobe / FFmpeg ---
     ffprobe_bin: str = "ffprobe"
     ffmpeg_bin: str = "ffmpeg"

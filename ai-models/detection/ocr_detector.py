@@ -34,7 +34,6 @@ class EasyOcrProvider(OcrProvider):
         return self._reader
 
     def read(self, frame_bgr, bbox: tuple[int, int, int, int]) -> list[OcrHit]:
-        import numpy as np  # heavy; deferred
         x, y, w, h = bbox
         h0, w0 = frame_bgr.shape[:2]
         x = max(0, x); y = max(0, y)
@@ -48,7 +47,8 @@ class EasyOcrProvider(OcrProvider):
             # easyocr returns (bbox_pts, text, conf) or (text, bbox, conf) by version
             if len(r) == 3:
                 pts, text, conf = r
-                hits.append(OcrHit(text=str(text), bbox=(x, y, x2 - x, y2 - y),
+                hits.append(OcrHit(text=str(text),
+                                   bbox=_hit_bbox(pts, x, y, x2 - x, y2 - y),
                                    confidence=float(conf)))
         return hits
 
@@ -71,7 +71,6 @@ class PaddleOcrProvider(OcrProvider):
         return self._engine
 
     def read(self, frame_bgr, bbox: tuple[int, int, int, int]) -> list[OcrHit]:
-        import numpy as np  # heavy; deferred
         x, y, w, h = bbox
         h0, w0 = frame_bgr.shape[:2]
         x = max(0, x); y = max(0, y)
@@ -86,12 +85,37 @@ class PaddleOcrProvider(OcrProvider):
         for line in res[0] or []:
             # paddleocr entry: [bbox_pts, (text, conf)]
             try:
-                _pts, (text, conf) = line
-                hits.append(OcrHit(text=str(text), bbox=(x, y, x2 - x, y2 - y),
+                pts, (text, conf) = line
+                hits.append(OcrHit(text=str(text),
+                                   bbox=_hit_bbox(pts, x, y, x2 - x, y2 - y),
                                    confidence=float(conf)))
             except (ValueError, TypeError):
                 continue
         return hits
+
+
+def _hit_bbox(
+    pts, crop_x: int, crop_y: int, crop_w: int, crop_h: int
+) -> tuple[int, int, int, int]:
+    """Frame-space bbox of one OCR hit.
+
+    ``pts`` is the recognizer's quad (crop-relative corner points). Using it
+    keeps the candidate box tight around the text — falling back to the whole
+    ROI crop only when the quad is missing/malformed (previously the ROI was
+    always reported, so promoted text masks covered the entire ROI).
+    """
+    try:
+        xs = [float(p[0]) for p in pts]
+        ys = [float(p[1]) for p in pts]
+        if not xs or not ys:
+            raise ValueError
+        x0 = max(0.0, min(xs)); y0 = max(0.0, min(ys))
+        x1 = min(float(crop_w), max(xs)); y1 = min(float(crop_h), max(ys))
+        if x1 <= x0 or y1 <= y0:
+            raise ValueError
+        return (crop_x + int(x0), crop_y + int(y0), int(x1 - x0), int(y1 - y0))
+    except (TypeError, ValueError, IndexError):
+        return (crop_x, crop_y, crop_w, crop_h)
 
 
 def ocr_candidates_from_hits(
@@ -116,8 +140,32 @@ def ocr_candidates_from_hits(
     return out
 
 
+def make_ocr_provider(name: str | None) -> OcrProvider | None:
+    """Config-driven provider factory (``settings.ocr_provider``).
+
+    Returns None for "none"/empty or when the provider's wheels are absent —
+    the caller treats a missing provider as "skip Stage 3", never a crash.
+    """
+    key = (name or "").strip().lower()
+    if key in ("", "none", "off", "disabled"):
+        return None
+    try:
+        if key == "easyocr":
+            provider = EasyOcrProvider()
+            provider.reader  # force the heavy import so failures surface here
+            return provider
+        if key in ("paddle", "paddleocr"):
+            provider = PaddleOcrProvider()
+            provider.engine
+            return provider
+    except Exception:  # noqa: BLE001 — wheels absent / model download failed
+        return None
+    return None
+
+
 __all__ = [
     "EasyOcrProvider",
     "PaddleOcrProvider",
+    "make_ocr_provider",
     "ocr_candidates_from_hits",
 ]

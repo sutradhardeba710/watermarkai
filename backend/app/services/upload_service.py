@@ -6,6 +6,7 @@ route returns a presigned upload URL and the bytes never touch the API process.
 """
 from __future__ import annotations
 
+import asyncio
 import os
 import shutil
 import tempfile
@@ -65,7 +66,13 @@ async def complete(
     file_obj: UploadFile | Any,
     declared_mime: str | None,
 ) -> VideoProject:
-    """Stream the upload to disk, validate content, probe, proxy, finalize."""
+    """Stream the upload to disk, validate content, probe, proxy, finalize.
+
+    The byte stream is consumed on the event loop (async reads); everything
+    after — MIME sniff, ffprobe, proxy/thumbnail transcodes, storage copies —
+    is CPU/subprocess-bound and runs in a worker thread so a 10-minute ffmpeg
+    transcode doesn't freeze every other request on the server.
+    """
     settings = get_settings()
 
     safe = validation.sanitize_filename(upload.filename)
@@ -89,7 +96,7 @@ async def complete(
                 if len(head) < _SNIFF_BYTES:
                     head.extend(chunk[: _SNIFF_BYTES - len(head)])
                 out.write(chunk)
-                upload_repo.set_upload_progress(db, upload, received)
+        upload_repo.set_upload_progress(db, upload, received)
     except AppError:
         shutil.rmtree(tmp_path.parent, ignore_errors=True)
         raise
@@ -97,8 +104,25 @@ async def complete(
         shutil.rmtree(tmp_path.parent, ignore_errors=True)
         raise AppError("UPLOAD_ERROR", "Failed to write upload to disk.", 502) from exc
 
+    return await asyncio.to_thread(
+        _finalize_upload, db, upload, project, tmp_path, final_key,
+        bytes(head), declared_mime, received,
+    )
+
+
+def _finalize_upload(
+    db: Session,
+    upload: Upload,
+    project: VideoProject,
+    tmp_path: Path,
+    final_key: str,
+    head: bytes,
+    declared_mime: str | None,
+    received: int,
+) -> VideoProject:
+    """Blocking half of :func:`complete` — runs in a thread off the event loop."""
     # Content sniff on the saved head (SEC-004).
-    v = validation.validate_mime(bytes(head), declared_mime)
+    v = validation.validate_mime(head, declared_mime)
     if not v.ok:
         shutil.rmtree(tmp_path.parent, ignore_errors=True)
         raise AppError(v.code, v.message, 415, v.details)

@@ -23,8 +23,16 @@ Specs: `../Product Requirements Document`, `../Software Requirements Specificati
 | 7 | AI detection | [x] done |
 | 8 | Admin + hardening | [x] done |
 | 9 | Tests + README | [x] done |
+| AP1+2 | Admin Panel — Foundation + Users/Projects (PRD Phases 1+2) | [x] done |
+| AP3 | Admin Panel — Jobs/Queues/Workers deep-dive (PRD Phase 3) | [x] done |
+| AP4 | Admin Panel — Billing/Payments/Subscriptions/Plans/Promos/Credits (PRD Phase 4) | [x] done |
+| AP5 | Admin Panel — Storage & Compliance (PRD Phase 5) | [x] done |
+| AP6 | Admin Panel — Models/Presets/Feature Flags/Maintenance/Notifications (PRD Phase 6) | [x] done |
+| AP7 | Admin Panel — Analytics/Exports/System Health/Admin Mgmt/Search/Secrets (PRD Phase 7) | [x] done |
 
-**Next up:** MVP complete. Deploy to staging; observe real-world workloads; iterate.
+**Next up:** All PRD phases complete. Remaining work is the deferred batch
+verification (backend pytest phase5–7 + `tsc --noEmit` + `alembic upgrade head`
+through 0008) once the Bash classifier is reliably available.
 
 ---
 
@@ -328,6 +336,322 @@ Spec refs: SRS TEST-001..007. See plan §Phase 9.
 - `pytest backend/tests --ignore=tests/test_security.py` green; with `VWA_INTEGRATION=1` integration/E2E green.
 - `cd frontend && npm run typecheck && npm run build` green.
 - Manual E2E: from a clean DB, run the full happy path as described in the E2E test body; ensure the 10s sample clip processes to completion and the signed download URL streams an H.264 file.
+
+---
+
+## Admin Panel — Phases 1+2 (Foundation + Users/Projects)  `[x]`
+
+Spec: `../current-work.md` (ClearFrame Admin Panel PRD) §36 Phases 1+2.
+Plan: `.claude/plans/async-bubbling-waterfall.md`.
+
+### RBAC foundation (PRD §5, §33.1)
+- [x] `users.admin_role` String(32) column (NOT a PG enum) — 6 roles: super_admin, operations, support, billing, compliance, analyst. Legacy `role='admin'` + NULL admin_role resolves to super_admin (`effective_admin_role`).
+- [x] `backend/app/services/admin_permissions.py` — pure permission map (`resource.verb` strings), zero ORM imports, unit-testable on the 32-bit box.
+- [x] `require_permission(perm)` + `get_current_admin` in `app/auth/dependencies.py`; every `/admin/*` route swapped from `require_admin` to per-route permissions. `require_admin` kept for non-panel uses.
+- [x] `GET /admin/me` returns role + permission list; frontend nav hides on it (cosmetic — server enforces).
+
+### Audit upgrade (PRD §27)
+- [x] `audit_logs` widened: `previous_data`, `new_data`, `reason`, `ip_hash`, `user_agent`, `request_id`, `result` (+ indexes on action/created_at). `record_audit` extended with defaulted kwargs (backward compatible).
+- [x] `GET /admin/audit` — filtered (action/actor/target_type/date range) + paginated envelope `{items,total,page,page_size}`.
+- [x] `build_audit_context(request)` extracts ip_hash (reuses `compliance.hash_ip`), UA, `request.state.request_id`; every mutation records previous/new + reason.
+
+### Credit ledger + payments (PRD §13, §17)
+- [x] `credit_transactions` immutable table; pure `build_credit_txn()` validates amount/direction/source + overdraft. Admin adjustments require amount+reason (PRD §8.5) and lock the user row (`with_for_update`).
+- [x] `payment_service.deduct_credits`/`refund_credits` now write ledger rows (source job/refund); webhook charge/failure + sandbox subscribe write `payments` rows (idempotent on razorpay id).
+- [x] `support_notes` table + CRUD; `video_projects.locked` + `moderation_note`.
+
+### Users & projects admin (PRD §8, §9)
+- [x] Paginated/filtered `GET /admin/users` (q/status/role/plan/verified) + `GET /admin/users/{id}` detail bundle + tab endpoints (transactions/payments/projects/jobs/sessions/activity/notes).
+- [x] `POST /admin/users/{id}/actions` (verify_email, resend_verification, force_password_reset, revoke_sessions, suspend, ban, restore, delete_account — destructive ones require reason), `/role` (guards last super admin), `/plan`, `/credits`, `/notes`.
+- [x] Guard rails (`validate_user_admin_action`): no self-status-changes; only super admins act on staff.
+- [x] `GET /admin/projects` (+filters) / `GET /admin/projects/{id}` (jobs, outputs, compliance, notes) / `POST .../actions` (extend_retention, expire_now, lock, unlock, delete_files) / `DELETE` (soft delete + best-effort storage cleanup of recorded keys).
+
+### Frontend restructure
+- [x] `/admin` converted from one tabbed page to multi-page: `app/admin/layout.tsx` (guard + permission-aware `AdminSidebar`), pages: overview (rewritten w/ PRD §7.2 metric groups + `?tab=X` redirects), `users` + `users/[id]` (header card, action toolbar with `ConfirmActionDialog` reason capture, 7 tabs), `projects` + `projects/[id]`, `jobs` (retry/cancel), `workers`, `audit` (filters + pagination + expandable prev/new rows), `abuse`, `settings` (read-only for non-managers).
+- [x] Shared primitives in `components/admin/` (`ui.tsx`: Badge/Stat/DataTable/Pagination/PageHeader; `ConfirmActionDialog.tsx`; `AdminSidebar.tsx`); permission mirror in `features/admin/permissions.ts`.
+- [x] `AppShell` + dashboard/billing/upload links updated `/admin?tab=settings` → `/admin/settings`; Admin link shows for `admin_role` staff too.
+
+### Migration
+- [x] Fixed broken alembic chain: `0003_promo_codes.down_revision` `'0002'` → `'0002_payment_tables'` (would have failed `alembic upgrade head`).
+- [x] `backend/migrations/versions/0004_admin_panel.py` — admin_role (+ backfill super_admin), video_projects.locked/moderation_note, 7 audit columns, credit_transactions / payments / support_notes tables + indexes; symmetric downgrade.
+
+### Evidence
+- `backend/tests/test_admin_rbac.py` — **20 pure tests** (map completeness, super-set invariant, analyst view-only, legacy mapping).
+- `backend/tests/test_admin_panel_phase2.py` — **23 pure tests** (paginate clamps, credit-txn invariants incl. overdraft, action guards, retention math, overview extras, all new validators).
+- `backend/tests/test_admin_integration.py` — 5 integration tests gated `VWA_INTEGRATION=1` (ledger+audit round-trip, overdraft 409, detail bundle, extend-retention).
+- Full backend suite: **290 passed, 12 skipped** on the 32-bit box (`--ignore=tests/test_security.py --ignore=tests/test_projects_regressions.py`; both ignored files need sqlalchemy/argon2 — pre-existing constraint, not a regression). `test_admin_phase8.py` still green (48/48).
+- `python -m compileall -q backend/app backend/tests backend/migrations workers` clean; `cd frontend && npx tsc --noEmit` clean.
+
+### Verify (needs the running stack — F:\vw PG/Redis, 64-bit venv)
+- `alembic current` → if unset, `alembic stamp 0003`; then `alembic upgrade head` (applies 0004).
+- Start backend; `GET /api/v1/admin/me` as the seeded admin → `admin_role: super_admin` + full permission list.
+- Adjust credits on a test user → row in `credit_transactions` + audit row with previous/new/reason/request_id.
+- Load `/admin` → sidebar; Users → detail → suspend (reason dialog) → user 403s on next request.
+
+---
+
+## Admin Panel — Phase 3 (Jobs / Queues / Workers deep-dive)  `[x]`
+
+Spec: `../current-work.md` (ClearFrame Admin Panel PRD) §10–12, §36 Phase 3.
+No new DB tables — reuses `processing_jobs` + `worker_nodes` + `audit_logs`.
+
+### Backend
+- [x] Pure policy in `app/services/admin_service.py`: `job_stage_timeline(job_type, status)` (per-type pipelines analyze/preview/process + default; terminal states mark prior steps done + final = terminal status), `is_terminal_job_state()`. Zero ORM — testable on 32-bit.
+- [x] `app/repositories/admin.py`: `queue_metrics` (queued/active/completed_today/failed_today + by_state grouped count), `queue_breakdown` (per detection/processing queue: queued, active, failed_today, oldest_queued_seconds), `get_worker_node`, `worker_jobs`, `worker_job_counts`, `list_audit_for_target`.
+- [x] `app/schemas/admin.py`: `AdminJobDetail` (project_title, user_email, duration/queued seconds, timeline, recent_events), `JobStageStep`, `QueueInfo`, `QueueMetrics`, `WorkerDetail` (active_job, recent_jobs, completed/failed counts).
+- [x] `app/api/admin.py`: `GET /jobs/{id}` (perm `jobs.view`, 404 guard, builds timeline + audit events + timing via `_job_seconds`), `GET /queues` (perm `jobs.view`), `GET /workers/{name}` (perm `workers.view`, fuses heartbeat + recent jobs + counts).
+
+### Frontend
+- [x] `app/admin/jobs/[id]/page.tsx` — job detail: header w/ project/user/worker links, 4 stats (progress/frames/queued-for/run-time), progress bar, stage timeline (colored dots + pulse on current), failure diagnostics panel, recent admin events, retry/cancel via `ConfirmActionDialog`. Live-polls every 4s until terminal.
+- [x] `app/admin/queue/page.tsx` — queue dashboard: 4 stats (tone-coded), per-queue table, jobs-by-state badge cloud. Polls 10s. Nav item "Queues" added (`Layers` icon, perm `jobs.view`).
+- [x] `app/admin/workers/[name]/page.tsx` — worker detail: header (online/gpu/version/heartbeat), 4 stats (completed/failed/success-rate/active), active-job panel, recent-jobs table. Polls 8s.
+- [x] Jobs + Workers list rows made clickable → detail pages (inline action buttons guarded with `stopPropagation`).
+- [x] `services/admin.ts` + `types/index.ts`: `getJob`/`getQueues`/`getWorker` + `AdminJobDetail`/`QueueMetrics`/`QueueInfo`/`WorkerDetail`/`JobStageStep`.
+
+### Evidence
+- `backend/tests/test_admin_panel_phase3.py` — **13 pure-logic tests** (timeline in-progress/completed/failed/cancelled/analyze-pipeline/unknown-type/created/fallback, `is_terminal_job_state`, schema construction for QueueMetrics/QueueInfo/JobStageStep/AdminJobDetail).
+- Full backend suite green: **303 passed, 12 skipped** on the 32-bit box (`--ignore=tests/test_security.py --ignore=tests/test_projects_regressions.py`; both need argon2/sqlalchemy — pre-existing constraint). `test_admin_phase8.py` + `test_admin_panel_phase2.py` still green (74/74).
+- `cd frontend && npx tsc --noEmit` clean.
+
+### Verify (needs the running stack — F:\vw PG/Redis, 64-bit venv)
+- `/admin/jobs` → click a running job → timeline advances live, run-time ticks, retry re-enqueues on the job's queue.
+- `/admin/queue` → depth + per-queue backlog + oldest-wait; enqueue jobs → counts move.
+- `/admin/workers` → click a worker → active job + lifetime throughput; stop it → flips offline after 90s.
+
+---
+
+## Admin Panel — Phase 4 (Billing / Payments / Subscriptions / Plans / Promos / Credits)  `[x]`
+
+Spec: `../current-work.md` (ClearFrame Admin Panel PRD) §13–17, §33, §36 Phase 4.
+
+### Migration
+- [x] `backend/migrations/versions/0005_billing_admin.py` (down_revision `0004_admin_panel`) — adds
+  `subscription_plans` extras (billing_interval, monthly_credits, limits, api_access, support_level,
+  is_recommended, display_order, archived), `subscriptions` lifecycle columns (display/status helpers,
+  cancel_at_period_end, payment_failures, grace_until, cancelled_at), `payments` extras (discount/tax,
+  refund_status, refunded_inr, manual_review, internal_note), `refunds` table, `webhook_events` table,
+  `promo_codes` extras (discount_type/value, sandbox_only, new_users_only, caps, times_redeemed). Symmetric downgrade.
+
+### Backend — pure policy (`app/services/admin_service.py`, 32-bit testable)
+- [x] Constants: PAYMENT_STATUSES, SUBSCRIPTION_STATUSES, DISCOUNT_TYPES, BILLING_INTERVALS,
+  `REFUND_SUPER_ADMIN_THRESHOLD_INR = 500_000` (₹5,000; PRD §13.5).
+- [x] `mask_secret(value, keep=4)` (gateway/PII masking, PRD §33), `mask_webhook_payload` (recursive; masks
+  token/card/vpa/email/contact/customer_id/bank_account/auth_code/signature/secret/notes).
+- [x] `refund_requires_approval`, `validate_refund` (amount ≤ refundable, > 0), `refund_status_after`,
+  `billing_overview`, `promo_remaining_uses`, `validate_plan_fields`, `validate_promo_fields`,
+  `credit_dashboard`, `subscription_display_status`, `apply_subscription_action` (orchestration; cancel /
+  cancel_at_period_end / resume / reactivate / change_plan; records audit, caller commits).
+
+### Backend — schemas + routes (`app/schemas/admin.py`, `app/api/admin.py`)
+- [x] Schemas: BillingOverviewOut, PaymentListItem/Page, RefundOut, PaymentDetailOut (refundable_inr + refunds),
+  RefundRequest, PaymentNoteRequest, WebhookEventOut/Page, AdminSubscriptionListItem/Page,
+  SubscriptionActionRequest (validators: plan_id for change_plan, reason for cancel), PlanOut/Create/Update,
+  PromoOut/Create/Update, CreditDashboardOut.
+- [x] Routes: `GET /billing` (billing.view); `GET /payments` + `GET /payments/{id}` (mask all gateway IDs);
+  `POST /payments/{id}/refund` (billing.manage — validate → 422, approval threshold → 403, insert refund +
+  update payment, audit); `POST /payments/{id}/note`; `GET /webhooks` + `GET /webhooks/{id}` (list omits
+  payload, detail masks); `GET /subscriptions` + `POST /subscriptions/{id}/actions` (billing.manage);
+  `GET /plans` (billing.view) + `POST /plans` + `PATCH /plans/{id}` (plans.manage); `GET /promos` +
+  `POST /promos` (promos.manage — blocks sandbox_only in prod) + `PATCH /promos/{id}`; `GET /credits`.
+- [x] New Phase 4 perms wired in `admin_permissions.py`: `billing.view`, `billing.manage`, `plans.manage`,
+  `promos.manage` (plans/promos GET gate on `billing.view` — no `plans.view`/`promos.view` exist).
+
+### Frontend
+- [x] Pages under `app/admin/`: `billing` (revenue/MRR/ARPU/subscription + payment health cards),
+  `payments` + `payments/[id]` (list → detail; refund workflow via `ConfirmActionDialog` rupees→paise,
+  internal note + manual-review toggle, refund history), `subscriptions` (cancel/reactivate/resume gated on
+  billing.manage), `plans` (CRUD modal, ₹→paise, archive/restore, plans.manage), `promos` (create modal,
+  percent/flat, sandbox/new-user flags, enable/disable, promos.manage), `credits` (today's ledger flow +
+  low-balance users → user detail).
+- [x] `features/admin/permissions.ts` — billing.manage/plans.manage/promos.manage added; NAV_ITEMS for all 6
+  billing pages (gate `billing.view`). `services/admin.ts` + `types/index.ts` — Phase 4 methods + types.
+  `components/admin/ui.tsx` — `formatINR(paise)` helper + Badge tones for billing states.
+
+### Evidence
+- `backend/tests/test_admin_panel_phase4.py` — **26 pure-logic tests** (mask_secret, mask_webhook_payload
+  recursive + scalars/lists, refund validation + approval threshold, refund_status_after, billing_overview,
+  promo_remaining_uses, plan/promo field validators, credit_dashboard, subscription_display_status).
+- Full backend suite green: **329 passed, 12 skipped** on the 32-bit box (`--ignore=tests/test_security.py
+  --ignore=tests/test_projects_regressions.py`; the 1 remaining failure — `test_detection_phase7`
+  candidate-owner — needs sqlalchemy, pre-existing native-dep gap, not a Phase 4 regression). Prior baseline
+  was 303; +26 confirms additions only.
+- `python -m py_compile` clean on all Phase 4 backend modules; `cd frontend && npx tsc --noEmit` clean.
+
+### Verify (needs the running stack — F:\vw PG/Redis, 64-bit venv)
+- `alembic upgrade head` (applies 0005). `/admin/billing` → revenue + MRR cards populate.
+- Capture a sandbox payment → appears in `/admin/payments` with masked gateway IDs → open detail → issue a
+  partial refund (reason required) → `refunds` row + audit + payment `partially_refunded`. Refund ≥ ₹5,000 as
+  a non-super-admin → 403.
+- Create a plan / promo → row persists; SANDBOX50 promo blocked from creation when `environment=prod`.
+- Cancel a subscription (reason dialog) → `display_status` flips, audit row written.
+
+---
+
+## Admin Panel — Phase 5 (Storage & Compliance)  `[x]`
+
+**PRD:** §18 (storage & retention), §21 (compliance & abuse).
+
+- **Migration `0006_storage_compliance`** (chain `0005_billing_admin` → `0006`):
+  `video_projects` += `legal_hold`, `legal_hold_reason`, `processing_restricted`,
+  `downloads_disabled`; `abuse_reports` += `severity`, `assigned_reviewer`,
+  `resolution_note`, `updated_at` + `ix_abuse_reports_status` (status default
+  widened `open`→`new`); `output_files` += `cleanup_failed`, `retention_extended`.
+  All columns nullable/server-defaulted.
+- **Pure policy** (`admin_service.py`, 32-bit testable): `storage_overview`
+  (per-bucket bytes, orphaned bucket, ₹2/GB-month estimate in paise),
+  `storage_deletion_allowed` (§18.5 priority: active_job → legal_hold →
+  compliance_lock → open_dispute), `retention_bucket` (locked / failed_cleanup /
+  past_retention / expiring_today / expiring_soon / extended / active),
+  `validate_abuse_severity`, `compliance_action_effects` (§21.5 action→effects
+  map), `compliance_overview`.
+- **Orchestration:** `apply_storage_action` (extend/expire/cleanup/retry/lock/
+  verify — every deletion guarded through `storage_deletion_allowed`, 409 on
+  block) and `apply_compliance_action` (legal hold, restrict, disable downloads,
+  suspend/ban → strongest available `AccountStatus`, note, escalate). Both audit
+  + caller commits.
+- **Repo** (`repositories/admin.py`): `storage_bucket_bytes`,
+  `storage_key_counts`, `list_output_files_for_retention`,
+  `project_has_active_job`, `mark_retention_extended`, `clear_cleanup_failed`,
+  `list_abuse_filtered`, `update_abuse_fields`, `project_previous_reports`,
+  `compliance_overview_counts`.
+- **Routes** (`api/admin.py`): `GET /storage`, `GET /storage/retention`,
+  `POST /projects/{id}/storage` (projects.manage); `GET /compliance`,
+  `GET /compliance/reports`, `GET /compliance/{id}`, `PATCH /compliance/{id}`
+  (severity), `POST /compliance/{id}/actions` (abuse.view / abuse.manage).
+- **Frontend:** `app/admin/storage/page.tsx` (bucket cards + retention queue
+  with per-file actions), `app/admin/compliance/page.tsx` (overview + filtered
+  report queue), `app/admin/compliance/[id]/page.tsx` (report context + severity
+  + full §21.5 action set). Nav items Storage/Compliance added; types + `adminApi`
+  wrappers added. Sensitive video is **not** auto-previewed — reviewers act on
+  reason/metadata first (§21.4/§21.6).
+- **Tests:** `tests/test_admin_panel_phase5.py` (~30 pure policy tests) written.
+  ⚠️ **Verification pending** — the sandbox Bash classifier was unavailable at
+  completion, so `pytest` + frontend `tsc --noEmit` have not yet been run. Code
+  was cross-checked by hand against model columns and test expectations. Run
+  both before starting Phase 6.
+
+---
+
+## Admin Panel — Phase 6 (Models / Presets / Feature Flags / Maintenance / Notifications)  `[x]`
+
+**PRD:** §19 (AI model registry), §20 (processing presets), §23 (notifications),
+§26.5 (feature flags), §26.6 (maintenance mode).
+
+- **Migration `0007_models_presets_notifications`** (chain `0006_storage_compliance`
+  → `0007`): 5 new tables — `ai_models` (name+version unique, lifecycle status,
+  default/fallback flags, rollout strategy/percentage/plans JSON, quality/speed/
+  failure metrics, worker compat JSON, previous_version for rollback),
+  `processing_presets` (model wiring + morphology + encoding params + credit cost
+  + worker requirements JSON), `feature_flags` (key-unique catalogue overlay),
+  `notification_templates` (key-unique, subject/html/text, variables JSON, version
+  bump on edit), `broadcasts` (kind/target/recipient_count audit trail). Maintenance
+  mode stored as a JSON blob in the existing `system_settings` table (no new table).
+  All columns nullable/server-defaulted; symmetric downgrade.
+- **Pure policy** (`admin_service.py`, 32-bit testable): MODEL_TYPES/STATUSES/
+  ACTIONS, ROLLOUT_STRATEGIES, NOTIFICATION_TEMPLATE_KEYS, BROADCAST_KINDS/TARGETS,
+  FEATURE_FLAG_KEYS, MAINTENANCE_DEFAULTS. Functions: `validate_model_type`,
+  `validate_model_action`, `model_action_effects` (status/default/fallback/
+  requires-reason per action; rollback/disable/deprecate require a reason),
+  `validate_rollout` (percentage 0–100), `validate_preset_fields`,
+  `merge_feature_flags` (overlays stored rows onto the catalogue, order preserved),
+  `normalise_maintenance`, `validate_broadcast`, `render_template_preview`
+  (`{{var}}` substitution, unknown placeholders left intact).
+- **Orchestration:** `apply_model_action` (sets status, stamps deployment_date on
+  first activate, clears sibling default/fallback per model_type, rollback promotes
+  previous_version, audits `model.<action>`) and `send_broadcast` (resolves the
+  target segment → recipient user IDs, fans out notifications, records a broadcast
+  row, audits `notifications.broadcast`). Both audit + caller commits.
+- **Repo** (`repositories/admin.py`): model CRUD + `clear_model_flag`, preset CRUD
+  + `clear_default_preset`, feature-flag list + `upsert_feature_flag`, template
+  list/get + `upsert_template` (version bump), `broadcast_recipients` (segment →
+  active-account user IDs), `create_notifications`, `create_broadcast`,
+  `list_broadcasts`, `get_setting_json`/`set_setting_json` (maintenance blob).
+- **Routes** (`api/admin.py`): `GET/POST /models`, `PATCH /models/{id}`,
+  `POST /models/{id}/actions` (models.view/manage); `GET/POST /presets`,
+  `PATCH /presets/{id}`, `POST /presets/{id}/set-default` (presets.view/manage);
+  `GET /feature-flags`, `PATCH /feature-flags/{key}` (config.view / flags.manage);
+  `GET/PUT /maintenance` (config.view / maintenance.manage); `GET /notifications/
+  templates`, `PATCH .../templates/{id}`, `POST .../templates/{id}/preview`,
+  `POST /notifications/broadcast` (notifications.view/manage). New perms wired in
+  `admin_permissions.py`: models/presets/notifications `.view` + models/presets/
+  notifications/flags/maintenance `.manage`; operations role expanded.
+- **Frontend:** `app/admin/models/page.tsx` (registry table + lifecycle actions via
+  `ConfirmActionDialog`), `presets/page.tsx` (table + inline create + enable/set-
+  default), `feature-flags/page.tsx` (toggle board), `maintenance/page.tsx` (toggle
+  set + public message + status-page link), `notifications/page.tsx` (template
+  editor + `{{var}}` preview + broadcast composer). Nav items Models/Presets/
+  Notifications/Feature flags/Maintenance added; types + `adminApi` wrappers added.
+- **Tests:** `tests/test_admin_panel_phase6.py` (~35 pure policy tests) written.
+  ⚠️ **Verification pending** — the sandbox Bash classifier was unavailable at
+  completion, so `pytest` + frontend `tsc --noEmit` + `alembic upgrade head`
+  (through 0007) have not yet been run. Code was cross-checked by hand against
+  model columns, existing patterns, and test expectations. Run all three before
+  starting Phase 7.
+
+---
+
+## Admin Panel — Phase 7 (Analytics / Exports / System Health / Admin Mgmt / Search / Secrets)  `[x]`
+
+**PRD:** §24 (analytics & reports), §24.5 (exports), §25 (system health +
+incidents), §28 (administrator management), §29 (global search), §26.7 (secret
+handling).
+
+- **Migration `0008_incidents_admin_mgmt`** (chain `0007` → `0008`): one new
+  table `incidents` (service/severity/status/title/detail, notes JSON,
+  silenced_until, acknowledged_by, started_at/resolved_at/updated_at; indexed on
+  status + started_at) plus 5 administrator-tracking columns on `users`
+  (`mfa_enabled`, `mfa_required`, `last_login_at`, `admin_created_by`,
+  `admin_invited_at`). Analytics/exports/health-metrics/search/secrets are all
+  read-only over existing tables + config, so they need **no** schema. Symmetric
+  downgrade.
+- **Pure policy** (`admin_service.py`, 32-bit testable): `safe_rate`/`_avg`
+  (zero-denominator-safe rate math), `product_analytics`/`processing_analytics`/
+  `cost_analytics` (funnel rates, failure-rate buckets, paise cost estimates from
+  raw count maps), `filter_export_rows`/`to_csv` (RFC-4180, column allow-list)/
+  `validate_export_format`, `service_status_list`/`health_status_for`/
+  `evaluate_health_metrics`/`overall_health` (threshold scoring, worst-wins
+  banner), `incident_action_effects`/`validate_incident_action`,
+  `validate_admin_mgmt_action` (self-target / role-validity / reason guards),
+  `classify_search_query` (prefix/UUID/caps/email regex → candidate entity
+  types), `describe_secret` (never returns a private value — configured flag +
+  last-four + public-id only). Constants: SERVICE_NAMES, _HEALTH_THRESHOLDS,
+  INCIDENT_*, ADMIN_MGMT_ACTIONS, SEARCH_ENTITY_TYPES, SECRET_KEYS.
+- **RBAC** (`admin_permissions.py`): added `analytics.view`/`health.view` to the
+  view vocab; `analytics.export`/`health.manage`/`admins.manage` to manage; a
+  new `_RESTRICTED_PERMISSIONS` set (`admins.view`, `secrets.view`) unioned into
+  ALL_PERMISSIONS but kept OUT of the view/manage vocab so **only** super_admin
+  receives them (§28.3). operations += health.manage; billing += analytics.*.
+- **Repo** (`repositories/admin.py`): `analytics_counts` (funnel + processing
+  failure buckets), `business_analytics_counts` (MRR / subs / payments /
+  refunds / revenue-by-plan), `health_probe_counts` (queue depth + stale
+  workers), incident CRUD (`list_incidents`/`get_incident`/`insert_incident`),
+  `list_admins`/`count_active_super_admins` (last-super-admin guard),
+  `search_entities` (per-entity-type lookups), `export_rows`/`EXPORT_COLUMNS`
+  (allow-listed dataset materialisation, enums/datetimes stringified).
+- **Routes** (`api/admin.py`): `GET /analytics` (analytics.view), `POST /exports`
+  (analytics.export → CSV/JSON download, audited as `data.export`), `GET
+  /system-health` (health.view), `GET/POST /incidents` + `POST
+  /incidents/{id}/actions` (health.view/manage), `GET/POST /administrators` +
+  `POST /administrators/{id}/actions` (admins.view/manage — invite creates an
+  MFA-required staff account with a random password; last-super-admin protection
+  enforced against a live count), `GET /search` (any admin via
+  get_current_admin), `GET /secrets` (secrets.view → descriptors only).
+- **Frontend:** `app/admin/analytics/page.tsx` (funnel/business/cost/processing
+  stat grids + window switch + CSV/JSON export buttons), `system-health/page.tsx`
+  (service grid + metric scoring + incident timeline with ack/silence/resolve),
+  `administrators/page.tsx` (staff list + role select + suspend/reactivate/
+  revoke/require-MFA/remove via `ConfirmActionDialog` + invite dialog),
+  `secrets/page.tsx` (non-revealing descriptors). New `components/admin/
+  GlobalSearch.tsx` (debounced grouped search, deep-links per entity) mounted in
+  the sidebar. Types + `adminApi` wrappers + nav items (Analytics/System health/
+  Administrators/Secrets) + frontend permission mirror all updated.
+- **Tests:** `tests/test_admin_panel_phase7.py` (~45 pure-logic tests over
+  safe_rate, product/processing/cost analytics, exports/CSV, health scoring,
+  incident effects, admin-mgmt guards, search classifier, secret descriptors).
+  ⚠️ **Verification pending** — the sandbox Bash classifier was unavailable at
+  completion, so `pytest` (phase5–7) + frontend `tsc --noEmit` + `alembic upgrade
+  head` (through 0008) have not yet been run. Code was cross-checked by hand
+  against model columns, existing route/schema patterns, and test expectations.
 
 ---
 

@@ -39,16 +39,27 @@ function clearStoredSession() {
   useAuthStore.getState().clear();
 }
 
+/** True when the refresh endpoint itself rejected the token (definitively
+ * dead session). Network blips / 5xx / timeouts are NOT session-ending. */
+function isAuthRejection(err: unknown): boolean {
+  const status = (err as { response?: { status?: number } })?.response?.status;
+  return status === 401 || status === 403;
+}
+
 async function refreshAccessToken(): Promise<string> {
   if (typeof window === "undefined") throw new Error("Session refresh is browser-only.");
 
   const refreshToken = window.localStorage.getItem(REFRESH_KEY);
-  if (!refreshToken) throw new Error("No refresh token is available.");
+  if (!refreshToken) {
+    const err = new Error("No refresh token is available.");
+    (err as { response?: { status: number } }).response = { status: 401 };
+    throw err;
+  }
 
   const response = await axios.post<RefreshResponse>(
     baseURL + "/auth/refresh",
     { refresh_token: refreshToken },
-    { headers: { "Content-Type": "application/json" } },
+    { headers: { "Content-Type": "application/json" }, timeout: 15_000 },
   );
   const session = response.data;
   useAuthStore.getState().setAuth(session.access_token, session.refresh_token, session.user);
@@ -80,10 +91,15 @@ api.interceptors.response.use(
         const accessToken = await refreshPromise;
         original.headers.Authorization = "Bearer " + accessToken;
         return api(original);
-      } catch {
-        clearStoredSession();
-        if (window.location.pathname !== "/login") {
-          window.location.assign("/login?session=expired");
+      } catch (refreshErr) {
+        // Only end the session when the server actually rejected the refresh
+        // token. A network drop / server restart mid-refresh must not log the
+        // user out — the next 401 will simply retry the refresh.
+        if (isAuthRejection(refreshErr)) {
+          clearStoredSession();
+          if (window.location.pathname !== "/login") {
+            window.location.assign("/login?session=expired");
+          }
         }
       }
     }
@@ -92,6 +108,19 @@ api.interceptors.response.use(
     if (body?.error) {
       err.message = body.error.message || err.message;
       err.code = body.error.code;
+    }
+
+    // Maintenance mode: backend answers 503 MAINTENANCE for gated routes.
+    // Send the user to the maintenance page (admins keep working — /admin
+    // routes are exempted server-side).
+    if (
+      typeof window !== "undefined" &&
+      status === 503 &&
+      body?.error?.code === "MAINTENANCE" &&
+      !window.location.pathname.startsWith("/maintenance") &&
+      !window.location.pathname.startsWith("/admin")
+    ) {
+      window.location.assign("/maintenance");
     }
     return Promise.reject(err);
   },

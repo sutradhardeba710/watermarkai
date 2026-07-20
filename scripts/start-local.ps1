@@ -15,14 +15,16 @@ $backendPython = Join-Path $repoRoot 'backend\.venv\Scripts\python.exe'
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 
 function Test-LocalPort([int]$Port) {
-    $client = [System.Net.Sockets.TcpClient]::new()
-    try {
-        $async = $client.BeginConnect('127.0.0.1', $Port, $null, $null)
-        return $async.AsyncWaitHandle.WaitOne(1000) -and $client.Connected
+    return [bool](Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue)
+}
+
+function Wait-LocalPort([int]$Port, [int]$TimeoutSeconds = 15) {
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    while ((Get-Date) -lt $deadline) {
+        if (Test-LocalPort $Port) { return $true }
+        Start-Sleep -Milliseconds 500
     }
-    finally {
-        $client.Dispose()
-    }
+    return $false
 }
 
 function Start-LoggedProcess([string]$Name, [string]$FilePath, [string[]]$Arguments, [string]$WorkingDirectory) {
@@ -46,17 +48,39 @@ if (-not (Test-Path $postgresCtl) -or -not (Test-Path $postgresData)) { throw 'P
 if (-not (Test-Path $redisServer) -or -not (Test-Path $redisConfig)) { throw 'Redis was not found at F:\vw\redis.' }
 if (-not (Test-Path $backendPython)) { throw 'Backend virtual environment is missing. Run scripts\setup.ps1 first.' }
 
-if (-not (Test-LocalPort 5432)) {
+& $postgresCtl -D $postgresData status *> $null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host 'Starting PostgreSQL...'
     & $postgresCtl -D $postgresData -l 'F:\vw\pgsql\logfile' start | Out-Host
+    if (-not (Wait-LocalPort 5432)) { throw 'PostgreSQL did not become ready on port 5432.' }
+}
+else {
+    Write-Host 'PostgreSQL is already running.'
 }
 if (-not (Test-LocalPort 6379)) {
-    Start-Process -FilePath $redisServer -ArgumentList $redisConfig -WorkingDirectory 'F:\vw\redis' -WindowStyle Hidden | Out-Null
-    Write-Host 'Started redis.'
+    # Redis' config sets `logfile ""` (stdout), which is discarded when the
+    # process is started hidden — so a Redis that dies leaves no trace and the
+    # whole pipeline silently runs with no broker (Approve -> 500, jobs stuck at
+    # "Queued 0%"). Redirect its output to a log so crashes are diagnosable, and
+    # re-check the port so we fail loudly if it did not stay up.
+    $redisLog = Join-Path $logDir 'redis.log'
+    $redisErr = Join-Path $logDir 'redis-error.log'
+    Start-Process -FilePath $redisServer -ArgumentList $redisConfig -WorkingDirectory 'F:\vw\redis' -WindowStyle Hidden -RedirectStandardOutput $redisLog -RedirectStandardError $redisErr | Out-Null
+    if (-not (Wait-LocalPort 6379)) { throw "Redis did not become ready on port 6379. See $redisLog." }
+    Write-Host 'Started Redis.'
+}
+else {
+    Write-Host 'Redis is already running.'
 }
 
 # Run from the repository root so sibling packages such as workers are on sys.path.
 # --app-dir keeps the FastAPI app package importable.
-Start-LoggedProcess 'backend' $backendPython @('-m', 'uvicorn', 'app.main:app', '--app-dir', 'backend', '--reload', '--port', '8000') $repoRoot
+# NOTE: --reload is intentionally omitted. This project lives inside a OneDrive
+# folder whose background sync constantly touches files; uvicorn's file watcher
+# treats every sync as a code change and reload-loops until the worker dies with
+# a KeyboardInterrupt, leaving port 8000 empty (the frontend proxy then returns
+# 500 on /api/v1/auth/login). Restart this script after backend code changes.
+Start-LoggedProcess 'backend' $backendPython @('-m', 'uvicorn', 'app.main:app', '--app-dir', 'backend', '--port', '8000') $repoRoot
 Start-LoggedProcess 'frontend' 'cmd.exe' @('/c', 'npm run dev') (Join-Path $repoRoot 'frontend')
 
 if (-not $NoWorker) {

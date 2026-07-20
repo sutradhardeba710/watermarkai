@@ -36,6 +36,7 @@ dependencies = [
 
 [project.optional-dependencies]
 paddle = ["paddlepaddle>=2.6", "paddleocr>=2.7"]
+billing = ["razorpay>=1.4"]   # pip install vwa-backend[billing]
 dev = ["pytest>=8.0", "pytest-asyncio>=0.23", "pytest-cov>=4.1", "httpx>=0.27", "ruff>=0.3"]
 
 [tool.setuptools.packages.find]

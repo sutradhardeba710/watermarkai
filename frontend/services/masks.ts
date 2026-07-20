@@ -2,14 +2,20 @@ import { api } from "./api";
 
 export type MaskTool = "rectangle" | "polygon" | "brush";
 
+/** Persisted tool: the editor's simple tools, or "multi" — a composite of
+ * several simple shapes saved as one mask (geometry.shapes). */
+export type PersistedMaskTool = MaskTool | "multi";
+
 export interface MaskGeometry {
   // rectangle: {x,y,w,h}; polygon: {points:[x,y]...}; brush: {strokes:[{x,y,r}]}
+  // multi: {shapes:[{tool, geometry}...]}
   x?: number;
   y?: number;
   w?: number;
   h?: number;
   points?: [number, number][];
   strokes?: { x: number; y: number; r: number }[];
+  shapes?: { tool: MaskTool; geometry: MaskGeometry }[];
 }
 
 export interface MaskOptions {
@@ -24,7 +30,7 @@ export interface MaskOptions {
 export interface Mask extends MaskOptions {
   id: string;
   project_id: string;
-  tool: MaskTool;
+  tool: PersistedMaskTool;
   geometry: MaskGeometry;
   width: number;
   height: number;

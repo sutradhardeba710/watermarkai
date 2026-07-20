@@ -44,7 +44,7 @@ from app.repositories import candidates as cand_repo
 from app.repositories import processing as proc_repo
 from app.services.frame_sample import sample_timestamps
 from app.storage.factory import get_storage
-from workers.common import isolated_tempdir, job_lock
+from workers.common import LockBusy, isolated_tempdir, job_lock
 
 settings = get_settings()
 ORIGINAL_BUCKET = "originals"
@@ -125,6 +125,30 @@ def _candidate_type_for_source(source: str) -> str:
             "merged": "logo"}.get(source, "logo")
 
 
+_OCR_PROVIDER_CACHE: dict[str, object] = {}
+
+
+def _make_ocr_provider(job_id: str):
+    """Build the configured OCR provider (Stage 3, AI-006).
+
+    Cached per-process so the model loads once, not per job. Absent wheels or
+    ocr_provider="none" cleanly disable Stage 3 — text watermarks then simply
+    fall back to heuristic/manual selection, with a warning event so the gap
+    is visible instead of silent.
+    """
+    key = settings.ocr_provider or "none"
+    if key not in _OCR_PROVIDER_CACHE:
+        from ai_models.detection.ocr_detector import make_ocr_provider
+
+        provider = make_ocr_provider(key)
+        _OCR_PROVIDER_CACHE[key] = provider
+        if provider is None and key not in ("", "none", "off", "disabled"):
+            proc_task.publish_event(job_id, proc_task._event(
+                "ocr", 40,
+                warnings=[f"ocr provider '{key}' unavailable; text detection skipped"]))
+    return _OCR_PROVIDER_CACHE[key]
+
+
 # ---------------------------------------------------------------------------
 # Pipeline
 # ---------------------------------------------------------------------------
@@ -150,20 +174,24 @@ def run_detection_pipeline(job_id: str, project_id: str,
                 error_code="PROJECT_MISSING", message="Project not found."))
             return
 
-        # created -> processing_queued -> analyzing
-        proc_repo.transition(db, job, JobState.processing_queued, stage="queued")
-        db.commit()
+        # The /analyze route already moved the job created -> processing_queued
+        # before dispatching. Guard terminal states so an acks-late redelivery
+        # of a finished job is a clean no-op (completed -> processing_queued
+        # would raise "illegal job transition" and crash-loop the retry cycle,
+        # exactly like the Phase 5 task documents), and only bump a fresh
+        # `created` row so a redelivery mid-`analyzing` isn't rewound.
+        if job.status in (JobState.completed, JobState.failed,
+                          JobState.cancelled, JobState.expired):
+            return
+        if job.status == JobState.created:
+            proc_repo.transition(db, job, JobState.processing_queued, stage="queued")
+            db.commit()
 
         with job_lock(job_id, wid, ttl_seconds=settings.job_timeout_seconds) as got:
             if not got:
-                proc_repo.mark_failed(db, job, "LOCK_BUSY",
-                                      "Another worker is already processing this job.")
-                db.commit()
-                proc_task.publish_event(job_id, proc_task._event(
-                    "failed", 100, terminal=True,
-                    error_code="LOCK_BUSY",
-                    message="Job already held by another worker."))
-                return
+                # Held by another worker or a crashed worker's stale lock —
+                # retry later instead of permanently failing the job.
+                raise LockBusy(job_id)
             _execute_detection(db, job, project, wid,
                                dry_run_path=dry_run_path)
     finally:
@@ -246,7 +274,7 @@ def _execute_detection(db, job, project, wid: str, *,
             report: DetectionReport = run_detection(
                 duration_seconds=duration,
                 frame_source=lambda: frames_list,
-                ocr_provider=None,
+                ocr_provider=_make_ocr_provider(job_id),
                 cfg=cfg,
             )
 
@@ -358,6 +386,10 @@ def analyze_video(self, job_id: str, project_id: str,
     reports progress via the shared SSE machinery."""
     try:
         run_detection_pipeline(job_id, project_id, dry_run_path=dry_run_path)
+    except LockBusy as exc:
+        # Someone else owns the job right now (or a crashed worker's stale
+        # lock is waiting out its TTL). Retry later rather than failing.
+        raise self.retry(exc=exc, countdown=120)
     except Exception as exc:  # noqa: BLE001 — final safety net
         # The DB row is already marked failed in run_detection_pipeline.
         raise self.retry(exc=exc, countdown=2 * (self.request.retries + 1))

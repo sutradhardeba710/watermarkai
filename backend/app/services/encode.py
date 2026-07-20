@@ -33,14 +33,23 @@ def extract_frames_args(src: str | Path, frames_dir: str | Path, fps: float | No
         "-i", str(src),
         "-vf", vf,
         "-vsync", "0",          # passthrough — keeps every frame
-        "-frame_pts", "1",      # filename carries presentation timestamp
+        # NOTE: no -frame_pts — the encode step reads the frames back with the
+        # image2 sequence demuxer, which requires sequential numbering starting
+        # near 0. PTS-derived names (e.g. an MP4 edit-list start offset, or raw
+        # 512-step stream PTS when fps is None) leave gaps that truncate or
+        # fail the encode.
         str(Path(frames_dir) / "frame_%08d.png"),
     ]
 
 
 def remux_audio_args(src: str | Path, dst_audio: str | Path) -> list[str]:
     """Demux the original audio track losslessly to disk (NORM-003). No-op if the
-    source has no audio (FFmpeg exits non-zero; callers fall back to no-audio mux)."""
+    source has no audio (FFmpeg exits non-zero; callers fall back to no-audio mux).
+
+    Only works when the source audio is already AAC (the raw ``.aac`` ADTS
+    container accepts nothing else) — for Vorbis/Opus/PCM sources callers fall
+    back to :func:`transcode_audio_aac_args`.
+    """
     settings = get_settings()
     return [
         settings.ffmpeg_bin,
@@ -49,6 +58,27 @@ def remux_audio_args(src: str | Path, dst_audio: str | Path) -> list[str]:
         "-vn",
         "-map", "a?",
         "-c:a", "copy",
+        "-sn",
+        str(dst_audio),
+    ]
+
+
+def transcode_audio_aac_args(src: str | Path, dst_audio: str | Path, *, bitrate: str = "192k") -> list[str]:
+    """Re-encode the source audio to AAC (ENCODE-004 fallback).
+
+    Used when the original codec can't be copied into the .aac/.mp4 container
+    (webm's Vorbis/Opus, MOV PCM). Without this fallback every such upload
+    silently produced a silent output.
+    """
+    settings = get_settings()
+    return [
+        settings.ffmpeg_bin,
+        "-y",
+        "-i", str(src),
+        "-vn",
+        "-map", "a?",
+        "-c:a", "aac",
+        "-b:a", bitrate,
         "-sn",
         str(dst_audio),
     ]
@@ -140,6 +170,7 @@ def output_duration_within_tolerance(
 __all__ = [
     "extract_frames_args",
     "remux_audio_args",
+    "transcode_audio_aac_args",
     "encode_args",
     "validate_output_args",
     "output_duration_within_tolerance",

@@ -1,18 +1,35 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCard, NamedLink } from "@/components/AuthCard";
 import { authApi } from "@/services/auth";
 import { useAuthStore } from "@/features/auth/authStore";
+import { effectiveAdminRole } from "@/features/admin/permissions";
 
-export default function LoginPage() {
+function LoginPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const setAuth = useAuthStore((s) => s.setAuth);
+  const hydrated = useAuthStore((s) => s.hydrated);
+  const currentUser = useAuthStore((s) => s.user);
+  const hasSession = useAuthStore((s) => !!s.accessToken);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+
+  // Already logged in? Don't show the login form — go straight to the app
+  // (or the requested redirect). session=expired means we were sent here on
+  // purpose after a dead session, so the form should show then.
+  useEffect(() => {
+    if (!hydrated || !hasSession || !currentUser) return;
+    if (searchParams.get("session") === "expired") return;
+    const redirect = searchParams.get("redirect");
+    const safeRedirect = redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : null;
+    const home = effectiveAdminRole(currentUser) ? "/admin" : "/dashboard";
+    router.replace(safeRedirect ?? home);
+  }, [hydrated, hasSession, currentUser, searchParams, router]);
 
   async function onSubmit(ev: FormEvent) {
     ev.preventDefault();
@@ -21,7 +38,14 @@ export default function LoginPage() {
     try {
       const res = await authApi.login(email.trim(), password);
       setAuth(res.access_token, res.refresh_token, res.user);
-      router.push("/dashboard");
+      // Honor ?redirect= param (e.g. from /checkout?plan=pro); otherwise
+      // admins land on the admin dashboard, everyone else on /dashboard.
+      // searchParams.get() already URL-decodes, and only same-origin paths
+      // are honored — a full URL here would be an open redirect.
+      const redirect = searchParams.get("redirect");
+      const home = effectiveAdminRole(res.user) ? "/admin" : "/dashboard";
+      const safeRedirect = redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : null;
+      router.push(safeRedirect ?? home);
     } catch (err: any) {
       if (err?.code === "EMAIL_NOT_VERIFIED") {
         setServerError("Please verify your email before logging in.");
@@ -83,3 +107,13 @@ export default function LoginPage() {
 
 
 
+
+// useSearchParams() requires a Suspense boundary for static prerender
+// (nextjs.org/docs/messages/missing-suspense-with-csr-bailout).
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginPageInner />
+    </Suspense>
+  );
+}

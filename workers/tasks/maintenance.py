@@ -44,12 +44,24 @@ def _run_cleanup() -> dict:
     db = SessionLocal()
     deleted = 0
     errors = 0
+    # Which project column each bucket's key lives in — cleared after delete so
+    # the next sweep doesn't re-plan the same artifact and download endpoints
+    # stop signing URLs for objects that no longer exist.
+    key_attr_for_bucket = {
+        "originals": "input_storage_key",
+        "proxies": "proxy_storage_key",
+        "previews": "preview_storage_key",
+        "outputs": "output_storage_key",
+    }
     try:
         rows = db.execute(select(VideoProject)).scalars()
         for p in rows:
             for action in retention.plan_project_cleanup(p, policy):
                 try:
                     storage.delete(action.bucket, action.key)
+                    attr = key_attr_for_bucket.get(action.bucket)
+                    if attr is not None and getattr(p, attr, None) == action.key:
+                        setattr(p, attr, None)
                     deleted += 1
                 except Exception:  # noqa: BLE001 — best-effort, keep sweeping
                     errors += 1
@@ -160,4 +172,23 @@ def emit_metrics_snapshot() -> dict:
         return {"alerts": [], "ts": int(time.time()), "error": "snapshot_failed"}
 
 
-__all__ = ["cleanup_expired_artifacts", "emit_metrics_snapshot"]
+@shared_task(name="workers.tasks.maintenance.reset_daily_credits", queue="processing")
+def reset_daily_credits_task() -> dict:
+    """BILLING: daily credit reset (PRD §17). Scheduled via celery beat —
+    without this, users who exhaust their allowance stay at 402
+    INSUFFICIENT_CREDITS forever (the 402 message promises a daily reset)."""
+    from app.services.payment_service import reset_daily_credits
+
+    db = SessionLocal()
+    try:
+        count = reset_daily_credits(db)
+        db.commit()
+        return {"users_reset": count}
+    except Exception:  # noqa: BLE001 — never let a periodic task crash the beat
+        db.rollback()
+        return {"users_reset": 0, "error": "reset_failed"}
+    finally:
+        db.close()
+
+
+__all__ = ["cleanup_expired_artifacts", "emit_metrics_snapshot", "reset_daily_credits_task"]

@@ -23,6 +23,13 @@ def _redis() -> redis.Redis:
     return redis.from_url(settings.redis_url)
 
 
+class LockBusy(Exception):
+    """Raised by tasks when another worker (or a stale lock left by a crashed
+    worker) holds the per-job lock. Callers retry with a countdown instead of
+    permanently failing the job — with task_acks_late + reject_on_worker_lost,
+    a redelivered message racing a stale lock is expected, not fatal."""
+
+
 @contextlib.contextmanager
 def job_lock(job_id: str, worker_id: str, ttl_seconds: int = 600) -> Generator[bool, None, None]:
     """Redis SETNX job lock — one worker per job (WORKER-004)."""

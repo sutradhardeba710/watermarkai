@@ -1,7 +1,7 @@
 """Auth business logic (SRS AUTH-001..007, SEC-001)."""
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from jose import JWTError
 from sqlalchemy.orm import Session
@@ -131,12 +131,17 @@ def login(req: LoginRequest, ip: str, user_agent: str, db: Session) -> AuthRespo
     user = db.query(User).filter(User.email == req.email.lower()).first()
     if user is None or not verify_password(req.password, user.password_hash):
         raise AppError("INVALID_CREDENTIALS", "Invalid email or password.", 401)
+    if user.account_status == AccountStatus.deleted:
+        # Deleted accounts must not receive sessions/tokens; present as bad creds
+        # rather than leaking that the account existed.
+        raise AppError("INVALID_CREDENTIALS", "Invalid email or password.", 401)
     if user.account_status == AccountStatus.suspended:
         raise AppError("FORBIDDEN", "Account suspended.", 403)
     if not user.email_verified:
         # AUTH-002: unverified cannot process video. We still allow login so they
         # can verify, but flag it. Frontend will block /analyze & /process.
         raise AppError("EMAIL_NOT_VERIFIED", "Please verify your email before logging in.", 403)
+    user.last_login_at = datetime.now(timezone.utc)
     return _issue_session(user, ip, user_agent, db)
 
 
@@ -162,6 +167,13 @@ def _issue_session(user: User, ip: str, user_agent: str, db: Session) -> AuthRes
 
 # --- Refresh (AUTH-006) ---
 
+# Rotation grace: after a refresh token is rotated, the *old* token stays
+# usable for this many seconds. Two tabs refreshing at the same instant (both
+# holding the same token when the 30-min access token expires) is normal — the
+# losing tab must get a fresh session, not a forced logout. Explicit logout
+# still revokes immediately (revoked=True bypasses the grace).
+_ROTATION_GRACE_SECONDS = 60
+
 
 def refresh_session(refresh_token: str, db: Session) -> AuthResponse:
     try:
@@ -170,15 +182,24 @@ def refresh_session(refresh_token: str, db: Session) -> AuthResponse:
         raise AppError("UNAUTHORIZED", "Invalid or expired refresh token.", 401) from exc
     user_id = payload["sub"]
     jti = payload.get("jti", "")
+    now = datetime.now(timezone.utc)
     session = (
         db.query(SessionRow)
         .filter(SessionRow.user_id == user_id, SessionRow.refresh_token_hash == hash_short(refresh_token))
         .first()
     )
-    if session is None or session.revoked or session.expires_at < datetime.now(timezone.utc):
+    if session is None or session.revoked:
         raise AppError("UNAUTHORIZED", "Session not found or expired.", 401)
-    # Rotate: revoke old, issue new.
-    session.revoked = True
+    expires_at = session.expires_at
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if expires_at < now:
+        raise AppError("UNAUTHORIZED", "Session not found or expired.", 401)
+    # Rotate: instead of revoking instantly, collapse the old session's expiry
+    # to the grace window so a concurrent tab's in-flight refresh still lands.
+    grace_expiry = now + timedelta(seconds=_ROTATION_GRACE_SECONDS)
+    if expires_at > grace_expiry:
+        session.expires_at = grace_expiry
     user = db.get(User, user_id)
     if user is None or user.account_status != AccountStatus.active:
         raise AppError("UNAUTHORIZED", "Account unavailable.", 401)
@@ -242,8 +263,10 @@ def reset_password(req: ResetPasswordRequest, db: Session) -> UserPublic:
 
 def _send_email(to: str, subject: str, body: str) -> None:
     # MVP: console log. Switch to SMTP when VWA_SMTP_CONSOLE=false.
+    # flush=True: stdout is block-buffered when redirected to a file, so without
+    # this the verification link never reaches the live log window.
     if settings.smtp_console:
-        print(f"[email] to={to} subject={subject}\nbody={body}\n")
+        print(f"[email] to={to} subject={subject}\nbody={body}\n", flush=True)
         return
     # Real SMTP wired later; left as a no-op guard so dev never crashes.
-    print(f"[email:disabled] to={to} subject={subject}")
+    print(f"[email:disabled] to={to} subject={subject}", flush=True)

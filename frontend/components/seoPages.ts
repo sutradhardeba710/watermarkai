@@ -58,11 +58,6 @@ export const seoPages: SeoPage[] = [
     { title: "Our boundary", body: "The product is for footage users own or are licensed to modify. DRM removal and unauthorized ownership-mark removal are outside the product scope." },
     { title: "Our focus", body: "We prioritize transparent controls, predictable processing, media preservation, and secure output handling." },
   ] },
-  { slug: ["contact"], title: "Contact ClearFrame", description: "Contact ClearFrame about product support, security, authorized workflows, or business inquiries.", eyebrow: "Contact", heading: "Talk with the ClearFrame team.", intro: "Choose the address that best matches your request so it reaches the right workflow.", sections: [
-    { title: "Product support", body: "For account and project assistance, use the support channel available from your account." },
-    { title: "Security reports", body: "Report potential vulnerabilities through the dedicated security contact channel. Do not include sensitive footage in the first message." },
-    { title: "Business inquiries", body: "Use the business inquiry channel to discuss agency or team requirements." },
-  ] },
   { slug: ["terms"], title: "ClearFrame Terms of Service", description: "Read the terms governing ClearFrame accounts, authorized video processing, acceptable use, and service access.", eyebrow: "Legal", heading: "Terms of Service.", intro: "These terms describe the conditions for using ClearFrame and form part of the agreement between ClearFrame and each account holder.", sections: [
     { title: "Account responsibility", body: "You are responsible for accurate account information, credential security, and all activity performed through your account." },
     { title: "Content authorization", body: "You represent that you own or have sufficient permission to upload, modify, and process every submitted file." },
