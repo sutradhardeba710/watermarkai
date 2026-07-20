@@ -37,8 +37,10 @@ COPY workers/ ./workers/
 # ai-models/ → /app/ai-models/  (Detector / Tracker / Inpainter implementations)
 COPY ai-models/ ./ai-models/
 
-# YOLO weights (AGPL — see LICENSE-NOTE.md)
-COPY yolov8n-seg.pt ./yolov8n-seg.pt
+# YOLO weights (AGPL — see LICENSE-NOTE.md) are NOT baked into the image:
+# yolov8n-seg.pt is gitignored (see .gitignore "downloaded at runtime") so it is
+# absent from a clean checkout. Ultralytics fetches it by name on first use and
+# caches it on the mounted storage volume, so no COPY is needed here.
 
 # ── Python path ───────────────────────────────────────────────────────────────
 # /app      → resolves workers.celery_app, workers.tasks.*
