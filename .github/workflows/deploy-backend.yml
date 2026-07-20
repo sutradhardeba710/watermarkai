@@ -30,25 +30,40 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      - name: Preserve and clear server-side local edits
+      - name: Preserve local state and sync to pushed commit
         working-directory: /home/ubuntu/watermarkai
         run: |
           set -euo pipefail
-          # The production host has uncommitted hand-edits to tracked files
-          # (Caddyfile, backend/Dockerfile, docker-compose.prod.yml,
-          # workers/tasks/detection.py) that block `git pull --ff-only`.
-          # Back them up to a timestamped patch AND a git stash (both
-          # recoverable) so nothing is lost, then leave a clean tree so the
-          # deploy can fast-forward. This is non-destructive: recover with
-          #   git stash list / git stash show -p / git apply <patch>
+          # Make the working tree match the pushed commit no matter what local
+          # state exists on the host (tracked hand-edits, or a tracked file that
+          # the incoming commit deletes — e.g. backend/.env.production, which is
+          # now untracked but whose on-disk copy holds the real prod secrets).
+          #
+          # Strategy: copy the live secrets file OUT of the repo, snapshot any
+          # other edits to a timestamped patch, hard-reset to origin, then put
+          # the secrets file back. Non-destructive — the patch and the file copy
+          # are both recoverable.
+          STAMP="$(date +%Y%m%d-%H%M%S)"
+          LIVE_ENV="$HOME/vwa-env-production.live"
+
+          if [[ -f backend/.env.production ]]; then
+            cp backend/.env.production "$LIVE_ENV"
+            echo "Saved live secrets to $LIVE_ENV"
+          fi
+
           if ! git diff --quiet || ! git diff --cached --quiet; then
-            BACKUP="$HOME/ec2-local-edits-$(date +%Y%m%d-%H%M%S).patch"
-            git diff HEAD > "$BACKUP"
-            echo "Saved server-side edits to $BACKUP"
-            git stash push -u -m "auto-preserved before deploy ${{ github.sha }}"
-            echo "Stashed server-side edits (recover with: git stash show -p)"
-          else
-            echo "Working tree already clean; nothing to preserve."
+            git diff HEAD > "$HOME/ec2-local-edits-$STAMP.patch" || true
+            echo "Saved server-side edits to $HOME/ec2-local-edits-$STAMP.patch"
+          fi
+
+          git fetch --prune origin
+          git reset --hard origin/main
+          echo "Working tree hard-reset to $(git rev-parse --short HEAD)"
+
+          # Restore the live secrets file (git-ignored, so it stays put after).
+          if [[ -f "$LIVE_ENV" ]]; then
+            cp "$LIVE_ENV" backend/.env.production
+            echo "Restored live secrets to backend/.env.production"
           fi
 
       - name: Deploy the pushed commit on EC2
