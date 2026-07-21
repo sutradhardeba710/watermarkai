@@ -102,7 +102,25 @@ def _download_original(project: VideoProject, dest: Path) -> Path:
     storage = get_storage()
     key = project.input_storage_key or (project.id + "/" + project.original_filename)
     dest.parent.mkdir(parents=True, exist_ok=True)
-    return Path(storage.download_to_file(ORIGINAL_BUCKET, key, str(dest)))
+    if not storage.exists(ORIGINAL_BUCKET, key):
+        # The DB row points at an object that isn't in storage — retention swept
+        # it (24h window) or the upload never persisted. Surface a precise,
+        # user-actionable error instead of a bare FileNotFoundError whose repr()
+        # drops the missing path.
+        raise AppError(
+            "SOURCE_MISSING",
+            "The source video is no longer in storage (it may have expired after 24 hours). "
+            "Please re-upload the clip and start processing again.",
+            404,
+        )
+    try:
+        return Path(storage.download_to_file(ORIGINAL_BUCKET, key, str(dest)))
+    except FileNotFoundError as exc:
+        raise AppError(
+            "SOURCE_MISSING",
+            "The source video could not be read from storage. Please re-upload the clip.",
+            404,
+        ) from exc
 
 
 def _quality_from(mode: QualityMode) -> str:
@@ -287,7 +305,13 @@ def _execute_job(db, job, project, mask, wid: str, *, dry_run_path: str | None) 
     except subprocess.CalledProcessError as exc:  # pragma: no cover - defensive
         _fail(db, job, project, "FFMPEG_ERROR", f"ffmpeg exited {exc.returncode}")
     except Exception as exc:  # noqa: BLE001 — surface any failure on the job
-        _fail(db, job, project, "INTERNAL", repr(exc))
+        # Log the full traceback worker-side; repr(exc) alone hides the path a
+        # FileNotFoundError carries and is useless for diagnosis.
+        import logging
+        logging.getLogger("workers.processing").exception(
+            "Processing job %s failed unexpectedly", job.id
+        )
+        _fail(db, job, project, "INTERNAL", "Processing failed unexpectedly. Please try again.")
 
 
 def _inpaint_all(db, job_id, job, project, frame_paths, mask_u8, out_dir) -> None:

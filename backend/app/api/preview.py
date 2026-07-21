@@ -16,6 +16,7 @@ queue.
 """
 from __future__ import annotations
 
+import logging
 import shutil
 import tempfile
 import uuid
@@ -45,6 +46,7 @@ from app.services.compliance import gate_downloads_allowed, gate_processing_allo
 from app.storage.factory import get_storage
 
 settings = get_settings()
+logger = logging.getLogger("app.preview")
 router = APIRouter(prefix="/projects", tags=["preview"])
 
 PREVIEW_BUCKET = "previews"
@@ -133,7 +135,17 @@ def create_preview(
     except Exception as exc:  # noqa: BLE001
         p.status = ProjectStatus.failed
         db.commit()
-        raise AppError("PREVIEW_FAILED", repr(exc), 502) from exc
+        # Log the *full* traceback server-side (repr(exc) alone drops the
+        # missing path FileNotFoundError carries on .filename, which is exactly
+        # what you need to know which source object is gone). Surface a stable,
+        # user-facing message instead of the raw Python exception text.
+        logger.exception("Preview build failed for project %s", p.id)
+        raise AppError(
+            "PREVIEW_FAILED",
+            "Could not build the preview. The source video may have expired or is "
+            "still processing — return to the mask editor and try again.",
+            502,
+        ) from exc
 
 
 def _build_preview_clip(
@@ -148,26 +160,69 @@ def _build_preview_clip(
     storage = get_storage()
     # Pull the source to a local temp file. We prefer the proxy for preview so
     # the inpaint runs at <=720p; fall back to the original when there's no
-    # proxy yet.
-    src_key = project.proxy_storage_key or project.input_storage_key
-    src_bucket = PROXY_BUCKET if project.proxy_storage_key else "originals"
-    if not src_key:
-        raise AppError("NOT_FOUND", "Source video is not available in storage.", 404)
+    # proxy yet — or when the proxy object has been swept by retention but the
+    # original is still around.
+    candidates: list[tuple[str, str]] = []
+    if project.proxy_storage_key:
+        candidates.append((PROXY_BUCKET, project.proxy_storage_key))
+    if project.input_storage_key:
+        candidates.append(("originals", project.input_storage_key))
+    if not candidates:
+        raise AppError(
+            "SOURCE_MISSING",
+            "Source video is not available in storage. Re-upload the clip and try again.",
+            404,
+        )
+
+    # Resolve the first source that actually exists on this storage backend. A
+    # DB key with no object behind it is the classic 'FileNotFoundError(2, ...)'
+    # cause: the proxy/original was deleted by retention (24h window) or the
+    # upload's proxy step failed, so the row points at a file that isn't there.
+    src_bucket = src_key = None
+    for bucket, key in candidates:
+        if storage.exists(bucket, key):
+            src_bucket, src_key = bucket, key
+            break
+    if src_key is None:
+        missing = ", ".join(f"{b}/{k}" for b, k in candidates)
+        logger.error("Preview source object missing for project %s (tried: %s)", project.id, missing)
+        raise AppError(
+            "SOURCE_MISSING",
+            "The source video is no longer in storage (it may have expired after 24 hours). "
+            "Please re-upload the clip to generate a new preview.",
+            404,
+        )
 
     work_dir = Path(tempfile.mkdtemp(prefix="vwa-preview-"))
     try:
         local_src = work_dir / "source.mp4"
-        storage.download_to_file(src_bucket, src_key, str(local_src))
+        try:
+            storage.download_to_file(src_bucket, src_key, str(local_src))
+        except FileNotFoundError as exc:
+            # Raced with retention between exists() and the copy, or the local-fs
+            # volume the API sees differs from where the file was written.
+            logger.error(
+                "Preview source download failed for %s (%s/%s): %s",
+                project.id, src_bucket, src_key, exc,
+            )
+            raise AppError(
+                "SOURCE_MISSING",
+                "The source video could not be read from storage. Please re-upload the clip.",
+                404,
+            ) from exc
 
         # Trim window (copy codec when possible)
         trimmed = work_dir / "window.mp4"
         normalize.run_ffmpeg(preview_svc.trim_clip_args(local_src, trimmed, start, duration))
 
         # Re-encode to a <=720p proxy target if the source is full-res. Skip if
-        # already 720p (proxy path); keeps the loop fast.
+        # the source we resolved is already the <=720p proxy; keeps the loop
+        # fast. Key off the bucket we actually downloaded from, not the DB proxy
+        # key — that key may point at a swept file we just fell back off of.
         proxy = work_dir / "proxy.mp4"
         h = project.height or 0
-        if h > 720 and project.proxy_storage_key is None:
+        source_is_proxy = src_bucket == PROXY_BUCKET
+        if h > 720 and not source_is_proxy:
             normalize.run_ffmpeg(preview_svc.proxy_target_args(trimmed, proxy))
         else:
             proxy = trimmed
