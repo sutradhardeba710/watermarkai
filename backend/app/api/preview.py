@@ -395,8 +395,13 @@ def issue_download_url(
     gate_downloads_allowed(p)
 
     b = body or DownloadUrlRequest()
-    storage = get_storage()
-    url = storage.signed_download_url(OUTPUT_BUCKET, p.output_storage_key, b.expires_seconds)
+    # Always mint the app's own signed token (not storage.signed_download_url):
+    # the /output route streams bytes via storage.get() and validates this JWT.
+    # On the minio/S3 backend, signed_download_url returns an S3 presigned URL
+    # the frontend would forward as ?token=, which /output can't parse -> 403.
+    from app.storage.local_fs import mint_signed_token
+
+    url = f"token:{mint_signed_token(OUTPUT_BUCKET, p.output_storage_key, b.expires_seconds)}"
     from datetime import datetime, timedelta, timezone
 
     exp = datetime.now(timezone.utc) + timedelta(seconds=b.expires_seconds)

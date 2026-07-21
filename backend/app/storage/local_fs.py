@@ -88,4 +88,23 @@ def parse_signed_token(url: str) -> tuple[str, str]:
     return LocalFsStorage.verify_signed_url(url[len("token:") :])
 
 
-__all__ = ["LocalFsStorage", "parse_signed_token"]
+def mint_signed_token(bucket: str, key: str, expires_seconds: int) -> str:
+    """Mint the app's own signed media token, independent of the storage backend.
+
+    The proxy/thumbnail/preview/output routes stream object bytes through
+    ``storage.get()`` (same-origin) and authenticate with this JWT via
+    ``?token=``. They must NOT use ``storage.signed_download_url`` for that
+    token: on the minio/S3 backend that returns a real S3 presigned URL, which
+    ``parse_signed_token`` cannot validate — the browser then gets a 403 (and
+    media elements go black). Returns the raw JWT (no ``token:`` prefix), which
+    is exactly what the ``?token=`` query param carries.
+    """
+    payload = {
+        "bucket": bucket,
+        "key": key,
+        "exp": int(time.time()) + expires_seconds,
+    }
+    return jwt.encode(payload, _settings.secret_key, algorithm="HS256")
+
+
+__all__ = ["LocalFsStorage", "parse_signed_token", "mint_signed_token"]

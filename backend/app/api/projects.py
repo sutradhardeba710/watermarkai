@@ -85,22 +85,22 @@ def _attach_signed_media_urls(detail: ProjectSummary, p: VideoProject) -> None:
     from app.storage.factory import get_storage
 
     storage = get_storage()
+    # These routes stream bytes via storage.get() and authenticate with the
+    # app's own JWT (?token=). Mint that JWT directly — storage.signed_download_url
+    # returns an S3 presigned URL on the minio backend, which the app routes
+    # can't parse (403 / black media element).
+    from app.storage.local_fs import mint_signed_token
+
     if p.proxy_storage_key:
-        detail.proxy_url = f"/api/v1/projects/{p.id}/proxy?token={_strip_scheme(storage.signed_download_url('proxies', p.proxy_storage_key, _MEDIA_TOKEN_TTL))}"
+        detail.proxy_url = f"/api/v1/projects/{p.id}/proxy?token={mint_signed_token('proxies', p.proxy_storage_key, _MEDIA_TOKEN_TTL)}"
     if p.thumbnail_storage_key:
-        detail.thumbnail_url = f"/api/v1/projects/{p.id}/thumbnail?token={_strip_scheme(storage.signed_download_url('thumbnails', p.thumbnail_storage_key, _MEDIA_TOKEN_TTL))}"
+        detail.thumbnail_url = f"/api/v1/projects/{p.id}/thumbnail?token={mint_signed_token('thumbnails', p.thumbnail_storage_key, _MEDIA_TOKEN_TTL)}"
     if p.preview_storage_key and isinstance(detail, ProjectDetail):
-        detail.preview_url = f"/api/v1/projects/{p.id}/preview-clip?token={_strip_scheme(storage.signed_download_url('previews', p.preview_storage_key, _MEDIA_TOKEN_TTL))}"
+        detail.preview_url = f"/api/v1/projects/{p.id}/preview-clip?token={mint_signed_token('previews', p.preview_storage_key, _MEDIA_TOKEN_TTL)}"
         from app.api.preview import _before_preview_key
         before_key = _before_preview_key(p.preview_storage_key)
         if storage.exists("previews", before_key):
-            detail.before_preview_url = f"/api/v1/projects/{p.id}/preview-clip?variant=before&token={_strip_scheme(storage.signed_download_url('previews', before_key, _MEDIA_TOKEN_TTL))}"
-
-
-def _strip_scheme(signed: str) -> str:
-    # signed_download_url returns "token:<jwt>"; the ?token= query carries the
-    # raw jwt and the route re-adds the scheme before parsing.
-    return signed[len("token:"):] if signed.startswith("token:") else signed
+            detail.before_preview_url = f"/api/v1/projects/{p.id}/preview-clip?variant=before&token={mint_signed_token('previews', before_key, _MEDIA_TOKEN_TTL)}"
 
 
 @router.post("", response_model=ProjectDetail, status_code=status.HTTP_201_CREATED)
