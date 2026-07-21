@@ -10,20 +10,14 @@ import {
   Calendar,
   Check,
   ChevronRight,
-  CreditCard,
-  FolderKanban,
-  LogOut,
   Shield,
-  Sparkles,
-  Upload,
   Zap,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useHydrateAuth } from "@/features/auth/useHydrateAuth";
 import { useAuthStore } from "@/features/auth/authStore";
-import { UserMenu } from "@/features/account/UserMenu";
+import { WorkspaceShell } from "@/components/WorkspaceShell";
 import { paymentsApi, type SubscriptionStatus } from "@/services/payments";
-import { authApi } from "@/services/auth";
 
 const PLAN_COLORS: Record<string, string> = {
   free: "from-white/10 to-white/5",
@@ -57,8 +51,6 @@ export default function BillingPage() {
   useHydrateAuth();
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
-  const clear = useAuthStore((s) => s.clear);
-  const refreshToken = useAuthStore((s) => s.refreshToken);
   const hydrated = useAuthStore((s) => s.hydrated);
   const ready = useAuthStore((s) => !!s.accessToken);
 
@@ -78,12 +70,6 @@ export default function BillingPage() {
     queryFn: paymentsApi.status,
     enabled: ready,
   });
-
-  async function logout() {
-    await authApi.logout(refreshToken ?? undefined);
-    clear();
-    router.replace("/login");
-  }
 
   async function handleCancel() {
     setCancelling(true);
@@ -124,42 +110,7 @@ export default function BillingPage() {
     : null;
 
   return (
-    <main className="min-h-dvh bg-[#07080f] text-[#f5f6fa]">
-      {/* Sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-white/[.07] bg-[#0a0c18] px-4 py-6 lg:flex">
-        <Link href="/" className="flex items-center gap-2.5 text-lg font-semibold tracking-tight">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] text-white shadow-[0_0_22px_rgba(79,124,255,.35)]">
-            <Sparkles className="h-5 w-5" />
-          </span>
-          ClearFrame
-        </Link>
-        <nav className="mt-10 space-y-1 text-sm">
-          <Link href="/dashboard" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white">
-            <FolderKanban className="h-4 w-4" /> Projects
-          </Link>
-          <Link href="/upload" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 hover:bg-white/5 hover:text-white">
-            <Upload className="h-4 w-4" /> Upload
-          </Link>
-          <Link href="/billing" className="flex items-center gap-3 rounded-xl bg-white/10 px-3 py-2.5 font-medium text-white">
-            <CreditCard className="h-4 w-4 text-[#9eb4ff]" /> Billing
-          </Link>
-        </nav>
-        <div className="mt-auto">
-          <button onClick={logout} className="flex items-center gap-2 text-xs text-white/45 hover:text-white">
-            <LogOut className="h-3.5 w-3.5" /> Log out
-          </button>
-        </div>
-      </aside>
-
-      <div className="lg:pl-64">
-        <header className="sticky top-0 z-20 flex h-20 items-center justify-between border-b border-white/[.07] bg-[#07080f]/90 px-5 backdrop-blur-xl sm:px-8">
-          <div>
-            <p className="text-xs uppercase tracking-[.16em] text-white/35">Account</p>
-            <h1 className="mt-1 text-xl font-semibold">Billing & Credits</h1>
-          </div>
-          <UserMenu />
-        </header>
-
+    <WorkspaceShell title="Billing & Credits" eyebrow="Account">
         <div className="mx-auto max-w-4xl px-5 py-10 sm:px-8">
           {isLoading ? (
             <div className="space-y-4">
@@ -354,7 +305,6 @@ export default function BillingPage() {
             </div>
           ) : null}
         </div>
-      </div>
-    </main>
+    </WorkspaceShell>
   );
 }

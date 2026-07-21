@@ -35,6 +35,7 @@ from app.schemas.candidates import (
     CandidateResponse,
 )
 from app.services.compliance import gate_processing_allowed, gate_unconfirmed
+from app.services.task_dispatch import BrokerUnavailable, dispatch_task
 
 project_router = APIRouter(prefix="/projects", tags=["detection"])
 candidate_router = APIRouter(prefix="/candidates", tags=["detection"])
@@ -124,22 +125,13 @@ def enqueue_analyze(
     db.commit()
     db.refresh(job)
 
-    # Imported lazily so a missing Celery import doesn't crash the route layer
-    # in tests that bypass the broker. Import workers.celery_app first so the
-    # @shared_task binds to our app (broker_url/queues); see app/api/processing.py.
+    # Publish via dispatch_task (lazy Celery import for tests, fresh-connection
+    # retry for the stale-socket case, and real error logging). See
+    # app/services/task_dispatch.py.
     try:
-        import workers.celery_app  # noqa: F401
         from workers.tasks.detection import analyze_video
-
-        analyze_video.apply_async(
-            args=(job.id, p.id),
-            queue="detection",
-            # Fail fast on a dead broker instead of hanging on kombu's default
-            # connection-retry loop (same rationale as the /process route).
-            retry=True,
-            retry_policy={"max_retries": 2, "interval_start": 0, "interval_step": 0.5, "interval_max": 1},
-        )
-    except Exception:  # noqa: BLE001 — celery optional in dev
+        dispatch_task(analyze_video, args=(job.id, p.id), queue="detection")
+    except BrokerUnavailable:
         # Without this the job row stays processing_queued forever and every
         # later /analyze returns the dead job, so the project can never be
         # re-analyzed.

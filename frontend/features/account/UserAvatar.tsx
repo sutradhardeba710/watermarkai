@@ -33,7 +33,7 @@ export function UserAvatar({
   size = 36,
   className,
 }: {
-  user: Pick<AuthUser, "id" | "full_name" | "email"> | null | undefined;
+  user: Pick<AuthUser, "id" | "full_name" | "email" | "avatar_url"> | null | undefined;
   imageUrl?: string | null;
   size?: number;
   className?: string;
@@ -41,7 +41,10 @@ export function UserAvatar({
   const [imageFailed, setImageFailed] = useState(false);
   const initial = initialFor(user);
   const seed = user?.id || user?.email || "account";
-  const showImage = Boolean(imageUrl) && !imageFailed;
+  // Explicit imageUrl wins (e.g. a local preview during upload); otherwise fall
+  // back to the user's stored avatar.
+  const resolvedUrl = imageUrl ?? user?.avatar_url ?? null;
+  const showImage = Boolean(resolvedUrl) && !imageFailed;
 
   return (
     <span
@@ -55,7 +58,7 @@ export function UserAvatar({
       {showImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={imageUrl!}
+          src={resolvedUrl!}
           alt=""
           className="h-full w-full object-cover"
           onError={() => setImageFailed(true)}

@@ -11,6 +11,7 @@ export interface AuthUser {
   email_verified: boolean;
   account_status: string;
   created_at: string;
+  avatar_url?: string | null;
 }
 
 interface AuthState {

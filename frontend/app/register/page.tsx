@@ -16,10 +16,8 @@ export default function RegisterPage() {
   useEffect(() => {
     if (hydrated && hasSession) router.replace("/dashboard");
   }, [hydrated, hasSession, router]);
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
   const [terms, setTerms] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -28,11 +26,9 @@ export default function RegisterPage() {
 
   function validate(): boolean {
     const e: Record<string, string> = {};
-    if (!fullName.trim()) e.full_name = "Full name is required.";
     if (!email.trim()) e.email = "Email is required.";
     if (!password) e.password = "Password is required.";
     else if (!isStrongPassword(password)) e.password = STRENGTH_MSG;
-    if (confirm !== password) e.confirm_password = "Passwords do not match.";
     if (!terms) e.terms = "You must accept the terms to continue.";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -44,11 +40,12 @@ export default function RegisterPage() {
     if (!validate()) return;
     setBusy(true);
     try {
+      const emailTrimmed = email.trim();
       await authApi.register({
-        full_name: fullName.trim(),
-        email: email.trim(),
+        full_name: emailTrimmed.split("@")[0] || emailTrimmed,
+        email: emailTrimmed,
         password,
-        confirm_password: confirm,
+        confirm_password: password,
         terms_accepted: terms,
       });
       setSubmitted(true);
@@ -97,16 +94,6 @@ export default function RegisterPage() {
       )}
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         <div>
-          <label className="mb-1 block text-sm font-medium">Full name</label>
-          <input
-            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-[#4F7CFF] focus:ring-2 focus:ring-[#4F7CFF]/30"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            autoComplete="name"
-          />
-          <FieldError msg={errors.full_name} />
-        </div>
-        <div>
           <label className="mb-1 block text-sm font-medium">Email</label>
           <input
             type="email"
@@ -127,17 +114,6 @@ export default function RegisterPage() {
             autoComplete="new-password"
           />
           <FieldError msg={errors.password} />
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium">Confirm password</label>
-          <input
-            type="password"
-            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-[#4F7CFF] focus:ring-2 focus:ring-[#4F7CFF]/30"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            autoComplete="new-password"
-          />
-          <FieldError msg={errors.confirm_password} />
         </div>
         <label className="flex items-start gap-2 text-sm text-white/70">
           <input

@@ -76,8 +76,38 @@ class UserPublic(BaseModel):
     email_verified: bool
     account_status: str
     created_at: datetime
+    avatar_url: Optional[str] = None
 
     model_config = {"from_attributes": True}
+
+    @classmethod
+    def from_user(cls, user) -> "UserPublic":
+        """Build the public view, deriving avatar_url from the stored key."""
+        data = cls.model_validate(user)
+        if getattr(user, "avatar_key", None):
+            data.avatar_url = f"/api/v1/auth/avatars/{user.avatar_key}"
+        return data
+
+
+class UpdateProfileRequest(BaseModel):
+    full_name: str = Field(min_length=1, max_length=255)
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str = Field(min_length=1, max_length=128)
+    new_password: str = Field(min_length=8, max_length=128)
+    confirm_password: str = Field(min_length=8, max_length=128)
+
+    @field_validator("confirm_password")
+    @classmethod
+    def _match(cls, v: str, info) -> str:
+        if info.data.get("new_password") != v:
+            raise ValueError("New password and confirmation do not match.")
+        return v
+
+
+class DeleteAccountRequest(BaseModel):
+    password: str = Field(min_length=1, max_length=128)
 
 
 class PasswordResetTokenResponse(BaseModel):

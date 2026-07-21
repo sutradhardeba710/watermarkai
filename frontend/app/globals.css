@@ -6,6 +6,13 @@
   color-scheme: dark;
 }
 
+/* Always reserve the vertical scrollbar's width so the layout doesn't shift
+   sideways when navigating between a tall page (e.g. Projects) and a short one
+   (Upload / Billing). Without this the shell appears to "jump" every time. */
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   @apply bg-[#07080f] text-white antialiased;
 }

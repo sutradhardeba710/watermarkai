@@ -42,3 +42,8 @@ Thumbs.db
 *.pt
 *.onnx
 weights/
+
+# Runtime state / caches (not source)
+dump.rdb
+celerybeat-schedule*
+*.tsbuildinfo

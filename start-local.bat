@@ -106,16 +106,31 @@ if "!PORT_UP!"=="1" (
 )
 
 REM --- Celery worker + beat (no port; solo pool for Windows) ------------------
-REM  -B embeds the beat scheduler so periodic jobs (credit reset, retention
-REM  cleanup, metrics) run locally too. Detected via the "VWA Worker" window
-REM  title so re-runs don't stack duplicate workers.
+REM  IMPORTANT: -B (embedded beat) is NOT supported on Windows -- celery exits
+REM  immediately with "Error: -B option does not work on Windows" and the worker
+REM  never consumes jobs, so /process sits at "Queued 0%" forever. So the worker
+REM  runs WITHOUT -B, and beat runs as its OWN process (below). Each is detected
+REM  via its window title so re-runs don't stack duplicates.
 set "WORKER_UP=0"
 for /f "tokens=*" %%L in ('tasklist /v ^| findstr /c:"VWA Worker"') do set "WORKER_UP=1"
 if "!WORKER_UP!"=="1" (
   echo [ OK ] Worker already running
 ) else (
   echo [ .. ] Starting Worker...
-  start "VWA Worker" cmd /k "cd /d "!PROJECT_ROOT!." && "!PY!" -m celery -A workers.celery_app worker -B -Q detection,processing,encoding --pool=solo -l info"
+  start "VWA Worker" cmd /k "cd /d "!PROJECT_ROOT!." && "!PY!" -m celery -A workers.celery_app worker -Q detection,processing,encoding --pool=solo -l info"
+)
+
+REM --- Celery beat (periodic jobs: credit reset, retention cleanup, metrics) ---
+REM  Separate process because -B can't be embedded on Windows. Optional for
+REM  local video work -- the worker above handles all process/detection jobs on
+REM  its own; beat only drives the scheduled maintenance tasks.
+set "BEAT_UP=0"
+for /f "tokens=*" %%L in ('tasklist /v ^| findstr /c:"VWA Beat"') do set "BEAT_UP=1"
+if "!BEAT_UP!"=="1" (
+  echo [ OK ] Beat already running
+) else (
+  echo [ .. ] Starting Beat...
+  start "VWA Beat" cmd /k "cd /d "!PROJECT_ROOT!." && "!PY!" -m celery -A workers.celery_app beat -l info"
 )
 
 REM --- Frontend (3000) -------------------------------------------------------

@@ -35,6 +35,7 @@ from app.schemas.processing import (
 )
 from app.services.compliance import gate_processing_allowed, gate_unconfirmed
 from app.services.payment_service import deduct_credits, refund_credits, CREDITS_PER_JOB
+from app.services.task_dispatch import BrokerUnavailable, dispatch_task
 
 settings = get_settings()
 
@@ -152,30 +153,17 @@ def enqueue_process(
     db.commit()
     db.refresh(job)
 
-    # Enqueue on the processing queue. Imported lazily so the API process does
-    # not require Celery to import (unit tests reach the route helpers
-    # directly without a running broker).
-    # Importing workers.celery_app FIRST makes it the current Celery app, so the
-    # @shared_task `process_video` binds to it (broker_url, queues, pool settings).
-    # Without this, shared_task binds to Celery's default app, whose broker_url is
-    # None — apply_async raises kombu OperationalError "connection refused" and
-    # /process returns 500, leaving the job stuck at processing_queued (UI shows
-    # "queued · 0% (0/0 frames)" forever).
+    # Enqueue on the processing queue. Publishing is delegated to dispatch_task,
+    # which imports the Celery app lazily (so unit tests can reach the route
+    # helpers without a running broker), retries once on a fresh connection to
+    # survive a stale pooled socket (the common Windows/OneDrive case), and logs
+    # the real error instead of masking every failure as "broker unavailable".
     try:
-        import workers.celery_app  # noqa: F401 — current-app setup
         from workers.tasks.processing import process_video
-        process_video.apply_async(
-            args=(job.id, p.id),
-            queue="processing",
-            # Bound the publish so a dead/unreachable broker fails fast (~a few
-            # seconds) instead of blocking the request for ~2 minutes on kombu's
-            # default connection-retry loop before the except-branch runs.
-            retry=True,
-            retry_policy={"max_retries": 2, "interval_start": 0, "interval_step": 0.5, "interval_max": 1},
-        )
-    except Exception:  # noqa: BLE001 — celery optional in dev
-        # If Celery is unavailable (e.g., broker not running), refund credits
-        # and surface a useful error rather than leaving the user charged.
+        dispatch_task(process_video, args=(job.id, p.id), queue="processing")
+    except BrokerUnavailable:
+        # Broker is genuinely unreachable — refund credits and surface a useful
+        # error rather than leaving the user charged with a stuck job.
         refund_credits(db, user=user, cost=CREDITS_PER_JOB)
         proc_repo.transition(db, job, JobState.failed, stage="dispatch",
                              error_code="BROKER_UNAVAILABLE",

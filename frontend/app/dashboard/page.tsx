@@ -4,13 +4,12 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Bell, Check, ChevronDown, CreditCard, FolderKanban, LayoutGrid, List, LogOut, MoreHorizontal, Search, Sparkles, Upload, X, Zap } from "lucide-react";
+import { Check, ChevronDown, CreditCard, FolderKanban, LayoutGrid, List, MoreHorizontal, Search, Upload, X, Zap } from "lucide-react";
 import { useHydrateAuth } from "@/features/auth/useHydrateAuth";
 import { useAuthStore } from "@/features/auth/authStore";
-import { UserMenu } from "@/features/account/UserMenu";
+import { WorkspaceShell } from "@/components/WorkspaceShell";
 import { effectiveAdminRole } from "@/features/admin/permissions";
 import { projectsApi } from "@/services/projects";
-import { authApi } from "@/services/auth";
 import { downloadApi } from "@/services/process";
 import { paymentsApi, type CreditStatus } from "@/services/payments";
 import { VideoProject } from "@/types";
@@ -20,35 +19,15 @@ const statusStyles: Record<string, string> = { completed: "bg-emerald-400/15 tex
 function fmtDuration(s?: number) { if (!s && s !== 0) return "—"; const total = Math.round(s); return `${Math.floor(total / 60)}:${(total % 60).toString().padStart(2, "0")}`; }
 function canOpen(status: string) { return ["preview_ready", "preview_processing", "processing_queued", "processing", "encoding", "completed", "failed"].includes(status); }
 function prettyStatus(status: string) { return status.replaceAll("_", " ").replace(/(^| )\w/g, (m) => m.toUpperCase()); }
-function Brand() { return <Link href="/" className="flex items-center gap-2.5 text-lg font-semibold tracking-tight"><span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] text-white shadow-[0_0_22px_rgba(79,124,255,.35)]"><Sparkles className="h-5 w-5" /></span>ClearFrame</Link>; }
 function StatusBadge({ status }: { status: string }) { return <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${statusStyles[status] || statusStyles.created}`}>{prettyStatus(status)}</span>; }
 
-function CreditWidget({ credits }: { credits: CreditStatus | undefined }) {
-  if (!credits) return null;
-  const pct = credits.credits_per_day > 0 ? Math.min(100, (credits.credits_remaining / credits.credits_per_day) * 100) : 0;
-  const barColor = pct < 20 ? "from-rose-500 to-rose-400" : pct < 50 ? "from-amber-400 to-amber-300" : "from-[#4f7cff] to-[#6d5ef7]";
-  return (
-    <Link href="/billing" className="block rounded-2xl border border-white/10 bg-white/[.03] p-4 transition hover:border-white/20">
-      <div className="flex items-center justify-between text-xs">
-        <span className="flex items-center gap-1.5 font-medium text-cyan-200"><Zap className="h-3 w-3" />{credits.plan_name}</span>
-        <span className="text-white/55">{credits.credits_remaining.toLocaleString("en-IN")} cr</span>
-      </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
-        <div className={`h-full rounded-full bg-gradient-to-r ${barColor} transition-all`} style={{ width: `${pct}%` }} />
-      </div>
-      <p className="mt-1.5 text-[10px] text-white/35">{credits.credits_remaining} / {credits.credits_per_day} credits today</p>
-      {credits.plan_id === "free" && <p className="mt-2 text-[10px] font-medium text-[#b7c7ff] hover:text-white">Upgrade for more →</p>}
-    </Link>
-  );
-}
+
 
 function DashboardPageInner() {
   useHydrateAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const user = useAuthStore((s) => s.user);
-  const clear = useAuthStore((s) => s.clear);
-  const refreshToken = useAuthStore((s) => s.refreshToken);
   const hydrated = useAuthStore((s) => s.hydrated);
   const ready = useAuthStore((s) => !!s.accessToken);
   const [filter, setFilter] = useState<string | undefined>();
@@ -83,18 +62,24 @@ function DashboardPageInner() {
   const { data, isLoading, isError, refetch } = useQuery({ queryKey: ["projects", query], queryFn: () => projectsApi.list(query), enabled: ready });
   const { data: credits } = useQuery<CreditStatus>({ queryKey: ["credits"], queryFn: paymentsApi.credits, enabled: ready });
 
-  async function logout() { await authApi.logout(refreshToken ?? undefined); clear(); router.replace("/login"); }
-
   if (!ready || !user || isAdmin) return null;
   const projects = data || [];
   const completed = projects.filter((p) => p.status === "completed").length;
   const processing = projects.filter((p) => ["processing", "analyzing", "encoding"].includes(p.status)).length;
 
   return (
-    <main className="min-h-dvh bg-[#07080f] text-[#f5f6fa]">
-      {/* Ambient workspace glow */}
-      <div className="pointer-events-none fixed left-1/2 top-0 z-0 h-96 w-[60rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_top,rgba(79,124,255,.08),transparent_65%)]" />
-      <div className="pointer-events-none fixed bottom-0 right-0 z-0 h-80 w-80 bg-[radial-gradient(circle_at_bottom_right,rgba(139,92,246,.06),transparent_70%)]" />
+    <WorkspaceShell
+      title="Projects"
+      actions={
+        <>
+          <div className="hidden w-64 items-center rounded-xl border border-white/10 bg-white/5 px-3 transition focus-within:border-[#4f7cff]/50 focus-within:shadow-[0_0_0_3px_rgba(79,124,255,.12)] md:flex">
+            <Search className="h-4 w-4 text-white/35" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search projects…" className="w-full border-0 bg-transparent px-2 py-2 text-sm text-white outline-none placeholder:text-white/30" />
+          </div>
+          <Link href="/upload" className="hidden items-center gap-2 rounded-xl bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(79,124,255,.22)] transition hover:brightness-110 sm:flex"><Upload className="h-4 w-4" />New project</Link>
+        </>
+      }
+    >
       {/* Subscribed success toast */}
       {showSubscribedToast && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl border border-emerald-400/25 bg-[#0e1420] px-5 py-4 shadow-[0_20px_60px_rgba(52,211,153,.15)]">
@@ -109,40 +94,7 @@ function DashboardPageInner() {
         </div>
       )}
 
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-white/[.07] bg-[#0a0c18] px-4 py-6 lg:flex">
-        <Brand />
-        <nav className="mt-10 space-y-1 text-sm">
-          <Link href="/dashboard" className="relative flex items-center gap-3 rounded-xl border border-[#4f7cff]/25 bg-gradient-to-r from-[#4f7cff]/15 to-[#8b5cf6]/10 px-3 py-2.5 font-medium text-white">
-            <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-[#4f7cff] to-[#8b5cf6]" />
-            <FolderKanban className="h-4 w-4 text-[#9db9ff]" />Projects
-          </Link>
-          <Link href="/upload" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 transition hover:bg-white/5 hover:text-white"><Upload className="h-4 w-4" />Upload</Link>
-          <Link href="/billing" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/55 transition hover:bg-white/5 hover:text-white"><CreditCard className="h-4 w-4" />Billing</Link>
-        </nav>
-        <div className="mt-auto space-y-3">
-          <CreditWidget credits={credits} />
-          <button onClick={logout} className="flex items-center gap-2 text-xs text-white/45 hover:text-white"><LogOut className="h-3.5 w-3.5" />Log out</button>
-        </div>
-      </aside>
-
-      <div className="relative lg:pl-64">
-        <header className="sticky top-0 z-20 flex h-20 items-center justify-between border-b border-white/[.07] bg-[#07080f]/90 px-5 backdrop-blur-xl sm:px-8">
-          <div>
-            <p className="text-xs uppercase tracking-[.16em] text-white/35">Workspace</p>
-            <h1 className="mt-1 text-xl font-semibold">Projects</h1>
-          </div>
-          <div className="hidden max-w-md flex-1 items-center rounded-xl border border-white/10 bg-white/5 px-3 transition focus-within:border-[#4f7cff]/50 focus-within:shadow-[0_0_0_3px_rgba(79,124,255,.12)] sm:flex md:mx-12">
-            <Search className="h-4 w-4 text-white/35" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search projects…" className="w-full border-0 bg-transparent px-2 py-2 text-sm text-white outline-none placeholder:text-white/30" />
-          </div>
-          <div className="flex items-center gap-2">
-            <Link href="/upload" className="hidden items-center gap-2 rounded-xl bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(79,124,255,.22)] transition hover:brightness-110 sm:flex"><Upload className="h-4 w-4" />New project</Link>
-            <button aria-label="Notifications" className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 text-white/55 hover:text-white"><Bell className="h-4 w-4" /></button>
-            <UserMenu />
-          </div>
-        </header>
-
-        <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
+      <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
           <div className="mb-8 grid gap-3 sm:grid-cols-4">
             <Stat label="Total projects" value={projects.length} icon={FolderKanban} tone="indigo" />
             <Stat label="Processing now" value={processing} icon={Zap} tone="amber" />
@@ -199,8 +151,7 @@ function DashboardPageInner() {
             </div>
           )}
         </div>
-      </div>
-    </main>
+    </WorkspaceShell>
   );
 }
 
@@ -255,7 +206,7 @@ function ProjectCard({ project, onRefresh }: { project: VideoProject; onRefresh:
           <div className="relative">
             <button aria-label="More project actions" onClick={() => setOpen(!open)} className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-white/55 hover:text-white"><MoreHorizontal className="h-5 w-5" /></button>
             {open && (
-              <div className="absolute right-0 z-20 mt-2 w-44 rounded-xl border border-white/10 bg-[#171a2b] p-1 text-sm shadow-2xl">
+              <div className="absolute bottom-full right-0 z-20 mb-2 w-44 rounded-xl border border-white/10 bg-[#171a2b] p-1 text-sm shadow-2xl">
                 <Link href={`/projects/${project.id}/candidates`} className="block rounded-lg px-3 py-2 text-white/75 hover:bg-white/10">AI Detect</Link>
                 {project.status === "completed" && (
                   <button onClick={async () => { const dl = await downloadApi.issueUrl(project.id); const token = dl.url.startsWith("token:") ? dl.url.slice(6) : dl.url; window.open(downloadApi.streamUrl(project.id, token), "_blank"); }} className="block w-full rounded-lg px-3 py-2 text-left text-white/75 hover:bg-white/10">Download</button>

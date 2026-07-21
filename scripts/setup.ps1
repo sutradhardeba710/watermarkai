@@ -27,6 +27,9 @@ Pop-Location
 
 Write-Host ""
 Write-Host "Done."
-Write-Host "  Backend :  backend\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --reload --port 8000"
+Write-Host "  Backend :  backend\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --port 8000"
+Write-Host "             (do NOT add --reload here: this repo lives in a OneDrive folder and"
+Write-Host "              the synchronous /preview endpoint writes artifacts the watcher then"
+Write-Host "              treats as code changes, restarting the server mid-request -> 500.)"
 Write-Host "  Worker  :  backend\.venv\Scripts\python.exe -m celery -A workers.celery_app worker -Q detection,processing,encoding --pool=solo -l info"
 Write-Host "  Frontend:  cd frontend; npm run dev   ->  http://localhost:3000"

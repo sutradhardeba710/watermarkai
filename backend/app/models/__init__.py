@@ -133,6 +133,9 @@ class User(Base):
     # non-staff. Legacy role=='admin' with NULL admin_role maps to super_admin
     # via admin_permissions.effective_admin_role.
     admin_role: Mapped[str | None] = mapped_column(String(32), nullable=True, index=True)
+    # Self-service profile picture. Stores the object key inside the `avatars`
+    # bucket; NULL → fall back to the generated initial/gradient avatar.
+    avatar_key: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     # Administrator-management tracking (PRD §28.1). All nullable — only staff
     # rows populate them; normal users leave them NULL.
     mfa_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)

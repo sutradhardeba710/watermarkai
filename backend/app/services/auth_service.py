@@ -161,7 +161,7 @@ def _issue_session(user: User, ip: str, user_agent: str, db: Session) -> AuthRes
     return AuthResponse(
         access_token=access,
         refresh_token=refresh,
-        user=UserPublic.model_validate(user),
+        user=UserPublic.from_user(user),
     )
 
 

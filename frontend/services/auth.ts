@@ -40,3 +40,25 @@ export const authApi = {
   resetPassword: (token: string, password: string, confirm_password: string) =>
     api.post<AuthUser>("/auth/reset-password", { token, password, confirm_password }).then((r) => r.data),
 };
+
+/** Self-service account management (acts on the current user via /auth/me). */
+export const accountApi = {
+  updateProfile: (full_name: string) =>
+    api.patch<AuthUser>("/auth/me", { full_name }).then((r) => r.data),
+
+  changePassword: (current_password: string, new_password: string, confirm_password: string) =>
+    api.post("/auth/me/password", { current_password, new_password, confirm_password }).then((r) => r.data),
+
+  uploadAvatar: (file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return api
+      .post<AuthUser>("/auth/me/avatar", form, { headers: { "Content-Type": "multipart/form-data" } })
+      .then((r) => r.data);
+  },
+
+  removeAvatar: () => api.delete<AuthUser>("/auth/me/avatar").then((r) => r.data),
+
+  deleteAccount: (password: string) =>
+    api.delete("/auth/me", { data: { password } }).then((r) => r.data),
+};
