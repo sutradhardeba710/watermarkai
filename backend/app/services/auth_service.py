@@ -32,6 +32,7 @@ from app.schemas.auth import (
     ResetPasswordRequest,
     UserPublic,
 )
+from app.services import email_service
 
 settings = get_settings()
 
@@ -102,9 +103,10 @@ def register(req: RegisterRequest, db: Session) -> UserPublic:
     db.add(user)
     db.commit()
     db.refresh(user)
-    # AUTH-002: verification email. MVP stubs to console.
+    # AUTH-002: verification email.
     token = make_email_verification_token(user.id)
-    _send_email(user.email, "Verify your email", f"{settings.app_base_url}/verify-email?token={token}")
+    verify_url = f"{settings.app_base_url}/verify-email?token={token}"
+    email_service.queue_email(user.email, "welcome_verify", {"name": user.full_name, "verify_url": verify_url})
     return UserPublic.model_validate(user)
 
 
@@ -121,6 +123,7 @@ def verify_email(token: str, db: Session) -> UserPublic:
     user.email_verified = True
     db.commit()
     db.refresh(user)
+    email_service.queue_email(user.email, "email_verified", {"name": user.full_name})
     return UserPublic.model_validate(user)
 
 
@@ -239,7 +242,8 @@ def forgot_password(email: str, db: Session) -> str:
         return "If that email exists, a reset link has been sent."
     token, nonce = make_password_reset_token(user.id)
     _store_reset_nonce(user.id, nonce)
-    _send_email(user.email, "Reset your password", f"{settings.app_base_url}/reset-password?token={token}")
+    reset_url = f"{settings.app_base_url}/reset-password?token={token}"
+    email_service.queue_email(user.email, "password_reset", {"name": user.full_name, "reset_url": reset_url})
     return "If that email exists, a reset link has been sent."
 
 
@@ -256,17 +260,3 @@ def reset_password(req: ResetPasswordRequest, db: Session) -> UserPublic:
     db.commit()
     db.refresh(user)
     return UserPublic.model_validate(user)
-
-
-# --- Email stub (AUTH-002) ---
-
-
-def _send_email(to: str, subject: str, body: str) -> None:
-    # MVP: console log. Switch to SMTP when VWA_SMTP_CONSOLE=false.
-    # flush=True: stdout is block-buffered when redirected to a file, so without
-    # this the verification link never reaches the live log window.
-    if settings.smtp_console:
-        print(f"[email] to={to} subject={subject}\nbody={body}\n", flush=True)
-        return
-    # Real SMTP wired later; left as a no-op guard so dev never crashes.
-    print(f"[email:disabled] to={to} subject={subject}", flush=True)

@@ -18,6 +18,7 @@ from app.schemas.auth import (
     UpdateProfileRequest,
     UserPublic,
 )
+from app.services import email_service
 from app.storage.factory import get_storage
 
 AVATAR_BUCKET = "avatars"
@@ -48,6 +49,7 @@ def change_password(user: User, req: ChangePasswordRequest, db: Session) -> None
     # the caller's own session valid so they aren't logged out mid-request.
     db.query(SessionRow).filter(SessionRow.user_id == user.id).update({"revoked": True})
     db.commit()
+    email_service.queue_email(user.email, "password_changed", {"name": user.full_name})
 
 
 def set_avatar(user: User, content_type: str | None, data: bytes, db: Session) -> UserPublic:
@@ -93,6 +95,7 @@ def delete_account(user: User, password: str, db: Session) -> None:
     user.account_status = AccountStatus.deleted
     db.query(SessionRow).filter(SessionRow.user_id == user.id).update({"revoked": True})
     db.commit()
+    email_service.queue_email(user.email, "account_deleted", {"name": user.full_name})
 
 
 def _safe_delete(key: str) -> None:

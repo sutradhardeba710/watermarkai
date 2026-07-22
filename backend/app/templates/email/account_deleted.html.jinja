@@ -1,0 +1,8 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<h1 style="margin:0 0 16px; font-size:20px; color:#111827;">Your account has been deleted</h1>
+<p style="margin:0; font-size:14px; color:#374151; line-height:1.6;">
+  {% if name %}Hi {{ name }},{% endif %} this confirms your ClearFrame account was deleted and all active sessions were signed out.
+  If you didn't request this, contact support right away.
+</p>
+{% endblock %}

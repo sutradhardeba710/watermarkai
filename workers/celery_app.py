@@ -29,6 +29,7 @@ celery_app = Celery(
         "workers.tasks.detection",
         "workers.tasks.processing",
         "workers.tasks.maintenance",
+        "workers.tasks.notifications",
     ],
 )
 
@@ -70,6 +71,7 @@ celery_app.conf.update(
         "workers.tasks.processing.*": {"queue": "processing"},
         "workers.tasks.encoding.*": {"queue": "encoding"},
         "workers.tasks.maintenance.*": {"queue": "processing"},
+        "workers.tasks.notifications.*": {"queue": "processing"},
     },
     beat_schedule={
         # STORAGE-006 retention sweep every 10 minutes.

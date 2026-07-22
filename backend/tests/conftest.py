@@ -1,5 +1,14 @@
 """Pytest configuration."""
 import os
+import sys
+from pathlib import Path
+
+# The `workers` package lives at the repo root (one level above backend/), same
+# as in the Docker images where both are on PYTHONPATH. Make it importable so
+# email-dispatch code paths (app -> workers.tasks.notifications) can be tested.
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
 # Default to a test-friendly secret + local storage so importing the app
 # doesn't require a real environment. Tests can override further.
