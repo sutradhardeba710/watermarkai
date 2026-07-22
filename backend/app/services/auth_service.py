@@ -255,6 +255,8 @@ def reset_password(req: ResetPasswordRequest, db: Session) -> UserPublic:
     if user is None:
         raise AppError("NOT_FOUND", "User not found.", 404)
     user.password_hash = hash_password(req.password)
+    # Using a password reset link proves email ownership — mark verified.
+    user.email_verified = True
     # Revoke all existing sessions for this user (force re-login).
     db.query(SessionRow).filter(SessionRow.user_id == user_id).update({"revoked": True})
     db.commit()
