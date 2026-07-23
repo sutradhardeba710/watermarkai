@@ -125,6 +125,9 @@ export function PricingCard({
   );
 }
 
+function MarketingPricingCardsLoading() {
+  return <div className="grid gap-5 lg:grid-cols-3" aria-busy="true" aria-label="Loading current plan prices">{Array.from({ length: 3 }, (_, index) => <div key={index} className="h-[38rem] animate-pulse rounded-3xl border border-white/[.08] bg-white/[.03] p-7"><div className="h-4 w-20 rounded bg-white/10" /><div className="mt-6 h-12 w-36 rounded bg-white/10" /><div className="mt-8 h-40 rounded-2xl bg-white/[.06]" /><div className="mt-6 space-y-4"><div className="h-3 w-full rounded bg-white/[.07]" /><div className="h-3 w-5/6 rounded bg-white/[.07]" /><div className="h-3 w-3/4 rounded bg-white/[.07]" /></div><div className="mt-12 h-12 rounded-full bg-white/[.07]" /></div>)}</div>;
+}
 function CreditsExplanation() {
   const items: [string, string][] = [
     ["What is a credit?", "A credit is the unit ClearFrame uses for processing. 100 credits equals one full-video render."],
@@ -171,11 +174,11 @@ export function PricingSection() {
           </p>
         )}
 
-        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+        {state === "loading" ? <div className="mt-10"><MarketingPricingCardsLoading /></div> : <div className="mt-10 grid gap-5 lg:grid-cols-3">
           {plans.map((plan, i) => (
             <PricingCard key={plan.id} plan={plan} index={i} isAuthed={isAuthed} currentPlanId={currentPlanId} />
           ))}
-        </div>
+        </div>}
         {state === "loading" && (
           <p className="mt-4 text-center text-xs text-white/35" aria-live="polite">Refreshing live plan details…</p>
         )}
