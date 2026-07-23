@@ -40,6 +40,15 @@ def update_profile(user: User, req: UpdateProfileRequest, db: Session) -> UserPu
 
 
 def change_password(user: User, req: ChangePasswordRequest, db: Session) -> None:
+    if user.password_hash is None:
+        # Google-only account, nothing to compare "current_password" against.
+        # They can add one via the forgot-password flow, which sets a fresh
+        # password_hash without requiring an old one.
+        raise AppError(
+            "NO_PASSWORD_SET",
+            "This account has no password yet. Use \"Forgot password\" to set one.",
+            400,
+        )
     if not verify_password(req.current_password, user.password_hash):
         raise AppError("INVALID_CREDENTIALS", "Your current password is incorrect.", 401)
     if not is_strong_password(req.new_password):
@@ -90,7 +99,9 @@ def delete_account(user: User, password: str, db: Session) -> None:
     """Soft delete: flag the account and revoke every session. Login/auth already
     treat ``account_status == deleted`` as unavailable, so no data is destroyed
     and an admin can reverse it."""
-    if not verify_password(password, user.password_hash):
+    # Google-only accounts have no password to confirm with — the caller is
+    # already holding a valid access token, which is the confirmation.
+    if user.password_hash is not None and not verify_password(password, user.password_hash):
         raise AppError("INVALID_CREDENTIALS", "Password is incorrect.", 401)
     user.account_status = AccountStatus.deleted
     db.query(SessionRow).filter(SessionRow.user_id == user.id).update({"revoked": True})

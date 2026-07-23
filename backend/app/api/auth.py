@@ -18,6 +18,7 @@ from app.schemas.auth import (
     ChangePasswordRequest,
     DeleteAccountRequest,
     ForgotPasswordRequest,
+    GoogleAuthRequest,
     LoginRequest,
     RefreshRequest,
     RegisterRequest,
@@ -56,6 +57,13 @@ def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)) ->
     ip = _client_ip(request)
     ua = request.headers.get("user-agent", "")
     return auth_service.login(req, ip, ua, db)
+
+
+@router.post("/google", response_model=AuthResponse)
+def google_login(req: GoogleAuthRequest, request: Request, db: Session = Depends(get_db)) -> AuthResponse:
+    ip = _client_ip(request)
+    ua = request.headers.get("user-agent", "")
+    return auth_service.google_login(req.credential, ip, ua, db)
 
 
 @router.post("/refresh", response_model=AuthResponse)

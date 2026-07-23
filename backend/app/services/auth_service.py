@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.core.errors import AppError
+from app.core.google_oauth import verify_google_id_token
 from app.core.security import (
     create_access_token,
     create_refresh_token,
@@ -45,6 +46,7 @@ __all__ = [
     "register",
     "verify_email",
     "login",
+    "google_login",
     "refresh_session",
     "logout",
     "forgot_password",
@@ -132,7 +134,15 @@ def verify_email(token: str, db: Session) -> UserPublic:
 
 def login(req: LoginRequest, ip: str, user_agent: str, db: Session) -> AuthResponse:
     user = db.query(User).filter(User.email == req.email.lower()).first()
-    if user is None or not verify_password(req.password, user.password_hash):
+    if user is None:
+        raise AppError("INVALID_CREDENTIALS", "Invalid email or password.", 401)
+    if user.password_hash is None:
+        # Google-only account — no password to check against. Don't leak that
+        # distinction beyond a clear pointer to the correct sign-in method.
+        raise AppError(
+            "GOOGLE_ACCOUNT", "This account signs in with Google. Use \"Continue with Google\".", 400
+        )
+    if not verify_password(req.password, user.password_hash):
         raise AppError("INVALID_CREDENTIALS", "Invalid email or password.", 401)
     if user.account_status == AccountStatus.deleted:
         # Deleted accounts must not receive sessions/tokens; present as bad creds
@@ -166,6 +176,68 @@ def _issue_session(user: User, ip: str, user_agent: str, db: Session) -> AuthRes
         refresh_token=refresh,
         user=UserPublic.from_user(user),
     )
+
+
+# --- Google Sign-In ---
+
+
+def google_login(credential: str, ip: str, user_agent: str, db: Session) -> AuthResponse:
+    profile = verify_google_id_token(credential)
+    if not profile.email_verified:
+        raise AppError(
+            "EMAIL_NOT_VERIFIED", "Your Google account's email is not verified.", 403
+        )
+
+    user = db.query(User).filter(User.google_sub == profile.sub).first()
+    if user is None:
+        # First time we've seen this Google subject. Look up by email to avoid
+        # duplicating an existing password account — but only link silently when
+        # that account has ALREADY proved email ownership via the local flow.
+        # A Google account that merely controls a matching address must not be
+        # able to adopt an unverified local account (which never confirmed the
+        # email) and inherit its state. So: verified → link; unverified → refuse.
+        existing = db.query(User).filter(User.email == profile.email).first()
+        if existing is None:
+            user = User(
+                email=profile.email,
+                full_name=profile.full_name,
+                password_hash=None,
+                google_sub=profile.sub,
+                auth_provider="google",
+                email_verified=True,
+                role=UserRole.user,
+                account_status=AccountStatus.active,
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        elif existing.email_verified:
+            # Safe to link: this account already verified the email locally.
+            # Bind the Google subject to it. Do NOT touch email_verified here —
+            # it is already True, and Google sign-in never auto-promotes a
+            # locally-unverified account.
+            existing.google_sub = profile.sub
+            db.commit()
+            db.refresh(existing)
+            user = existing
+        else:
+            # A password account exists for this email but was never verified.
+            # Refuse to hand it over to a Google login — require the owner to
+            # log in with the password and confirm the email first.
+            raise AppError(
+                "EMAIL_NOT_VERIFIED",
+                "This email is registered but not verified. "
+                "Log in with your password and verify it first, then you can link Google.",
+                403,
+            )
+
+    if user.account_status == AccountStatus.deleted:
+        raise AppError("INVALID_CREDENTIALS", "Invalid email or password.", 401)
+    if user.account_status == AccountStatus.suspended:
+        raise AppError("FORBIDDEN", "Account suspended.", 403)
+
+    user.last_login_at = datetime.now(timezone.utc)
+    return _issue_session(user, ip, user_agent, db)
 
 
 # --- Refresh (AUTH-006) ---

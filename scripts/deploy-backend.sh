@@ -42,7 +42,7 @@ if [[ -n "$EXPECTED_SHA" ]] && [[ "$(git rev-parse HEAD)" != "$EXPECTED_SHA" ]];
   exit 1
 fi
 
-COMPOSE=(docker compose -f docker-compose.prod.yml)
+COMPOSE=(docker compose --env-file backend/.env.production -f docker-compose.prod.yml)
 if [[ -f docker-compose.local.yml ]]; then
   COMPOSE+=(-f docker-compose.local.yml)
 fi

@@ -74,7 +74,9 @@ api.interceptors.response.use(
     const status = err?.response?.status;
     const isAuthRoute =
       typeof original?.url === "string" &&
-      (original.url.includes("/auth/login") || original.url.includes("/auth/refresh"));
+      (original.url.includes("/auth/login") ||
+        original.url.includes("/auth/google") ||
+        original.url.includes("/auth/refresh"));
 
     if (
       typeof window !== "undefined" &&

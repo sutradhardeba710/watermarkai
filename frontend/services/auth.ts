@@ -26,6 +26,11 @@ export const authApi = {
       .post<AuthResponse>("/auth/login", { email, password })
       .then((r) => r.data),
 
+  googleLogin: (credential: string) =>
+    api
+      .post<AuthResponse>("/auth/google", { credential }, { timeout: 15_000 })
+      .then((r) => r.data),
+
   refresh: (refresh_token: string) =>
     api.post<AuthResponse>("/auth/refresh", { refresh_token }).then((r) => r.data),
 

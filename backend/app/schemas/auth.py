@@ -35,6 +35,13 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class GoogleAuthRequest(BaseModel):
+    # The signed ID token (JWT) handed to the browser by Google Identity
+    # Services' "Sign in with Google" button. Verified server-side in
+    # app.core.google_oauth before any claim is trusted.
+    credential: str = Field(min_length=1)
+
+
 class ForgotPasswordRequest(BaseModel):
     email: EmailStr
 
@@ -77,15 +84,20 @@ class UserPublic(BaseModel):
     account_status: str
     created_at: datetime
     avatar_url: Optional[str] = None
+    auth_provider: str = "local"
+    has_password: bool = False
 
     model_config = {"from_attributes": True}
 
     @classmethod
     def from_user(cls, user) -> "UserPublic":
-        """Build the public view, deriving avatar_url from the stored key."""
+        """Build the public view, deriving avatar_url from the stored key and
+        has_password from whether a password_hash is set (false for Google-only
+        accounts — the frontend uses it to hide the change-password form)."""
         data = cls.model_validate(user)
         if getattr(user, "avatar_key", None):
             data.avatar_url = f"/api/v1/auth/avatars/{user.avatar_key}"
+        data.has_password = getattr(user, "password_hash", None) is not None
         return data
 
 

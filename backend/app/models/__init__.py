@@ -126,7 +126,17 @@ class User(Base):
     id: Mapped[str] = _uuid_pk()
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    # NULL for accounts created via Google Sign-In that have never set a
+    # password (see auth_service.google_login / SEC note on nullable auth).
+    password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # Google's stable per-account subject identifier ("sub" claim). Unique and
+    # nullable — set the first time a user signs in with Google, whether that
+    # creates a new account or links an existing password account by email.
+    google_sub: Mapped[str | None] = mapped_column(String(255), unique=True, index=True, nullable=True)
+    # How the account was originally created: 'local' | 'google'. Informational
+    # only — login accepts whichever credential (password/Google) the account
+    # actually has, this just drives account-settings UI copy.
+    auth_provider: Mapped[str] = mapped_column(String(16), default="local", nullable=False)
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     role: Mapped[UserRole] = mapped_column(SAEnum(UserRole), default=UserRole.user, nullable=False)
     # Admin-panel role (PRD §5); plain string validated app-side. NULL for
@@ -156,6 +166,10 @@ class User(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
+
+    @property
+    def has_password(self) -> bool:
+        return self.password_hash is not None
 
     sessions: Mapped[list[Session]] = relationship(back_populates="user", cascade="all, delete-orphan")
     plan: Mapped[Plan | None] = relationship("Plan", foreign_keys=[plan_id])

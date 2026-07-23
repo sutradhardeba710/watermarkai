@@ -31,6 +31,12 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = 14
     cors_origins: list[str] = ["http://localhost:3000"]
 
+    # --- Google Sign-In (Google Identity Services) ---
+    # OAuth 2.0 Client ID from console.cloud.google.com > APIs & Services >
+    # Credentials. Used as the expected `aud` when verifying ID tokens — leave
+    # blank to keep /auth/google disabled.
+    google_client_id: str = ""
+
     # --- Database ---
     database_url: str = "postgresql+psycopg://vwa:vwa@localhost:5432/vwa"
 

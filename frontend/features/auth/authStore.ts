@@ -12,6 +12,8 @@ export interface AuthUser {
   account_status: string;
   created_at: string;
   avatar_url?: string | null;
+  auth_provider: string;
+  has_password: boolean;
 }
 
 interface AuthState {
