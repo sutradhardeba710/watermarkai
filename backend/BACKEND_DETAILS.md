@@ -60,11 +60,11 @@ Rule of thumb: `mint_signed_token` / `parse_signed_token` is the **app's own aut
 - `workers/{detection,encoding,inpainting,tracking}/` — the actual CV/ML pipeline modules.
 - Queues: `detection`, `processing`, `encoding` (all consumed by one `worker` container, `--concurrency=2`); `beat` runs scheduled jobs (retention cleanup, stale-job sweep) on its own container.
 
-### Docker image staleness — the recurring failure mode
+### Docker image freshness
 
 `docker-compose.worker.yml` bind-mounts `workers/` from the host (always fresh on `git pull`), but **`app/` (the whole FastAPI package the workers import from, e.g. `app.services.encode`) is baked into the image at build time.** If backend code under `app/` changes but the worker image isn't rebuilt, the worker/beat containers run stale code — this has caused a production `AttributeError` for a function (`transcode_audio_aac_args`) that existed in the repo but not in the running image.
 
-**The automated deploy pipeline (`.github/workflows/deploy-backend.yml` → `scripts/deploy-backend.sh`) only builds/recreates `backend`, `frontend`, and `caddy`.** It does **not** rebuild or restart `worker`/`beat`, even though the workflow's path filter includes `workers/**`. Any change touching `app/` (imported by workers) or `workers/` requires a **manual** rebuild on the EC2 host:
+The automated deploy pipeline (`.github/workflows/deploy-backend.yml` → `scripts/deploy-backend.sh`) rebuilds and recreates `worker`/`beat` on every deployment, including changes under `app/` or `workers/`. It then requires a successful Celery ping and a running Beat container before reporting success. For manual recovery, use:
 
 ```bash
 docker compose -f docker-compose.worker.yml build worker
@@ -85,7 +85,7 @@ Transactional email (account lifecycle) is sent **asynchronously via Celery** so
 - **Events wired** (`auth_service` / `account_service`): `welcome_verify` (register), `email_verified` (verify), `password_reset` (forgot-password), `password_changed` (change-password), `account_deleted` (delete-account). Login alerts and "video ready" are intentionally out of scope.
 - **Config** (`Settings`, prefix `VWA_`): `smtp_console` (default `true`), `smtp_host`, `smtp_port`, `smtp_user`, `smtp_password`, `smtp_from`, `app_base_url` (used to build `verify_url` / `reset_url`). See `.env.example`.
 - **Gmail production setup**: `VWA_SMTP_HOST=smtp.gmail.com`, `VWA_SMTP_PORT=587` (STARTTLS), `VWA_SMTP_USER=<address>`, `VWA_SMTP_PASSWORD=<16-char Google App Password>` (requires 2-Step Verification; **not** the account password), `VWA_SMTP_FROM` must equal the authenticated address, `VWA_SMTP_CONSOLE=false`. The App Password is a secret — mask as `***`, never commit it.
-- **Deploy caveat**: the `send_email` task lives under `workers/` but imports `email_service` from `app/`, so it is subject to the **worker image staleness** rule above — after any email-code change, the `worker`/`beat` containers must be **manually** rebuilt on EC2 (CI won't do it).
+- **Deploy behavior**: the `send_email` task lives under `workers/` and imports `email_service` from `app/`; automated deployments rebuild and recreate `worker`/`beat` so email code cannot remain stale.
 
 ## Deploy pipeline
 
@@ -96,12 +96,12 @@ Transactional email (account lifecycle) is sent **asynchronously via Celery** so
   2. `git fetch` + hard-reset workflow step syncs the tree to the pushed commit, preserving/restoring the live secrets file around the reset.
   3. `git pull --ff-only origin main`, restore `.env.production`.
   4. Verify `HEAD` matches the expected commit SHA.
-  5. `docker compose -f docker-compose.prod.yml --profile api --profile worker build backend frontend`
+  5. Build `backend`/`frontend` from `docker-compose.prod.yml` and `worker`/`beat` from `docker-compose.worker.yml`.
   6. Run Alembic migrations (`upgrade head`) via a throwaway `backend` container.
-  7. `up -d --no-deps --force-recreate backend frontend`, then `caddy` (force-recreated separately so it reliably re-reads the bind-mounted Caddyfile).
-  8. Health-check both containers over the Docker network (not through Caddy, since Caddy only answers for the configured domain) with up to 18 retries (5s apart).
+  7. Recreate `backend`, `frontend`, `worker`, `beat`, then `caddy` (force-recreated separately so it reliably re-reads the bind-mounted Caddyfile).
+  8. Health-check backend/frontend over the Docker network, require a successful Celery worker ping, and require Beat to be running, with up to 18 retries (5s apart).
 - A `flock` on `/tmp/vwa-production-deploy.lock` prevents concurrent deploy runs.
-- **Gap**: no equivalent automated path rebuilds `worker`/`beat` — see above.
+- All long-running containers use `restart: unless-stopped`, so Docker restores the stack after an EC2 reboot. The self-hosted Actions runner is managed by systemd and resumes GitHub-triggered deployments after boot.
 
 ## Production environment
 
@@ -111,7 +111,7 @@ Transactional email (account lifecycle) is sent **asynchronously via Celery** so
 
 ## Known operational gotchas (learned in production)
 
-1. **Stale worker image** — see "Docker image staleness" above. Any `app/`-touching change needs a manual worker/beat rebuild; the CI pipeline won't do it.
+1. **Worker health** — deployments rebuild/recreate worker/beat and fail unless the worker answers a Celery ping. If the worker is absent after a reboot, verify Docker and the self-hosted Actions runner systemd services are enabled.
 2. **EC2 disk exhaustion** — `docker compose build` can fail with `No space left on device` once Docker's build cache + old image layers accumulate (observed at 91% disk usage, recurring after each manual worker rebuild). Fix: `docker builder prune -af && docker image prune -af` — safe, only removes unused/dangling layers, does not affect images backing currently-running containers. Re-run the failed step/workflow afterward (`gh run rerun <id> --failed`).
 3. **Storage backend must match intent** — `VWA_STORAGE_BACKEND` can silently drift from `minio` to `local` (or vice versa) across env-file edits. If S3 credentials are present but uploads keep landing in the local `storage` volume, check this var directly rather than assuming.
 4. **Signed-token backend independence** — see "Signed media tokens" above; this is the single most important invariant to preserve when touching `preview.py`, `files.py`, or `projects.py`'s `_attach_signed_media_urls`.

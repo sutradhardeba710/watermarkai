@@ -11,6 +11,7 @@ on:
       - "Caddyfile"
       - "Dockerfile"
       - "docker-compose.prod.yml"
+      - "docker-compose.worker.yml"
       - "docker-compose.local.yml"
       - "scripts/deploy-backend.sh"
       - ".github/workflows/deploy-backend.yml"
