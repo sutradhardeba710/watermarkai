@@ -209,7 +209,7 @@ export const adminApi = {
     description?: string; sandbox_only?: boolean; new_users_only?: boolean;
     max_discount_inr?: number; min_purchase_inr?: number;
     max_total_uses?: number; max_uses_per_user?: number;
-    starts_at?: string; ends_at?: string; applicable_plans?: string[];
+    starts_at?: string; ends_at?: string; applicable_plans?: string[]; razorpay_offer_id?: string;
   }) =>
     api.post<AdminPromo>("/admin/promos", body).then((r) => r.data),
   updatePromo: (promoId: string, body: Partial<AdminPromo> & { reason?: string }) =>

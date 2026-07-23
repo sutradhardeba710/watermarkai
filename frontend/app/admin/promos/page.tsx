@@ -20,6 +20,7 @@ interface PromoForm {
   min_purchase_rupees: number | "";
   max_total_uses: number | "";
   max_uses_per_user: number | "";
+  razorpay_offer_id: string;
   sandbox_only: boolean;
   new_users_only: boolean;
 }
@@ -28,7 +29,7 @@ function blankForm(): PromoForm {
   return {
     code: "", description: "", discount_type: "percentage", discount_value: 10,
     max_discount_rupees: "", min_purchase_rupees: "", max_total_uses: "",
-    max_uses_per_user: "", sandbox_only: false, new_users_only: false,
+    max_uses_per_user: "", razorpay_offer_id: "", sandbox_only: false, new_users_only: false,
   };
 }
 
@@ -72,6 +73,7 @@ export default function AdminPromosPage() {
         min_purchase_inr: rupeesToPaise(form.min_purchase_rupees),
         max_total_uses: count(form.max_total_uses),
         max_uses_per_user: count(form.max_uses_per_user),
+        razorpay_offer_id: form.razorpay_offer_id.trim() || undefined,
         sandbox_only: form.sandbox_only,
         new_users_only: form.new_users_only,
       });
@@ -94,8 +96,19 @@ export default function AdminPromosPage() {
     }
   }
 
+  async function configureOffer(p: AdminPromo) {
+    const value = window.prompt(`Enter the matching Razorpay Offer ID for ${p.code} (leave empty to remove it):`, p.razorpay_offer_id ?? "");
+    if (value === null) return;
+    try {
+      await adminApi.updatePromo(p.id, { razorpay_offer_id: value.trim() || null });
+      toast.success(value.trim() ? "Razorpay offer linked." : "Razorpay offer removed.");
+      refresh();
+    } catch (err) {
+      toast.error((err as { message?: string })?.message || "Could not update the Razorpay offer.");
+    }
+  }
   function discountLabel(p: AdminPromo): string {
-    if (p.discount_type === "flat" && p.discount_value != null) return formatINR(p.discount_value);
+    if (p.discount_type === "fixed" && p.discount_value != null) return formatINR(p.discount_value);
     return `${p.discount_percent}%`;
   }
 
@@ -145,13 +158,15 @@ export default function AdminPromosPage() {
                 </div>
               ),
             },
+            { key: "razorpay", header: "Razorpay", render: (p) => p.razorpay_offer_id ? <span className="text-xs text-emerald-300" title={p.razorpay_offer_id}>Offer linked</span> : <span className="text-xs text-amber-200">Offer needed</span> },
             { key: "state", header: "State", render: (p) => <Badge status={p.is_active ? "active" : "disabled"} /> },
             {
               key: "actions", header: "", className: "text-right", render: (p) =>
                 canManage ? (
-                  <button onClick={() => toggleActive(p)} className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-white/70 hover:bg-white/5">
-                    {p.is_active ? "Disable" : "Enable"}
-                  </button>
+                  <div className="flex justify-end gap-2">
+                    <button onClick={() => configureOffer(p)} className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-white/70 hover:bg-white/5">Razorpay offer</button>
+                    <button onClick={() => toggleActive(p)} className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-white/70 hover:bg-white/5">{p.is_active ? "Disable" : "Enable"}</button>
+                  </div>
                 ) : null,
             },
           ]}
@@ -190,7 +205,10 @@ export default function AdminPromosPage() {
               <label className="text-sm text-white/75">Max uses / user
                 <input type="number" min={0} value={form.max_uses_per_user} onChange={(e) => setForm({ ...form, max_uses_per_user: e.target.value === "" ? "" : Number(e.target.value) })} className="mt-1 h-10 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white outline-none focus:border-[#4f7cff]" />
               </label>
-              <div className="col-span-2 flex gap-4 text-sm text-white/75">
+              <label className="col-span-2 text-sm text-white/75">Razorpay Offer ID <span className="text-white/35">(required for live discounts)</span>
+                <input value={form.razorpay_offer_id} onChange={(e) => setForm({ ...form, razorpay_offer_id: e.target.value })} placeholder="offer_..." className="mt-1 h-10 w-full rounded-xl border border-white/10 bg-white/5 px-3 font-mono text-sm text-white outline-none focus:border-[#4f7cff]" />
+                <span className="mt-1 block text-xs text-white/40">Create a matching Offer in Razorpay Dashboard and paste its ID here. Existing promos can be linked from the Razorpay offer button.</span>
+              </label>              <div className="col-span-2 flex gap-4 text-sm text-white/75">
                 <label className="flex items-center gap-2"><input type="checkbox" checked={form.sandbox_only} onChange={(e) => setForm({ ...form, sandbox_only: e.target.checked })} /> Sandbox only</label>
                 <label className="flex items-center gap-2"><input type="checkbox" checked={form.new_users_only} onChange={(e) => setForm({ ...form, new_users_only: e.target.checked })} /> New users only</label>
               </div>
