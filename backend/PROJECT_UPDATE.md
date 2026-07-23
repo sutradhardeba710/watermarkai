@@ -9,6 +9,25 @@ Admin Panel).
 
 ---
 
+## 2026-07-23 — Automated worker deployment and EC2 restart recovery
+
+- **Symptom**: registration verification and forgot-password emails were queued
+  but never sent because production had no running `vwa-worker` container.
+- **Root cause**: GitHub Actions rebuilt/recreated only backend, frontend, and
+  Caddy. Worker/Beat used a separate Compose file and required a manual rebuild.
+- **Fix**: the production deploy now validates both Compose configurations,
+  rebuilds and recreates `worker`/`beat` on every deployment, requires a
+  successful Celery ping plus a running Beat container, and includes worker logs
+  in failed deployment diagnostics. Changes to `docker-compose.worker.yml` now
+  trigger the GitHub workflow. All services retain `restart: unless-stopped` for
+  automatic recovery after EC2/Docker restarts.
+- **Commit**: `3d47168` — "Automate EC2 worker deployment and health checks".
+- **Tests**: full backend suite green — 482 passed, 12 skipped.
+- **Deployment verification**: pending push, GitHub Actions run, and live EC2
+  smoke test.
+
+---
+
 ## 2026-07-22 — Transactional email integration (Gmail SMTP, async via Celery)
 
 Wired real account-lifecycle emails across the site. Previously auth used a
