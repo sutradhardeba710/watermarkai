@@ -97,7 +97,11 @@ function LoginPageInner() {
           <NamedLink href="/forgot-password">Forgot password?</NamedLink>
         </>
       }>
-      <AuthError msg={serverError} />
+      {/* Reserve the full error-message area so an unsuccessful sign-in does
+          not change the card height or vertically re-center the page. */}
+      <div className="min-h-24">
+        <AuthError msg={serverError} />
+      </div>
       <GoogleSignInButton
         mode="login"
         onSuccess={goAfterAuth}
