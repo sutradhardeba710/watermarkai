@@ -34,9 +34,10 @@ export function HeroProductPreview() {
 
           <div className="relative aspect-[16/10] select-none overflow-hidden bg-[#0d1226]">
             <Image
-              src="/demo/owned-after.png"
+              src="/demo/owned-after-optimized.webp"
               alt="Cleaned result on sample footage"
               fill
+              unoptimized
               priority
               sizes="(max-width: 1024px) 100vw, 640px"
               className="object-cover"
@@ -46,9 +47,10 @@ export function HeroProductPreview() {
               style={{ clipPath: `inset(0 ${100 - split}% 0 0)` }}
             >
               <Image
-                src="/demo/owned-before.png"
+                src="/demo/owned-before-optimized.webp"
                 alt="Sample footage before cleanup, showing an overlay"
                 fill
+                unoptimized
                 sizes="(max-width: 1024px) 100vw, 640px"
                 className="object-cover"
               />
