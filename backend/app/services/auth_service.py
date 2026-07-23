@@ -145,9 +145,14 @@ def login(req: LoginRequest, ip: str, user_agent: str, db: Session) -> AuthRespo
     if not verify_password(req.password, user.password_hash):
         raise AppError("INVALID_CREDENTIALS", "Invalid email or password.", 401)
     if user.account_status == AccountStatus.deleted:
-        # Deleted accounts must not receive sessions/tokens; present as bad creds
-        # rather than leaking that the account existed.
-        raise AppError("INVALID_CREDENTIALS", "Invalid email or password.", 401)
+        # The password has been verified, so we can clearly explain why this
+        # legitimate sign-in cannot continue without exposing account status
+        # to someone who does not control the credentials.
+        raise AppError(
+            "ACCOUNT_DELETED",
+            "This account has been deleted and can no longer be accessed. Contact support if you believe this was a mistake.",
+            403,
+        )
     if user.account_status == AccountStatus.suspended:
         raise AppError("FORBIDDEN", "Account suspended.", 403)
     if not user.email_verified:
@@ -232,7 +237,11 @@ def google_login(credential: str, ip: str, user_agent: str, db: Session) -> Auth
             )
 
     if user.account_status == AccountStatus.deleted:
-        raise AppError("INVALID_CREDENTIALS", "Invalid email or password.", 401)
+        raise AppError(
+            "ACCOUNT_DELETED",
+            "This account has been deleted and can no longer be accessed. Contact support if you believe this was a mistake.",
+            403,
+        )
     if user.account_status == AccountStatus.suspended:
         raise AppError("FORBIDDEN", "Account suspended.", 403)
 

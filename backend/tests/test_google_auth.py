@@ -19,7 +19,9 @@ from sqlalchemy import create_engine
 from app.core import google_oauth
 from app.core.errors import AppError
 from app.core.google_oauth import GoogleProfile, verify_google_id_token
+from app.core.security import hash_password
 from app.models import AccountStatus, Base, User, UserRole
+from app.schemas.auth import LoginRequest
 from app.services import auth_service
 
 
@@ -213,7 +215,7 @@ def test_google_login_returning_user_relinks_without_duplicate(db, monkeypatch):
 
 @pytest.mark.parametrize("status, code", [
     (AccountStatus.suspended, "FORBIDDEN"),
-    (AccountStatus.deleted, "INVALID_CREDENTIALS"),
+    (AccountStatus.deleted, "ACCOUNT_DELETED"),
 ])
 def test_google_login_rejects_suspended_and_deleted(db, monkeypatch, status, code):
     user = User(
@@ -242,3 +244,20 @@ def test_google_login_disabled_config(db, monkeypatch):
     with pytest.raises(AppError) as exc:
         auth_service.google_login("cred", "ip", "ua", db)
     assert exc.value.code == "GOOGLE_SIGNIN_DISABLED"
+
+def test_password_login_explains_deleted_account_only_after_valid_password(db):
+    user = User(
+        email="deleted@example.com",
+        full_name="Deleted User",
+        password_hash=hash_password("Password1!"),
+        email_verified=True,
+        account_status=AccountStatus.deleted,
+    )
+    db.add(user)
+    db.commit()
+
+    with pytest.raises(AppError) as exc:
+        auth_service.login(LoginRequest(email=user.email, password="Password1!"), "ip", "ua", db)
+
+    assert exc.value.code == "ACCOUNT_DELETED"
+    assert exc.value.status_code == 403

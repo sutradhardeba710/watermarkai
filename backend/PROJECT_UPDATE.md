@@ -9,6 +9,15 @@ Admin Panel).
 
 ---
 
+## 2026-07-23 — Clear deleted-account login status
+
+- **Symptom**: a user who had deleted their account saw the generic “Invalid email or password” message when attempting to sign in again.
+- **Root cause**: the authentication service deliberately mapped deleted accounts to `INVALID_CREDENTIALS`, so the UI could not distinguish a confirmed deletion from bad credentials.
+- **Fix**: authenticated password and Google sign-ins for deleted accounts now return `ACCOUNT_DELETED` (403); the login screen displays a clear, professional explanation and also shows it immediately after self-service deletion redirects to `?deleted=1`. Invalid passwords remain generic.
+- **Tests**: `tests/test_google_auth.py` — 14 passed; frontend `npm run typecheck` passed.
+- **Commit / deployment verification**: pending.
+
+---
 ## 2026-07-23 â€” Automated worker deployment and EC2 restart recovery
 
 - **Symptom**: registration verification and forgot-password emails were queued

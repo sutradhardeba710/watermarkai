@@ -1,16 +1,30 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Sparkles, Upload } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Loader2, LogOut, Sparkles, Upload } from "lucide-react";
 import { useAuthStore } from "@/features/auth/authStore";
 import { NAV_ITEMS, hasPermission, effectiveAdminRole, ROLE_LABELS } from "@/features/admin/permissions";
 import { GlobalSearch } from "@/components/admin/GlobalSearch";
+import { authApi } from "@/services/auth";
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const user = useAuthStore((s) => s.user);
+  const refreshToken = useAuthStore((s) => s.refreshToken);
+  const clear = useAuthStore((s) => s.clear);
   const role = effectiveAdminRole(user);
   const visible = NAV_ITEMS.filter((item) => hasPermission(user, item.permission));
+
+  async function logout() {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    await authApi.logout(refreshToken ?? undefined);
+    clear();
+    router.replace("/login");
+  }
 
   return (
     <aside className="fixed inset-y-0 left-0 hidden w-64 overflow-y-auto border-r border-white/[.07] bg-[#0a0c18] px-4 py-6 lg:block">
@@ -52,6 +66,19 @@ export function AdminSidebar() {
             <Upload className="h-4 w-4" />
             Upload
           </Link>
+          <button
+            type="button"
+            onClick={logout}
+            disabled={isLoggingOut}
+            className="flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-white/55 transition hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9eb4ff] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isLoggingOut ? (
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <LogOut className="h-4 w-4" aria-hidden="true" />
+            )}
+            {isLoggingOut ? "Logging out?" : "Log out"}
+          </button>
         </nav>
       </div>
     </aside>

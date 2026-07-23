@@ -23,6 +23,8 @@ function LoginPageInner() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [googleBusy, setGoogleBusy] = useState(false);
 
+  const deletedAccountMessage = "This account has been deleted and can no longer be accessed. Contact support if you believe this was a mistake.";
+
   // Surface Google sign-in problems as a toast (transient, non-blocking) while
   // password errors stay inline in the form.
   function handleGoogleError(message: string) {
@@ -41,6 +43,12 @@ function LoginPageInner() {
     const home = effectiveAdminRole(currentUser) ? "/admin" : "/dashboard";
     router.replace(safeRedirect ?? home);
   }, [hydrated, hasSession, currentUser, searchParams, router]);
+
+  // After a user deletes their account, explain the sign-out on return to the
+  // login page instead of leaving them with a generic credentials message.
+  useEffect(() => {
+    if (searchParams.get("deleted") === "1") setServerError(deletedAccountMessage);
+  }, [searchParams, deletedAccountMessage]);
 
   // Honor ?redirect= param (e.g. from /checkout?plan=pro); otherwise admins
   // land on the admin dashboard, everyone else on /dashboard. searchParams
@@ -64,6 +72,8 @@ function LoginPageInner() {
     } catch (err: any) {
       if (err?.code === "EMAIL_NOT_VERIFIED") {
         setServerError("Please verify your email before logging in.");
+      } else if (err?.code === "ACCOUNT_DELETED") {
+        setServerError(deletedAccountMessage);
       } else if (err?.code === "INVALID_CREDENTIALS") {
         setServerError("Invalid email or password.");
       } else if (err?.code === "GOOGLE_ACCOUNT") {
