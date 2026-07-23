@@ -9,6 +9,15 @@ Admin Panel).
 
 ---
 
+## 2026-07-23 — Promo discount type alignment
+
+- **Symptom**: creating a percentage or flat promo code in the admin UI failed with `discount_type must be one of fixed, percentage, free_trial_extension, bonus_credits, first_cycle, multi_cycle`.
+- **Root cause**: the form sent obsolete `percent` and `flat` values, while the API accepts canonical `percentage` and `fixed` values. Fixed promos were also not recognized by the checkout calculator.
+- **Fix**: aligned the form and its value conversion with the API contract, and made checkout treat `fixed` promos as paise-denominated fixed discounts (while retaining compatibility with `fixed_amount`).
+- **Tests**: `tests/test_admin_panel_phase4.py` — 27 passed; frontend `npm run typecheck` passed.
+- **Commit / deployment verification**: pending.
+
+---
 ## 2026-07-23 — Clear deleted-account login status
 
 - **Symptom**: a user who had deleted their account saw the generic “Invalid email or password” message when attempting to sign in again.

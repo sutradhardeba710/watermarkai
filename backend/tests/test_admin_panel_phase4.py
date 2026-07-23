@@ -6,10 +6,12 @@ No DB / SQLAlchemy — runs on the 32-bit dev box.
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+from types import SimpleNamespace
 
 import pytest
 
 from app.services import admin_service as svc
+from app.services import payment_service
 
 
 # ---------------------------------------------------------------------------
@@ -257,3 +259,13 @@ def test_mask_webhook_payload_handles_lists_and_scalars():
     out = svc.mask_webhook_payload([{"token": "tok_ABCD1234"}, {"amount": 10}])
     assert out[0]["token"].endswith("1234") and "•" in out[0]["token"]
     assert out[1]["amount"] == 10
+
+def test_fixed_promo_discount_uses_paise_amount():
+    promo = SimpleNamespace(
+        discount_type="fixed",
+        discount_value=20_000,
+        discount_percent=0,
+        max_discount_inr=None,
+    )
+
+    assert payment_service.compute_promo_discount(promo, price_paise=50_000) == 20_000

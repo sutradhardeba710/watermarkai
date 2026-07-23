@@ -185,7 +185,7 @@ def compute_promo_discount(promo, price_paise: int) -> int:
     discount_value directly (paise). Capped by max_discount_inr and price."""
     if promo is None:
         return 0
-    if promo.discount_type == "fixed_amount" and promo.discount_value:
+    if promo.discount_type in ("fixed", "fixed_amount") and promo.discount_value:
         discount = int(promo.discount_value)
     else:
         percent = promo.discount_percent or promo.discount_value or 0

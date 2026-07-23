@@ -14,7 +14,7 @@ import { useAuthStore } from "@/features/auth/authStore";
 interface PromoForm {
   code: string;
   description: string;
-  discount_type: string;
+  discount_type: "percentage" | "fixed";
   discount_value: number;
   max_discount_rupees: number | "";
   min_purchase_rupees: number | "";
@@ -26,7 +26,7 @@ interface PromoForm {
 
 function blankForm(): PromoForm {
   return {
-    code: "", description: "", discount_type: "percent", discount_value: 10,
+    code: "", description: "", discount_type: "percentage", discount_value: 10,
     max_discount_rupees: "", min_purchase_rupees: "", max_total_uses: "",
     max_uses_per_user: "", sandbox_only: false, new_users_only: false,
   };
@@ -65,7 +65,7 @@ export default function AdminPromosPage() {
         code: form.code.trim().toUpperCase(),
         description: form.description || undefined,
         discount_type: form.discount_type,
-        discount_value: form.discount_type === "flat"
+        discount_value: form.discount_type === "fixed"
           ? Math.round(form.discount_value * 100)
           : Number(form.discount_value),
         max_discount_inr: rupeesToPaise(form.max_discount_rupees),
@@ -167,15 +167,15 @@ export default function AdminPromosPage() {
                 <input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })} className="mt-1 h-10 w-full rounded-xl border border-white/10 bg-white/5 px-3 font-mono text-sm text-white outline-none focus:border-[#4f7cff]" />
               </label>
               <label className="text-sm text-white/75">Type
-                <select value={form.discount_type} onChange={(e) => setForm({ ...form, discount_type: e.target.value })} className="mt-1 h-10 w-full rounded-xl border border-white/10 bg-[#0c0e1a] px-3 text-sm text-white outline-none focus:border-[#4f7cff]">
-                  <option value="percent">Percent (%)</option>
-                  <option value="flat">Flat (₹)</option>
+                <select value={form.discount_type} onChange={(e) => setForm({ ...form, discount_type: e.target.value as PromoForm["discount_type"] })} className="mt-1 h-10 w-full rounded-xl border border-white/10 bg-[#0c0e1a] px-3 text-sm text-white outline-none focus:border-[#4f7cff]">
+                  <option value="percentage">Percent (%)</option>
+                  <option value="fixed">Flat (₹)</option>
                 </select>
               </label>
               <label className="col-span-2 text-sm text-white/75">Description
                 <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="mt-1 h-10 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white outline-none focus:border-[#4f7cff]" />
               </label>
-              <label className="text-sm text-white/75">{form.discount_type === "flat" ? "Discount (₹)" : "Discount (%)"}
+              <label className="text-sm text-white/75">{form.discount_type === "fixed" ? "Discount (₹)" : "Discount (%)"}
                 <input type="number" min={0} value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: Number(e.target.value) })} className="mt-1 h-10 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white outline-none focus:border-[#4f7cff]" />
               </label>
               <label className="text-sm text-white/75">Max discount (₹)
