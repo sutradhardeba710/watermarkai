@@ -18,24 +18,34 @@ import { faqItems } from "@/components/marketing/content";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
 export const metadata: Metadata = {
-  title: "ClearFrame — AI Video Cleanup with Manual Mask Control",
+  title: { absolute: "AI Video Watermark Remover Online | ClearFrame" },
   description:
-    "Detect and remove unwanted logos, timestamps, subtitles, and overlays from videos you own or are authorized to edit. Review masks, preview results, and export cleaned footage.",
+    "Remove watermarks, logos, timestamps, and hardcoded subtitles from videos you own. Use AI detection, manual masking, a free preview, and high-quality export.",
+  keywords: [
+    "AI video watermark remover",
+    "video watermark remover online",
+    "remove watermark from video",
+    "remove logo from video",
+    "remove timestamp from video",
+    "remove hardcoded subtitles from video",
+    "video overlay remover",
+    "MP4 watermark remover",
+  ],
   alternates: { canonical: "/" },
   openGraph: {
-    title: "ClearFrame — AI Video Cleanup with Manual Mask Control",
+    title: "AI Video Watermark Remover Online | ClearFrame",
     description:
-      "Detect and remove unwanted overlays from footage you own or are licensed to edit. Review the mask, preview the result, and export cleaned video.",
+      "Remove watermarks, logos, timestamps, and hardcoded subtitles from videos you own with AI detection, manual mask control, and preview-first processing.",
     url: "/",
     siteName: "ClearFrame",
     type: "website",
-    images: [{ url: "/demo/owned-after.png", width: 1200, height: 630, alt: "ClearFrame video cleanup preview" }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "ClearFrame AI video watermark remover with preview and manual control" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ClearFrame — AI Video Cleanup with Manual Mask Control",
-    description: "Remove unwanted overlays from footage you own or are authorized to edit.",
-    images: ["/demo/owned-after.png"],
+    title: "AI Video Watermark Remover Online | ClearFrame",
+    description: "Remove owned watermarks, logos, timestamps, and hardcoded subtitles with reviewable AI video cleanup.",
+    images: ["/og.png"],
   },
 };
 
@@ -46,7 +56,25 @@ const structuredData = {
       "@type": "WebSite",
       name: "ClearFrame",
       url: siteUrl,
-      description: "AI video cleanup with manual mask control for authorized footage.",
+      description: "An online AI video watermark remover with manual mask control for authorized footage.",
+    },
+    {
+      "@type": "WebApplication",
+      name: "ClearFrame",
+      url: siteUrl,
+      applicationCategory: "MultimediaApplication",
+      operatingSystem: "Any",
+      browserRequirements: "Requires a modern web browser with JavaScript enabled.",
+      description:
+        "Remove watermarks, logos, timestamps, hardcoded subtitles, and visual overlays from videos you own or are authorized to edit.",
+      featureList: [
+        "AI-assisted watermark and overlay detection",
+        "Manual rectangle, polygon, brush, and eraser masking",
+        "Static and moving-region tracking",
+        "Free short preview before full processing",
+        "Before-and-after comparison",
+        "Audio-preserving MP4 export",
+      ],
     },
     {
       "@type": "FAQPage",

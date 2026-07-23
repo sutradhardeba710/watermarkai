@@ -27,8 +27,8 @@ export function WorkflowSection() {
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
         <div className="max-w-2xl">
           <p className="bg-gradient-to-r from-[#7de6f7] to-[#9db9ff] bg-clip-text text-xs font-semibold uppercase tracking-[.18em] text-transparent">How it works</p>
-          <h2 className="mt-4 text-4xl font-semibold tracking-[-.03em] text-white sm:text-5xl">From upload to cleaned footage.</h2>
-          <p className="mt-4 text-lg leading-8 text-white/60">You stay in control at every stage.</p>
+          <h2 className="mt-4 text-4xl font-semibold tracking-[-.03em] text-white sm:text-5xl">How to remove a watermark from a video online.</h2>
+          <p className="mt-4 text-lg leading-8 text-white/60">Upload, detect, refine, preview, and export while you stay in control at every stage.</p>
         </div>
 
         <ol className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

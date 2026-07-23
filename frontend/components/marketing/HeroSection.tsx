@@ -19,7 +19,7 @@ export function HeroSection() {
   const { isAuthed } = useMarketingAuth();
 
   const primaryHref = isAuthed ? "/dashboard" : "/signup";
-  const primaryLabel = isAuthed ? "Open dashboard" : "Start cleaning a video";
+  const primaryLabel = isAuthed ? "Open dashboard" : "Remove a watermark";
 
   return (
     <section id="top" className="relative isolate mx-auto max-w-7xl px-5 pb-20 pt-28 sm:px-8 sm:pt-32 lg:px-10 lg:pb-28">
@@ -33,14 +33,14 @@ export function HeroSection() {
         <motion.div variants={reveal} initial={reduce ? false : "hidden"} animate="visible">
           <p className="inline-flex items-center gap-2 rounded-full border border-[#4f7cff]/35 bg-gradient-to-r from-[#4f7cff]/15 to-[#a855f7]/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[.16em] text-[#b7c7ff]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#22d3ee] shadow-[0_0_8px_rgba(34,211,238,.9)]" />
-            AI video cleanup with human control
+            Online AI video watermark remover
           </p>
           <h1 className="mt-6 max-w-2xl text-5xl font-semibold leading-[1.02] tracking-[-.04em] sm:text-6xl lg:text-[4.2rem]">
-            Clean the frame.{" "}
-            <span className="bg-gradient-to-r from-[#6d9bff] via-[#a78bfa] to-[#22d3ee] bg-clip-text text-transparent">Keep the footage.</span>
+            Remove video watermarks.{" "}
+            <span className="bg-gradient-to-r from-[#6d9bff] via-[#a78bfa] to-[#22d3ee] bg-clip-text text-transparent">Keep frame-level control.</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-8 text-[#9ca3af]">
-            Detect and remove logos, timestamps, subtitles, and unwanted visual overlays from videos you own or are authorized to edit. Review the mask, preview the result, and process only when you are satisfied.
+            Use AI to detect and remove your old logos, date stamps, hardcoded subtitles, and unwanted overlays from MP4, MOV, or WebM videos. Refine the mask, preview the result, and export only when you are satisfied.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -54,7 +54,7 @@ export function HeroSection() {
               href="#proof"
               className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[.03] px-6 py-3.5 text-center font-semibold text-white transition hover:border-white/30 hover:bg-white/[.07] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
             >
-              <Play className="h-4 w-4" /> Watch how it works
+              <Play className="h-4 w-4" /> See how it works
             </a>
           </div>
 

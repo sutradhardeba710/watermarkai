@@ -54,14 +54,14 @@ services:
       args:
         NEXT_PUBLIC_API_URL: http://backend:8000
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${VWA_GOOGLE_CLIENT_ID:-}
-        NEXT_PUBLIC_SITE_URL: ${VWA_APP_BASE_URL:-https://pdf-cropper.site}
+        NEXT_PUBLIC_SITE_URL: ${VWA_APP_BASE_URL:?Set VWA_APP_BASE_URL to the public HTTPS site URL}
     container_name: vwa-frontend
     restart: unless-stopped
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
       - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${VWA_GOOGLE_CLIENT_ID:-}
-      - NEXT_PUBLIC_SITE_URL=${VWA_APP_BASE_URL:-https://pdf-cropper.site}
+      - NEXT_PUBLIC_SITE_URL=${VWA_APP_BASE_URL:?Set VWA_APP_BASE_URL to the public HTTPS site URL}
       # API rewrite target inside Docker network
       - NEXT_PUBLIC_API_URL=http://backend:8000
     expose:

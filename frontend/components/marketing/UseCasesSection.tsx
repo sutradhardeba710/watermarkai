@@ -22,8 +22,8 @@ export function UseCasesSection() {
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
         <div className="max-w-2xl">
           <p className="bg-gradient-to-r from-[#7de6f7] to-[#9db9ff] bg-clip-text text-xs font-semibold uppercase tracking-[.18em] text-transparent">Who it&apos;s for</p>
-          <h2 className="mt-4 text-4xl font-semibold tracking-[-.03em] text-white sm:text-5xl">Built for authorized video cleanup.</h2>
-          <p className="mt-4 text-lg leading-8 text-white/60">ClearFrame is for footage you own, license, or are authorized to edit.</p>
+          <h2 className="mt-4 text-4xl font-semibold tracking-[-.03em] text-white sm:text-5xl">Remove owned logos, timestamps, and subtitles.</h2>
+          <p className="mt-4 text-lg leading-8 text-white/60">ClearFrame is a video overlay remover for footage you own, license, or are authorized to edit.</p>
         </div>
 
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

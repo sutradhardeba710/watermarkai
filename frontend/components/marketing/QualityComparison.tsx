@@ -10,7 +10,7 @@ export function QualityComparison() {
       <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10">
         <div className="mx-auto max-w-2xl text-center">
           <p className="bg-gradient-to-r from-[#9db9ff] to-[#c4b0ff] bg-clip-text text-xs font-semibold uppercase tracking-[.18em] text-transparent">Quality &amp; control</p>
-          <h2 className="mt-4 text-4xl font-semibold tracking-[-.03em] text-white sm:text-5xl">Not just blur, crop, or cover.</h2>
+          <h2 className="mt-4 text-4xl font-semibold tracking-[-.03em] text-white sm:text-5xl">Remove video watermarks without settling for blur or crop.</h2>
           <p className="mt-5 leading-7 text-white/60">
             ClearFrame uses mask-based reconstruction and temporal processing to rebuild the selected area while preserving the surrounding footage.
           </p>

@@ -119,7 +119,9 @@ export type FaqCategory = "Product" | "Processing" | "Credits & billing" | "Priv
 export type FaqItem = { q: string; a: string; category: FaqCategory };
 
 export const faqItems: FaqItem[] = [
-  { category: "Product", q: "What can ClearFrame remove?", a: "ClearFrame is built to remove persistent visual overlays — logos, timestamps, subtitles, and static graphics — from footage you own or are authorized to edit." },
+  { category: "Product", q: "What can an AI video watermark remover remove?", a: "ClearFrame is built to remove persistent visual overlays — including your own logos, watermarks, timestamps, hardcoded subtitles, and static graphics — from footage you own or are authorized to edit." },
+  { category: "Product", q: "Can I remove a logo or timestamp from an MP4 video?", a: "Yes. Upload an MP4, MOV, or WebM video, let ClearFrame suggest the logo or timestamp region, refine the mask if needed, and generate a short preview before processing the full video." },
+  { category: "Product", q: "Can ClearFrame remove hardcoded subtitles from a video?", a: "Yes, when the subtitles are burned into the picture on footage you are authorized to edit. Select the subtitle region, preview the reconstructed area, and check detailed backgrounds or moving subjects carefully before export." },
   { category: "Product", q: "Can it remove moving overlays?", a: "Yes, ClearFrame supports tracking a selected region as it moves. Results vary with speed, occlusion, and how much the background changes behind the overlay." },
   { category: "Processing", q: "Will every video produce a perfect result?", a: "No. Quality depends on scene complexity, movement, mask accuracy, and source quality. That is exactly why you preview a short section before running the full render." },
   { category: "Processing", q: "What video formats are supported?", a: "MP4, MOV, and WebM uploads are supported, subject to the product's validation limits for size, duration, and resolution." },

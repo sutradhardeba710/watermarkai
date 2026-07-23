@@ -8,7 +8,7 @@ import { useMarketingAuth } from "./useMarketingAuth";
 export function FinalCTA() {
   const { isAuthed } = useMarketingAuth();
   const primaryHref = isAuthed ? "/dashboard" : "/signup";
-  const primaryLabel = isAuthed ? "Open dashboard" : "Start cleaning a video";
+  const primaryLabel = isAuthed ? "Open dashboard" : "Remove a watermark";
 
   return (
     <section className="bg-[#07080f] pb-24 pt-4 sm:pb-28">
