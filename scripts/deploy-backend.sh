@@ -72,11 +72,14 @@ WORKER_COMPOSE=(
 # configured domain (a Host: localhost request would not match and would fail
 # even when the app is healthy). The backend image has curl available.
 for attempt in {1..18}; do
+  WORKER_PING="$(
+    "${WORKER_COMPOSE[@]}" exec -T worker sh -c \
+      'python -m celery -A workers.celery_app inspect ping --destination "celery@$HOSTNAME" --timeout=10' \
+      2>/dev/null || true
+  )"
   if "${COMPOSE[@]}" exec -T backend curl -fsS http://localhost:8000/health >/dev/null 2>&1 \
      && "${COMPOSE[@]}" exec -T backend curl -fsS http://frontend:3000/ >/dev/null 2>&1 \
-     && "${WORKER_COMPOSE[@]}" exec -T worker \
-          python -m celery -A workers.celery_app inspect ping --timeout=10 2>/dev/null \
-          | grep -q "pong" \
+     && [[ "$WORKER_PING" == *"pong"* ]] \
      && [[ "$("${WORKER_COMPOSE[@]}" ps --status running --services)" == *"beat"* ]]; then
     echo "Production stack deployment succeeded: $(git rev-parse --short HEAD)"
     "${COMPOSE[@]}" ps
