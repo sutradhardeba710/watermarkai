@@ -1,12 +1,7 @@
-"use client";
-
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 import { workflowSteps } from "./content";
-
-const ease = [0.22, 1, 0.36, 1] as const;
 
 /** Per-step accent hues so the sequence reads as a journey, not six clones. */
 const stepAccents = [
@@ -19,8 +14,6 @@ const stepAccents = [
 ];
 
 export function WorkflowSection() {
-  const reduce = useReducedMotion();
-
   return (
     <section id="workflow" className="relative scroll-mt-24 overflow-hidden bg-[#0c0e1a] py-24 sm:py-28">
       <div className="pointer-events-none absolute left-1/2 top-0 h-64 w-[50rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(167,139,250,.09),transparent_70%)]" />
@@ -36,12 +29,8 @@ export function WorkflowSection() {
             const Icon = step.icon;
             const isLast = i === workflowSteps.length - 1;
             return (
-              <motion.li
+              <li
                 key={step.n}
-                initial={reduce ? false : { opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ delay: reduce ? 0 : i * 0.06, duration: 0.4, ease }}
                 className={`relative flex flex-col rounded-2xl border border-white/[.08] bg-gradient-to-b from-white/[.05] to-white/[.02] p-6 transition ${stepAccents[i % stepAccents.length].hover}`}
               >
                 <div className="flex items-center justify-between">
@@ -55,7 +44,7 @@ export function WorkflowSection() {
                 {!isLast && (
                   <ArrowRight className="absolute -right-2 top-1/2 hidden h-4 w-4 -translate-y-1/2 text-white/20 lg:block" aria-hidden="true" />
                 )}
-              </motion.li>
+              </li>
             );
           })}
         </ol>

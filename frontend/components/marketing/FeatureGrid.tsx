@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 
 import { features } from "./content";
@@ -16,8 +13,6 @@ const featureAccents = [
 ];
 
 export function FeatureGrid() {
-  const reduce = useReducedMotion();
-
   return (
     <section id="features" className="relative scroll-mt-24 overflow-hidden bg-[#0c0e1a] py-24 sm:py-28">
       <div className="pointer-events-none absolute right-[-8%] top-10 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,.08),transparent_70%)]" />
@@ -43,13 +38,8 @@ export function FeatureGrid() {
               </>
             );
             return (
-              <motion.div
-                key={f.title}
-                initial={reduce ? false : { opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.4, delay: reduce ? 0 : (i % 3) * 0.06 }}
-              >
+              <div
+                key={f.title}>
                 {f.href ? (
                   <Link href={f.href} className="group block h-full rounded-2xl border border-white/[.08] bg-gradient-to-b from-white/[.05] to-white/[.02] p-6 transition hover:-translate-y-0.5 hover:border-[#4f7cff]/50 hover:from-white/[.07] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300">
                     {inner}
@@ -57,7 +47,7 @@ export function FeatureGrid() {
                 ) : (
                   <div className="group h-full rounded-2xl border border-white/[.08] bg-gradient-to-b from-white/[.05] to-white/[.02] p-6 transition hover:-translate-y-0.5 hover:border-white/[.16]">{inner}</div>
                 )}
-              </motion.div>
+              </div>
             );
           })}
         </div>

@@ -2,6 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 86400,
+  },
   // Isolate production output so next build cannot corrupt a running dev server.
   distDir: process.env.NODE_ENV === "production" ? ".next-build" : ".next",
   async headers() {

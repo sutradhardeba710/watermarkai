@@ -1,7 +1,3 @@
-"use client";
-
-import { motion, useReducedMotion } from "framer-motion";
-
 import { useCases } from "./content";
 
 const useCaseAccents = [
@@ -14,8 +10,6 @@ const useCaseAccents = [
 ];
 
 export function UseCasesSection() {
-  const reduce = useReducedMotion();
-
   return (
     <section id="use-cases" className="relative scroll-mt-24 overflow-hidden bg-[#0c0e1a] py-24 sm:py-28">
       <div className="pointer-events-none absolute left-[-6%] bottom-0 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(79,124,255,.08),transparent_70%)]" />
@@ -30,12 +24,8 @@ export function UseCasesSection() {
           {useCases.map((uc, i) => {
             const Icon = uc.icon;
             return (
-              <motion.article
+              <article
                 key={uc.title}
-                initial={reduce ? false : { opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.4, delay: reduce ? 0 : (i % 3) * 0.06 }}
                 className="rounded-2xl border border-white/[.08] bg-gradient-to-b from-white/[.05] to-white/[.02] p-6 transition hover:-translate-y-0.5 hover:border-white/[.16]"
               >
                 <span className={`grid h-10 w-10 place-items-center rounded-xl ${useCaseAccents[i % useCaseAccents.length]}`}>
@@ -43,7 +33,7 @@ export function UseCasesSection() {
                 </span>
                 <h3 className="mt-5 font-semibold text-white">{uc.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-white/55">{uc.copy}</p>
-              </motion.article>
+              </article>
             );
           })}
         </div>

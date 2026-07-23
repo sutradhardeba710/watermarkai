@@ -135,3 +135,8 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 @media (prefers-reduced-motion: reduce) {
   .mask-scan-line { animation: none; transform: translateY(36vh); }
 }
+/* Skip layout and paint work for marketing sections until they approach the viewport. */
+main#top > section:not(#top) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}

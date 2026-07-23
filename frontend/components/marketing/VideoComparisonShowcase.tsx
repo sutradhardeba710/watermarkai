@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -41,9 +41,9 @@ export function VideoComparisonShowcase() {
           ) : (
             <div className="relative aspect-video select-none overflow-hidden rounded-2xl bg-[#0d1226]">
               {imgError ? <div className="grid h-full place-items-center px-6 text-center text-sm text-white/50">This comparison could not load. Please refresh to try again.</div> : <>
-                <Image key={`${active.id}-cleaned`} src={active.cleanedPoster} alt={active.altCleaned} fill priority sizes="(max-width: 896px) 100vw, 896px" className="object-cover" onError={() => setImgError(true)} />
+                <Image key={`${active.id}-cleaned`} src={active.cleanedPoster} alt={active.altCleaned} fill sizes="(max-width: 896px) 100vw, 896px" className="object-cover" onError={() => setImgError(true)} />
                 <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - split}% 0 0)` }}>
-                  <Image key={`${active.id}-original`} src={active.originalPoster} alt={active.altOriginal} fill priority sizes="(max-width: 896px) 100vw, 896px" className="object-cover" />
+                  <Image key={`${active.id}-original`} src={active.originalPoster} alt={active.altOriginal} fill sizes="(max-width: 896px) 100vw, 896px" className="object-cover" />
                   <span className="absolute left-5 top-5 rounded-full bg-[#07080f]/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/80">Original</span>
                 </div>
                 <span className="absolute right-5 top-5 rounded-full bg-[#07080f]/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-cyan-200">Cleaned</span>
