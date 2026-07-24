@@ -40,8 +40,9 @@ export default function ForgotPasswordPage() {
             <div className="rounded-md bg-rose-500/10 px-3 py-2 text-sm text-rose-200">{error}</div>
           )}
           <div>
-            <label className="mb-1 block text-sm font-medium">Email</label>
+            <label htmlFor="forgot-email" className="mb-1 block text-sm font-medium">Email</label>
             <input
+              id="forgot-email"
               type="email"
               className="min-h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 focus:border-[#4f7cff] focus:outline-none"
               value={email}

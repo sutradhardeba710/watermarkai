@@ -54,9 +54,43 @@ function CompareTable({ plans }: { plans: PricingPlan[] }) {
     ["Retention", (plan) => plan.retention],
     ["Support", (plan) => plan.support],
   ];
-  return <section aria-labelledby="compare-plans-title" className="mt-16"><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="text-xs font-semibold uppercase tracking-[.18em] text-cyan-100">Plan comparison</p><h3 id="compare-plans-title" className="mt-3 text-3xl font-semibold tracking-[-.04em] text-white">Limits stay connected to live plan data.</h3></div><p className="max-w-md text-sm leading-6 text-white/45">When a plan-specific value is unset, the table shows the actual platform default or identifies the limit as platform-managed.</p></div><div className="mt-8 overflow-x-auto rounded-3xl border border-white/10 bg-[#10121f]"><table className="w-full min-w-[820px] text-left text-sm"><caption className="sr-only">ClearFrame plan prices and limits</caption><thead><tr className="border-b border-white/10"><th className="px-5 py-4 text-xs uppercase tracking-wider text-white/35">Compare plans</th>{plans.map((plan) => <th key={plan.id} className="px-5 py-4 font-semibold text-white">{plan.name}</th>)}</tr></thead><tbody>{rows.map(([label, value]) => <tr key={label} className="border-b border-white/[.07] last:border-0"><th className="px-5 py-4 font-medium text-white/55">{label}</th>{plans.map((plan) => <td key={plan.id} className="px-5 py-4 text-white/75">{value(plan) || <Minus size={15} className="text-white/25" />}</td>)}</tr>)}</tbody></table></div></section>;
+  return (
+    <section aria-labelledby="compare-plans-title" className="mt-16">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[.18em] text-cyan-100">Plan comparison</p>
+          <h3 id="compare-plans-title" className="mt-3 text-3xl font-semibold tracking-[-.04em] text-white">Limits stay connected to live plan data.</h3>
+        </div>
+        <p className="max-w-md text-sm leading-6 text-white/45">When a plan-specific value is unset, the comparison shows the actual platform default or identifies the limit as platform-managed.</p>
+      </div>
+      <div className="mt-8 grid gap-4 md:hidden">
+        {plans.map((plan) => (
+          <article key={plan.id} className="rounded-2xl border border-white/10 bg-[#10121f] p-5">
+            <div className="flex items-center justify-between gap-3">
+              <h4 className="text-lg font-semibold text-white">{plan.name}</h4>
+              {plan.popular && <span className="rounded-full bg-[#6d5ef7]/20 px-2.5 py-1 text-xs font-semibold text-[#c4b0ff]">Most popular</span>}
+            </div>
+            <dl className="mt-4 divide-y divide-white/[.07]">
+              {rows.map(([label, value]) => (
+                <div key={label} className="grid grid-cols-2 gap-4 py-3 text-sm">
+                  <dt className="text-white/50">{label}</dt>
+                  <dd className="text-right font-medium text-white/80">{value(plan) || <Minus size={15} className="ml-auto text-white/25" />}</dd>
+                </div>
+              ))}
+            </dl>
+          </article>
+        ))}
+      </div>
+      <div className="mt-8 hidden overflow-x-auto rounded-3xl border border-white/10 bg-[#10121f] md:block" role="region" aria-label="Scrollable plan comparison" tabIndex={0}>
+        <table className="w-full min-w-[820px] text-left text-sm">
+          <caption className="sr-only">ClearFrame plan prices and limits</caption>
+          <thead><tr className="border-b border-white/10"><th className="sticky left-0 z-10 bg-[#10121f] px-5 py-4 text-xs uppercase tracking-wider text-white/35">Compare plans</th>{plans.map((plan) => <th key={plan.id} className="px-5 py-4 font-semibold text-white">{plan.name}</th>)}</tr></thead>
+          <tbody>{rows.map(([label, value]) => <tr key={label} className="border-b border-white/[.07] last:border-0"><th className="sticky left-0 z-10 bg-[#10121f] px-5 py-4 font-medium text-white/55">{label}</th>{plans.map((plan) => <td key={plan.id} className="px-5 py-4 text-white/75">{value(plan) || <Minus size={15} className="text-white/25" />}</td>)}</tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+  );
 }
-
 function PricingFAQ() {
   const items = [
     ["Does a preview consume credits?", "No. The current quick-preview endpoint does not deduct credits."],

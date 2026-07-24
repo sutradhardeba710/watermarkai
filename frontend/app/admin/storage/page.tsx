@@ -157,11 +157,11 @@ export default function AdminStoragePage() {
                 {
                   key: "actions", header: "", render: (r) => canManage ? (
                     <div className="flex flex-wrap justify-end gap-1.5">
-                      <button onClick={() => act(r, "extend_retention")} className="rounded-lg border border-white/10 px-2.5 py-1 text-[11px] text-white/65 hover:bg-white/5">Extend</button>
-                      <button onClick={() => act(r, "verify_existence")} className="rounded-lg border border-white/10 px-2.5 py-1 text-[11px] text-white/65 hover:bg-white/5">Verify</button>
+                      <button onClick={() => act(r, "extend_retention")} className="min-h-11 rounded-lg border border-white/10 px-3 py-2 text-xs text-white/65 hover:bg-white/5">Extend</button>
+                      <button onClick={() => act(r, "verify_existence")} className="min-h-11 rounded-lg border border-white/10 px-3 py-2 text-xs text-white/65 hover:bg-white/5">Verify</button>
                       {r.cleanup_failed
-                        ? <button onClick={() => act(r, "retry_cleanup")} className="rounded-lg border border-rose-400/20 px-2.5 py-1 text-[11px] text-rose-300 hover:bg-rose-400/10">Retry cleanup</button>
-                        : <button onClick={() => act(r, "expire_now")} className="rounded-lg border border-amber-400/20 px-2.5 py-1 text-[11px] text-amber-200 hover:bg-amber-400/10">Expire</button>}
+                        ? <button onClick={() => act(r, "retry_cleanup")} className="min-h-11 rounded-lg border border-rose-400/20 px-3 py-2 text-xs text-rose-300 hover:bg-rose-400/10">Retry cleanup</button>
+                        : <button onClick={() => act(r, "expire_now")} className="min-h-11 rounded-lg border border-amber-400/20 px-3 py-2 text-xs text-amber-200 hover:bg-amber-400/10">Expire</button>}
                     </div>
                   ) : null,
                   className: "text-right",

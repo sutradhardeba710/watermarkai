@@ -108,7 +108,7 @@ export default function AdminModelsPage() {
                     <button
                       key={a.action}
                       onClick={() => act(m, a)}
-                      className={`rounded-lg border px-2.5 py-1 text-[11px] ${
+                      className={`min-h-11 rounded-lg border px-3 py-2 text-xs ${
                         a.danger
                           ? "border-rose-400/20 text-rose-300 hover:bg-rose-400/10"
                           : "border-white/10 text-white/65 hover:bg-white/5"

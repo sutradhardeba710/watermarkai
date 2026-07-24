@@ -32,7 +32,7 @@ export const SheetContent = React.forwardRef<
       ref={ref}
       className={cn(
         "fixed z-50 flex flex-col overflow-y-auto overscroll-contain border-white/10 bg-[#0e101d] text-white shadow-2xl outline-none",
-        "data-[state=open]:animate-in data-[state=closed]:animate-out duration-300",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out duration-300 motion-reduce:animate-none motion-reduce:duration-0",
         sides[side],
         className,
       )}

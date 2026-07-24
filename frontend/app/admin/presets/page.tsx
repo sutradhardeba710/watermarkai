@@ -91,7 +91,7 @@ export default function AdminPresetsPage() {
         actions={canManage ? (
           <button
             onClick={() => setCreating((v) => !v)}
-            className="rounded-xl bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-4 py-2 text-sm font-semibold text-white"
+            className="min-h-11 rounded-xl bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-4 py-2 text-sm font-semibold text-white"
           >
             {creating ? "Cancel" : "New preset"}
           </button>
@@ -151,11 +151,11 @@ export default function AdminPresetsPage() {
             {
               key: "actions", header: "", className: "text-right", render: (p) => canManage ? (
                 <div className="flex flex-wrap justify-end gap-1.5">
-                  <button onClick={() => toggle(p)} className="rounded-lg border border-white/10 px-2.5 py-1 text-[11px] text-white/65 hover:bg-white/5">
+                  <button onClick={() => toggle(p)} className="min-h-11 rounded-lg border border-white/10 px-3 py-2 text-xs text-white/65 hover:bg-white/5">
                     {p.enabled ? "Disable" : "Enable"}
                   </button>
                   {!p.is_default && (
-                    <button onClick={() => setDefault(p)} className="rounded-lg border border-[#4f7cff]/30 px-2.5 py-1 text-[11px] text-[#9db4ff] hover:bg-[#4f7cff]/10">
+                    <button onClick={() => setDefault(p)} className="min-h-11 rounded-lg border border-[#4f7cff]/30 px-3 py-2 text-xs text-[#9db4ff] hover:bg-[#4f7cff]/10">
                       Set default
                     </button>
                   )}

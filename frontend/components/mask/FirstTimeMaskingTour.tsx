@@ -78,7 +78,7 @@ export function FirstTimeMaskingTour({ forceOpen, onClose }: { forceOpen?: boole
                 type="button"
                 onClick={finish}
                 aria-label="Skip tour"
-                className="grid h-8 w-8 place-items-center rounded-lg text-white/40 hover:bg-white/5 hover:text-white"
+                className="grid h-11 w-11 place-items-center rounded-xl text-white/40 hover:bg-white/5 hover:text-white"
               >
                 <X className="h-4 w-4" />
               </button>

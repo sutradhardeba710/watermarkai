@@ -155,7 +155,7 @@ function ProfileSection({ user }: { user: AuthUser }) {
               onClick={() => fileRef.current?.click()}
               disabled={avatarBusy}
               aria-label="Change profile picture"
-              className="absolute -bottom-1 -right-1 grid h-8 w-8 place-items-center rounded-full border border-white/15 bg-[#0a0c18] text-white/70 transition hover:text-white disabled:opacity-50"
+              className="absolute -bottom-2 -right-2 grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-[#0a0c18] text-white/70 transition hover:text-white disabled:opacity-50"
             >
               {avatarBusy ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

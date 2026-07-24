@@ -57,8 +57,9 @@ function ResetInner() {
           )}
           <FieldError msg={errors.token} />
           <div>
-            <label className="mb-1 block text-sm font-medium">New password</label>
+            <label htmlFor="reset-password" className="mb-1 block text-sm font-medium">New password</label>
             <input
+              id="reset-password"
               type="password"
               className="min-h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 focus:border-[#4f7cff] focus:outline-none"
               value={password}
@@ -67,8 +68,9 @@ function ResetInner() {
             <FieldError msg={errors.password} />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium">Confirm password</label>
+            <label htmlFor="reset-confirm" className="mb-1 block text-sm font-medium">Confirm password</label>
             <input
+              id="reset-confirm"
               type="password"
               className="min-h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 focus:border-[#4f7cff] focus:outline-none"
               value={confirm}
