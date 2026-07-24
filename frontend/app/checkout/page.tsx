@@ -86,9 +86,23 @@ function useLivePlanMeta(planId: PlanId): PlanInfo {
 
 declare global {
   interface Window {
-    Razorpay: new (opts: Record<string, unknown>) => { open(): void };
+    Razorpay: new (opts: Record<string, unknown>) => {
+      open(): void;
+      on(
+        event: "payment.failed",
+        callback: (response: RazorpayPaymentFailure) => void
+      ): void;
+    };
   }
 }
+
+type RazorpayPaymentFailure = {
+  error?: {
+    code?: string;
+    description?: string;
+    reason?: string;
+  };
+};
 
 function loadRazorpayScript(): Promise<boolean> {
   return new Promise((resolve) => {
@@ -259,6 +273,14 @@ function CheckoutForm({
       };
 
       const rz = new window.Razorpay(options);
+      rz.on("payment.failed", (response) => {
+        const reason =
+          response.error?.description ||
+          response.error?.reason ||
+          "Razorpay could not complete the payment.";
+        setError(reason + " Please try another payment method or contact support.");
+        setBusy(false);
+      });
       rz.open();
     } catch (err: unknown) {
       const e = err as { message?: string };

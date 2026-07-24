@@ -297,7 +297,10 @@ def create_subscription(db: "DbSession", user: "User", plan_id: str, promo_code:
     _upsert_subscription_row(
         db, user=user, plan=plan,
         razorpay_sub_id=sub["id"],
-        status=SubscriptionStatus.active,
+        # Creating a Razorpay subscription does not mean the customer has
+        # authorised or paid it. The webhook promotes it to active only after
+        # Razorpay confirms the subscription/payment.
+        status=SubscriptionStatus.pending,
     )
     if promo is not None:
         promo.times_redeemed = (promo.times_redeemed or 0) + 1
