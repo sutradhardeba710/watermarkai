@@ -1320,12 +1320,15 @@ class ExportRequest(BaseModel):
 class ServiceStatusOut(BaseModel):
     name: str
     status: str  # operational | down | unknown
+    detail: Optional[str] = None
+    latency_ms: Optional[float] = None
 
 
 class HealthMetricOut(BaseModel):
     metric: str
     value: Optional[float] = None
     status: str  # ok | warn | critical | unknown
+    unit: Optional[str] = None
 
 
 class SystemHealthOut(BaseModel):
@@ -1333,6 +1336,7 @@ class SystemHealthOut(BaseModel):
     overall: str
     services: list[ServiceStatusOut] = Field(default_factory=list)
     metrics: list[HealthMetricOut] = Field(default_factory=list)
+    checked_at: datetime
 
 
 class IncidentOut(BaseModel):

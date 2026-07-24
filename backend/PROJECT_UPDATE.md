@@ -9,6 +9,29 @@ Admin Panel).
 
 ---
 
+## 2026-07-24 - Real EC2 system-health probes and rolling API telemetry
+
+- **Symptom**: the admin System Health page showed Frontend, Celery, object
+  storage, Razorpay, email, and signed URLs as `unknown`; most metric cards were
+  blank and the overall state was permanently `Degraded` despite healthy EC2
+  containers.
+- **Root cause**: `/admin/system-health` only populated four checks. Redis was
+  incorrectly inferred from worker-heartbeat presence, and no request,
+  database, storage, webhook, email, or external-service telemetry was
+  collected.
+- **Fix**: added bounded live probes for all ten services, fresh worker
+  heartbeat validation, S3 read/write cleanup checks, Razorpay and authenticated
+  SMTP probes, signed-token round trips, PostgreSQL/Redis metrics, one-hour
+  failure counts, and Redis-backed five-minute API latency/error telemetry
+  shared by all Uvicorn workers. Probe results are cached for five minutes and
+  API metric writes run as response background tasks.
+- **UI**: service cards now show probe detail, metrics show units, and the board
+  displays its last check time while continuing to refresh every 30 seconds.
+- **Tests**: full backend suite: 486 passed, 12 skipped; production Next.js
+  build passed.
+- **Commit / deployment verification**: pending.
+
+---
 ## 2026-07-23 — Promo discount type alignment
 
 - **Symptom**: creating a percentage or flat promo code in the admin UI failed with `discount_type must be one of fixed, percentage, free_trial_extension, bonus_credits, first_cycle, multi_cycle`.

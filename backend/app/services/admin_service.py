@@ -2030,7 +2030,7 @@ SERVICE_NAMES = (
 # Metric evaluation thresholds: (warn_at, critical_at). Higher-is-worse.
 _HEALTH_THRESHOLDS = {
     "api_response_ms": (500, 1500),
-    "api_error_rate": (0.02, 0.05),
+    "api_error_rate": (2, 5),
     "db_connections": (80, 95),
     "db_latency_ms": (50, 200),
     "redis_memory_mb": (512, 900),
@@ -2039,6 +2039,14 @@ _HEALTH_THRESHOLDS = {
     "storage_io_failures": (1, 5),
     "webhook_failures": (1, 5),
     "email_failures": (1, 5),
+}
+
+_HEALTH_UNITS = {
+    "api_response_ms": "ms",
+    "api_error_rate": "%",
+    "db_connections": "%",
+    "db_latency_ms": "ms",
+    "redis_memory_mb": "MB",
 }
 
 INCIDENT_SEVERITIES = ("info", "minor", "major", "critical")
@@ -2077,7 +2085,12 @@ def evaluate_health_metrics(metrics: Mapping[str, Any]) -> list[dict]:
     out = []
     for metric in _HEALTH_THRESHOLDS:
         value = metrics.get(metric)
-        out.append({"metric": metric, "value": value, "status": health_status_for(metric, value)})
+        out.append({
+            "metric": metric,
+            "value": value,
+            "status": health_status_for(metric, value),
+            "unit": _HEALTH_UNITS.get(metric),
+        })
     return out
 
 

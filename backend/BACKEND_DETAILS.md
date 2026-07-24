@@ -103,6 +103,27 @@ Transactional email (account lifecycle) is sent **asynchronously via Celery** so
 - A `flock` on `/tmp/vwa-production-deploy.lock` prevents concurrent deploy runs.
 - All long-running containers use `restart: unless-stopped`, so Docker restores the stack after an EC2 reboot. The self-hosted Actions runner is managed by systemd and resumes GitHub-triggered deployments after boot.
 
+## Admin system-health monitoring
+
+`GET /api/v1/admin/system-health` performs bounded, admin-only dependency
+checks for frontend, backend, PostgreSQL, Redis, Celery/processing workers,
+object storage, Razorpay, SMTP email, and app-signed media tokens.
+
+- Frontend and backend use HTTP probes; workers require Redis heartbeats no
+  older than 60 seconds.
+- Object storage performs a cached write/read/delete round trip against the
+  configured backend, so S3 credentials and I/O are tested rather than merely
+  checking configuration.
+- Razorpay validates the configured credentials with a read-only Plans request.
+  SMTP connects, upgrades with STARTTLS, and authenticates without sending mail.
+- External and storage probes are cached for five minutes and run concurrently;
+  the admin page may poll every 30 seconds without repeatedly hitting providers.
+- `RequestIdMiddleware` records API response time and 5xx counts after the
+  response is sent. Per-minute Redis hashes aggregate a rolling five-minute
+  window across all four Uvicorn workers.
+- Metrics also include PostgreSQL connection utilization and latency, Redis
+  memory, queue depth, stale worker count, and one-hour webhook/email probe
+  failures. The board refreshes every 30 seconds and reports the check time.
 ## Production environment
 
 - Prod env file: `backend/.env.production` on the EC2 host (git-ignored — never committed; `.bak-local-<timestamp>` backups are made before any manual edit).

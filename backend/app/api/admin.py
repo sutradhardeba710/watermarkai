@@ -1914,21 +1914,24 @@ def get_system_health(
     db: Session = Depends(get_db),
     _admin: User = Depends(require_permission("health.view")),
 ) -> SystemHealthOut:
-    # Service up/down checks: DB is reachable (we're serving), Redis via heartbeat
-    # hash presence, workers via live heartbeats. Unknown where we can't probe.
-    heartbeats = _heartbeats()
-    checks: dict[str, Optional[bool]] = {
-        "backend": True,
-        "postgres": True,
-        "redis": bool(heartbeats) or None,
-        "gpu_workers": (len(heartbeats) > 0) if heartbeats else None,
-    }
-    services = admin_service.service_status_list(checks)
+    from app.services import health_monitor
 
-    probe = admin_repo.health_probe_counts(db)
+    checks, probe = health_monitor.collect(db, admin_repo.health_probe_counts(db))
+    services = admin_service.service_status_list({
+        name: row.get("ok") for name, row in checks.items()
+    })
+    for service in services:
+        detail = checks.get(service["name"], {})
+        service["detail"] = detail.get("detail")
+        service["latency_ms"] = detail.get("latency_ms")
     metrics = admin_service.evaluate_health_metrics(probe)
     overall = admin_service.overall_health(services, metrics)
-    return SystemHealthOut(overall=overall, services=services, metrics=metrics)
+    return SystemHealthOut(
+        overall=overall,
+        services=services,
+        metrics=metrics,
+        checked_at=datetime.now(timezone.utc),
+    )
 
 
 @router.get("/incidents", response_model=list[IncidentOut])

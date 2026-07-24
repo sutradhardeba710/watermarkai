@@ -74,7 +74,11 @@ export default function AdminSystemHealthPage() {
       <PageHeader
         eyebrow="Operations"
         title="System health"
-        subtitle="Live service status, key metrics and the incident timeline."
+        subtitle={
+          data
+            ? `Live dependency probes and rolling metrics · checked ${new Date(data.checked_at).toLocaleTimeString()}`
+            : "Live dependency probes, rolling metrics and the incident timeline."
+        }
         actions={
           data && (
             <span className={`text-sm font-semibold ${OVERALL_TONE[data.overall] || "text-white/60"}`}>
@@ -94,9 +98,13 @@ export default function AdminSystemHealthPage() {
               {data.services.map((s: ServiceStatus) => (
                 <div
                   key={s.name}
-                  className="flex items-center justify-between rounded-xl border border-white/10 bg-[#10121f] px-4 py-3"
+                  title={s.detail || undefined}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-[#10121f] px-4 py-3"
                 >
-                  <span className="text-sm text-white/80">{labelize(s.name)}</span>
+                  <span>
+                    <span className="block text-sm text-white/80">{labelize(s.name)}</span>
+                    {s.detail && <span className="mt-0.5 block text-[10px] text-white/35">{s.detail}</span>}
+                  </span>
                   <span className="flex items-center gap-2 text-xs text-white/50">
                     <span className={`h-2.5 w-2.5 rounded-full ${SERVICE_DOT[s.status]}`} />
                     {s.status}
@@ -116,7 +124,7 @@ export default function AdminSystemHealthPage() {
                 >
                   <span className="text-sm text-white/70">{labelize(m.metric)}</span>
                   <span className={`text-sm font-medium ${METRIC_TONE[m.status]}`}>
-                    {m.value ?? "—"}
+                    {m.value ?? "—"}{m.value != null && m.unit ? ` ${m.unit}` : ""}
                   </span>
                 </div>
               ))}

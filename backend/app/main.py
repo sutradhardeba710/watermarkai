@@ -11,6 +11,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
 from slowapi import Limiter
+from starlette.background import BackgroundTask
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.api.auth import router as auth_router
@@ -51,6 +52,20 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
         response.headers["X-Request-ID"] = request_id
         # SRS BE-006 request logging (no sensitive payload logged)
         print(f"req_id={request_id} method={request.method} path={request.url.path} status={response.status_code} ms={elapsed_ms:.1f}")
+        if request.url.path.startswith(settings.api_prefix):
+            from app.services.request_metrics import record_request
+
+            existing_background = response.background
+            if existing_background is None:
+                response.background = BackgroundTask(
+                    record_request, response.status_code, elapsed_ms
+                )
+            else:
+                async def record_after_existing() -> None:
+                    await existing_background()
+                    record_request(response.status_code, elapsed_ms)
+
+                response.background = BackgroundTask(record_after_existing)
         return response
 
 

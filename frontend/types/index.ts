@@ -962,18 +962,22 @@ export type ExportFormat = "csv" | "json";
 export interface ServiceStatus {
   name: string;
   status: "operational" | "down" | "unknown";
+  detail?: string | null;
+  latency_ms?: number | null;
 }
 
 export interface HealthMetric {
   metric: string;
   value?: number | null;
   status: "ok" | "warn" | "critical" | "unknown";
+  unit?: string | null;
 }
 
 export interface SystemHealth {
   overall: string;
   services: ServiceStatus[];
   metrics: HealthMetric[];
+  checked_at: string;
 }
 
 export type IncidentSeverity = "info" | "minor" | "major" | "critical";
