@@ -68,7 +68,7 @@ export function WorkflowStepper({
               <span
                 aria-hidden="true"
                 className={cn(
-                  "grid h-8 w-8 shrink-0 place-items-center rounded-full text-[13px] font-semibold transition-colors",
+                  "grid h-9 w-9 shrink-0 place-items-center rounded-full text-[13px] font-semibold transition-colors",
                   status === "current" && "bg-cyan-300 text-[#06121a] ring-4 ring-cyan-300/20 shadow-[0_0_18px_rgba(34,211,238,.45)]",
                   status === "complete" && "bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6] text-white shadow-[0_2px_10px_rgba(109,94,247,.4)]",
                   status === "warning" && "bg-amber-400 text-[#1a1204]",
@@ -120,14 +120,14 @@ export function WorkflowStepper({
                         <button
                           type="button"
                           onClick={() => onStepClick?.(index)}
-                          className="rounded-xl outline-none transition focus-visible:ring-2 focus-visible:ring-cyan-300"
+                          className="grid min-h-11 min-w-11 place-items-center rounded-xl outline-none transition focus-visible:ring-2 focus-visible:ring-cyan-300"
                         >
                           {inner}
                         </button>
                       ) : (
                         <div
                           tabIndex={0}
-                          className="cursor-default rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/50"
+                          className="grid min-h-11 min-w-11 place-items-center cursor-default rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/50"
                         >
                           {inner}
                         </div>

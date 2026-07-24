@@ -58,7 +58,8 @@ export function PricingCard({
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: reduce ? 0 : 0.45, delay: reduce ? 0 : index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        "relative flex h-full flex-col rounded-3xl border p-7",
+        "relative flex h-full flex-col rounded-3xl border p-5 sm:p-7",
+        plan.popular && "order-first lg:order-none",
         plan.popular
           ? "border-[#6d5ef7]/80 bg-gradient-to-b from-[#221d4d] via-[#171735] to-[#10121f] shadow-[0_24px_90px_rgba(109,94,247,.3)] ring-1 ring-[#8b5cf6]/40"
           : "border-white/[.08] bg-gradient-to-b from-white/[.04] to-white/[.01] transition hover:border-white/[.16]",

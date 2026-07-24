@@ -47,7 +47,7 @@ export default function ProductFeaturePage({ params }: Props) {
           <div>
             <span className="grid h-12 w-12 place-items-center rounded-2xl border border-cyan-200/20 bg-gradient-to-br from-[#4f7cff]/25 to-[#6d5ef7]/25 text-cyan-100"><Icon size={22} /></span>
             <p className="mt-7 text-xs font-semibold uppercase tracking-[.18em] text-cyan-100">{feature.eyebrow}</p>
-            <h1 className="mt-4 max-w-2xl text-5xl font-semibold leading-[.98] tracking-[-.055em] sm:text-6xl">{feature.title}.</h1>
+            <h1 className="mt-4 max-w-2xl text-4xl font-semibold sm:text-5xl leading-[.98] tracking-[-.055em] sm:text-6xl">{feature.title}.</h1>
             <p className="mt-6 max-w-xl text-lg leading-8 text-white/68">{feature.description}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href={feature.primaryCta.href} className="inline-flex min-h-12 items-center justify-center rounded-full bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-6 font-semibold text-white shadow-[0_12px_32px_rgba(79,124,255,.26)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300">{feature.primaryCta.label}</Link>
@@ -61,7 +61,7 @@ export default function ProductFeaturePage({ params }: Props) {
 
       {feature.slug === "examples" && <ExamplesGallery />}
 
-      <section className={`${feature.slug === "examples" ? "bg-[#07080f] text-white" : "bg-[#f5f6f8] text-[#0c0e1a]"} py-24 sm:py-32`}>
+      <section className={`${feature.slug === "examples" ? "bg-[#07080f] text-white" : "bg-[#f5f6f8] text-[#0c0e1a]"} py-24 sm:py-28`}>
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <div className="grid gap-8 lg:grid-cols-[.75fr_1.25fr] lg:gap-16">
             <div>
@@ -76,7 +76,7 @@ export default function ProductFeaturePage({ params }: Props) {
         </div>
       </section>
 
-      <section className={`${feature.slug === "examples" ? "bg-[#f5f6f8] text-[#0c0e1a]" : "bg-[#07080f] text-white"} py-24 sm:py-32`}>
+      <section className={`${feature.slug === "examples" ? "bg-[#f5f6f8] text-[#0c0e1a]" : "bg-[#07080f] text-white"} py-24 sm:py-28`}>
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <p className={`text-xs font-semibold uppercase tracking-[.18em] ${feature.slug === "examples" ? "text-[#4f7cff]" : "text-cyan-100"}`}>Capabilities in context</p>
           <h2 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-.045em] sm:text-5xl">{feature.capabilitiesTitle}</h2>
@@ -86,7 +86,7 @@ export default function ProductFeaturePage({ params }: Props) {
         </div>
       </section>
 
-      {feature.examples.length > 0 && <section className="bg-[#f5f6f8] py-24 text-[#0c0e1a] sm:py-32"><div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"><div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end"><div><p className="text-xs font-semibold uppercase tracking-[.18em] text-[#4f7cff]">Practical review states</p><h2 className="mt-4 max-w-2xl text-4xl font-semibold tracking-[-.045em] sm:text-5xl">Know what to look for next.</h2></div><p className="max-w-md leading-7 text-slate-600">Each state points to a concrete next action instead of leaving you with a vague score or success message.</p></div><div className="mt-12 grid gap-4 md:grid-cols-2">{feature.examples.map((item, index) => <article key={item.title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_12px_32px_rgba(21,24,31,.05)]"><div className="flex items-start gap-4"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#4f7cff]/10 text-sm font-bold text-[#4f7cff]">{index + 1}</span><div><h3 className="font-semibold">{item.title}</h3><p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p></div></div></article>)}</div></div></section>}
+      {feature.examples.length > 0 && <section className="bg-[#f5f6f8] py-16 text-[#0c0e1a] sm:py-28"><div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"><div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end"><div><p className="text-xs font-semibold uppercase tracking-[.18em] text-[#4f7cff]">Practical review states</p><h2 className="mt-4 max-w-2xl text-4xl font-semibold tracking-[-.045em] sm:text-5xl">Know what to look for next.</h2></div><p className="max-w-md leading-7 text-slate-600">Each state points to a concrete next action instead of leaving you with a vague score or success message.</p></div><div className="mt-12 grid gap-4 md:grid-cols-2">{feature.examples.map((item, index) => <article key={item.title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_12px_32px_rgba(21,24,31,.05)]"><div className="flex items-start gap-4"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#4f7cff]/10 text-sm font-bold text-[#4f7cff]">{index + 1}</span><div><h3 className="font-semibold">{item.title}</h3><p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p></div></div></article>)}</div></div></section>}
 
       <section className="bg-[#0c0e1a] py-24 sm:py-28"><div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"><div className="grid gap-8 rounded-[2rem] border border-amber-300/20 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,.09),transparent_45%)] p-8 sm:p-10 lg:grid-cols-[.72fr_1.28fr]"><div><div className="flex items-center gap-2 text-amber-200"><Info size={18} /><span className="text-xs font-semibold uppercase tracking-[.18em]">What to expect</span></div><h2 className="mt-5 text-3xl font-semibold tracking-[-.04em] sm:text-4xl">Keep the limitation visible before the job starts.</h2></div><ul className="grid gap-3 sm:grid-cols-2">{feature.limitations.map((limitation) => <li key={limitation} className="flex gap-3 rounded-2xl border border-white/10 bg-white/[.025] p-4 text-sm leading-6 text-white/60"><ShieldCheck size={17} className="mt-0.5 shrink-0 text-amber-200" />{limitation}</li>)}</ul></div></div></section>
 

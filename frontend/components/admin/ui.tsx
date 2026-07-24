@@ -72,35 +72,18 @@ export function DataTable<T>({ columns, rows, rowKey, onRowClick, empty }: {
   onRowClick?: (row: T) => void;
   empty?: string;
 }) {
-  return (
-    <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#10121f]">
-      <table className="min-w-full text-sm">
-        <thead className="bg-[#0c0e1a] text-left text-xs uppercase tracking-wide text-white/40">
-          <tr>
-            {columns.map((c) => (
-              <th key={c.key} className={`px-4 py-3 ${c.className || ""}`}>{c.header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-white/10">
-          {rows.map((row) => (
-            <tr
-              key={rowKey(row)}
-              onClick={onRowClick ? () => onRowClick(row) : undefined}
-              className={`hover:bg-white/[.03] ${onRowClick ? "cursor-pointer" : ""}`}
-            >
-              {columns.map((c) => (
-                <td key={c.key} className={`px-4 py-3 ${c.className || ""}`}>{c.render(row)}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {rows.length === 0 && (
-        <p className="p-8 text-center text-sm text-white/45">{empty || "No results."}</p>
-      )}
+  if (rows.length === 0) return <div className="rounded-2xl border border-white/10 bg-[#10121f] p-8 text-center text-sm text-white/50">{empty || "No results."}</div>;
+  return <>
+    <div className="grid gap-3 md:hidden">
+      {rows.map((row) => {
+        const content = <>{columns.map((column) => <div key={column.key} className="grid grid-cols-[minmax(0,6.5rem)_minmax(0,1fr)] gap-3 border-b border-white/[.07] py-3 last:border-0"><span className="text-xs font-semibold uppercase tracking-wide text-white/40">{column.header}</span><div className="min-w-0 break-words text-right text-sm text-white/80">{column.render(row)}</div></div>)}</>;
+        return onRowClick ? <button type="button" key={rowKey(row)} onClick={() => onRowClick(row)} className="w-full rounded-2xl border border-white/10 bg-[#10121f] p-4 text-left transition hover:border-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300">{content}</button> : <article key={rowKey(row)} className="rounded-2xl border border-white/10 bg-[#10121f] p-4">{content}</article>;
+      })}
     </div>
-  );
+    <div className="hidden overflow-x-auto overscroll-x-contain rounded-2xl border border-white/10 bg-[#10121f] md:block" role="region" aria-label="Scrollable data table" tabIndex={0}>
+      <table className="min-w-full text-sm"><thead className="bg-[#0c0e1a] text-left text-xs uppercase tracking-wide text-white/40"><tr>{columns.map((c) => <th key={c.key} className={`whitespace-nowrap px-4 py-3 ${c.className || ""}`}>{c.header}</th>)}</tr></thead><tbody className="divide-y divide-white/10">{rows.map((row) => <tr key={rowKey(row)} onClick={onRowClick ? () => onRowClick(row) : undefined} className={`hover:bg-white/[.03] ${onRowClick ? "cursor-pointer" : ""}`}>{columns.map((c) => <td key={c.key} className={`px-4 py-3 ${c.className || ""}`}>{c.render(row)}</td>)}</tr>)}</tbody></table>
+    </div>
+  </>;
 }
 
 export function Pagination({ page, pageSize, total, onPage }: {
@@ -109,7 +92,7 @@ export function Pagination({ page, pageSize, total, onPage }: {
   const pages = Math.max(1, Math.ceil(total / pageSize));
   if (pages <= 1) return null;
   return (
-    <div className="flex items-center justify-between text-sm text-white/50">
+    <div className="flex flex-col gap-3 text-sm text-white/50 sm:flex-row sm:items-center sm:justify-between">
       <span>
         Page {page} of {pages} · {total} total
       </span>
@@ -117,14 +100,14 @@ export function Pagination({ page, pageSize, total, onPage }: {
         <button
           disabled={page <= 1}
           onClick={() => onPage(page - 1)}
-          className="rounded-lg border border-white/10 px-3 py-1.5 text-xs hover:bg-white/5 disabled:opacity-40"
+          className="min-h-11 rounded-lg border border-white/10 px-3 py-2 text-xs hover:bg-white/5 disabled:opacity-40"
         >
           Previous
         </button>
         <button
           disabled={page >= pages}
           onClick={() => onPage(page + 1)}
-          className="rounded-lg border border-white/10 px-3 py-1.5 text-xs hover:bg-white/5 disabled:opacity-40"
+          className="min-h-11 rounded-lg border border-white/10 px-3 py-2 text-xs hover:bg-white/5 disabled:opacity-40"
         >
           Next
         </button>

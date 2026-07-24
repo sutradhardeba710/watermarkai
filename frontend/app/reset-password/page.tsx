@@ -60,7 +60,7 @@ function ResetInner() {
             <label className="mb-1 block text-sm font-medium">New password</label>
             <input
               type="password"
-              className="w-full rounded-md border border-white/10 px-3 py-2 focus:border-[#4f7cff] focus:outline-none"
+              className="min-h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 focus:border-[#4f7cff] focus:outline-none"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -70,7 +70,7 @@ function ResetInner() {
             <label className="mb-1 block text-sm font-medium">Confirm password</label>
             <input
               type="password"
-              className="w-full rounded-md border border-white/10 px-3 py-2 focus:border-[#4f7cff] focus:outline-none"
+              className="min-h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 focus:border-[#4f7cff] focus:outline-none"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
             />
@@ -79,7 +79,7 @@ function ResetInner() {
           <button
             type="submit"
             disabled={busy}
-            className="w-full rounded-md bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-4 py-2.5 text-white font-medium hover:brightness-110 disabled:opacity-60">
+            className="min-h-12 w-full rounded-xl bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-4 py-2.5 text-white font-medium hover:brightness-110 disabled:opacity-60">
             {busy ? "Updating…" : "Reset password"}
           </button>
         </form>

@@ -18,7 +18,7 @@ export const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 min-w-[9rem] overflow-hidden rounded-xl border border-white/10 bg-[#10121f] p-1 text-white shadow-2xl",
+        "z-50 max-h-[min(24rem,var(--radix-dropdown-menu-content-available-height))] max-w-[calc(100vw-1.5rem)] min-w-[9rem] overflow-y-auto overscroll-contain rounded-xl border border-white/10 bg-[#10121f] p-1 text-white shadow-2xl",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
         className,
       )}
@@ -35,7 +35,7 @@ export const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex min-h-9 cursor-pointer select-none items-center gap-2 rounded-lg px-3 text-sm text-white/75 outline-none transition data-[highlighted]:bg-white/[.07] data-[highlighted]:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-40",
+      "relative flex min-h-11 cursor-pointer select-none items-center gap-2 rounded-lg px-3 text-sm text-white/75 outline-none transition data-[highlighted]:bg-white/[.07] data-[highlighted]:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-40",
       className,
     )}
     {...props}

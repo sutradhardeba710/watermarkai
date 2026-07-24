@@ -137,7 +137,7 @@ function LoginPageInner() {
         <button
           type="submit"
           disabled={busy}
-          className="w-full rounded-xl bg-gradient-to-r from-[#4F7CFF] to-[#6D5EF7] px-4 py-2.5 text-white font-medium shadow-[0_8px_24px_-8px_rgba(79,124,255,.6)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60">
+          className="min-h-12 w-full rounded-xl bg-gradient-to-r from-[#4F7CFF] to-[#6D5EF7] px-4 py-2.5 text-white font-medium shadow-[0_8px_24px_-8px_rgba(79,124,255,.6)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60">
           {busy ? "Signing in…" : "Log in"}
         </button>
       </form>

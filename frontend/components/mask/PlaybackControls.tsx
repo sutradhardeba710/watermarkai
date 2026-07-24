@@ -29,7 +29,7 @@ export function PlaybackControls({ ws }: { ws: Ws }) {
 
   return (
     <TooltipProvider delayDuration={150}>
-      <div className="flex flex-wrap items-center gap-1.5">
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
         <InfoTip label="Jump to start"><Button variant="secondary" size="icon" aria-label="Jump to start" onClick={() => seek(0)}><SkipBack className="h-4 w-4" /></Button></InfoTip>
         <InfoTip label="Previous frame"><Button variant="secondary" size="icon" aria-label="Previous frame" onClick={() => stepFrame(-1)}><ChevronLeft className="h-4 w-4" /></Button></InfoTip>
         <InfoTip label={playing ? "Pause" : "Play"}>
@@ -40,11 +40,11 @@ export function PlaybackControls({ ws }: { ws: Ws }) {
         <InfoTip label="Next frame"><Button variant="secondary" size="icon" aria-label="Next frame" onClick={() => stepFrame(1)}><ChevronRight className="h-4 w-4" /></Button></InfoTip>
         <InfoTip label="Jump to end"><Button variant="secondary" size="icon" aria-label="Jump to end" onClick={() => seek(duration)}><SkipForward className="h-4 w-4" /></Button></InfoTip>
 
-        <span className="ml-1 font-mono text-xs tabular-nums text-white/70">
+        <span className="order-last w-full text-center font-mono text-sm sm:order-none sm:ml-1 sm:w-auto sm:text-left tabular-nums text-white/70">
           {fmt(currentTime)} <span className="text-white/30">/</span> {fmt(duration)}
         </span>
 
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="flex items-center gap-2 sm:ml-auto">
           <InfoTip label={muted ? "Unmute" : "Mute"}>
             <Button variant="secondary" size="icon" aria-label={muted ? "Unmute" : "Mute"} onClick={toggleMute}>
               {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}

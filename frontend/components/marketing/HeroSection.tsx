@@ -22,7 +22,7 @@ export function HeroSection() {
   const primaryLabel = isAuthed ? "Open dashboard" : "Remove a watermark";
 
   return (
-    <section id="top" className="relative isolate mx-auto max-w-7xl px-5 pb-20 pt-28 sm:px-8 sm:pt-32 lg:px-10 lg:pb-28">
+    <section id="top" className="relative isolate mx-auto max-w-7xl px-4 pb-16 pt-24 sm:px-8 sm:pb-20 sm:pt-32 lg:px-10 lg:pb-28">
       {/* Layered ambient mesh: indigo core, violet + cyan side glows, faint grid masked toward the fold */}
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[44rem] bg-[radial-gradient(ellipse_at_top,rgba(79,124,255,.18),transparent_60%)]" />
       <div className="pointer-events-none absolute -top-24 right-[-10%] -z-10 h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(circle,rgba(168,85,247,.14),transparent_65%)]" />
@@ -35,11 +35,11 @@ export function HeroSection() {
             <span className="h-1.5 w-1.5 rounded-full bg-[#22d3ee] shadow-[0_0_8px_rgba(34,211,238,.9)]" />
             Online AI video watermark remover
           </p>
-          <h1 className="mt-6 max-w-2xl text-5xl font-semibold leading-[1.02] tracking-[-.04em] sm:text-6xl lg:text-[4.2rem]">
+          <h1 className="mt-6 max-w-2xl text-4xl font-semibold leading-[1.05] tracking-[-.035em] min-[390px]:text-[2.65rem] sm:text-6xl lg:text-[4.2rem]">
             Remove video watermarks.{" "}
             <span className="bg-gradient-to-r from-[#6d9bff] via-[#a78bfa] to-[#22d3ee] bg-clip-text text-transparent">Keep frame-level control.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-8 text-[#9ca3af]">
+          <p className="mt-5 max-w-xl text-base leading-7 sm:mt-6 sm:text-lg sm:leading-8 text-[#9ca3af]">
             Use AI to detect and remove your old logos, date stamps, hardcoded subtitles, and unwanted overlays from MP4, MOV, or WebM videos. Refine the mask, preview the result, and export only when you are satisfied.
           </p>
 

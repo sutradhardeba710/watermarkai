@@ -111,7 +111,7 @@ export default function BillingPage() {
 
   return (
     <WorkspaceShell title="Billing & Credits" eyebrow="Account">
-        <div className="mx-auto max-w-4xl px-5 py-10 sm:px-8">
+        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-8 sm:py-10">
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((n) => (
@@ -125,7 +125,7 @@ export default function BillingPage() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45 }}
-                className={`relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br ${PLAN_COLORS[status.plan_id] || PLAN_COLORS.free} p-8`}
+                className={`relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br ${PLAN_COLORS[status.plan_id] || PLAN_COLORS.free} p-5 sm:p-8`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
@@ -150,7 +150,7 @@ export default function BillingPage() {
                   {status.is_free && (
                     <Link
                       href="/pricing"
-                      className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(79,124,255,.25)] transition hover:brightness-110"
+                      className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r sm:w-auto from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(79,124,255,.25)] transition hover:brightness-110"
                     >
                       Upgrade plan <ArrowUpRight className="h-4 w-4" />
                     </Link>
@@ -275,17 +275,17 @@ export default function BillingPage() {
                           <p className="text-sm font-medium text-rose-200">
                             Are you sure? You&apos;ll lose {status.plan_name} features at the end of your billing period.
                           </p>
-                          <div className="mt-4 flex gap-3">
+                          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
                             <button
                               onClick={handleCancel}
                               disabled={cancelling}
-                              className="rounded-xl bg-rose-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-rose-600 disabled:opacity-60"
+                              className="min-h-11 rounded-xl bg-rose-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-rose-600 disabled:opacity-60"
                             >
                               {cancelling ? "Cancelling…" : "Yes, cancel subscription"}
                             </button>
                             <button
                               onClick={() => setShowConfirm(false)}
-                              className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition hover:text-white"
+                              className="min-h-11 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition hover:text-white"
                             >
                               Keep my plan
                             </button>

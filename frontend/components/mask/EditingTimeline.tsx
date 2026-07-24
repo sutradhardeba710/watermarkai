@@ -34,7 +34,7 @@ export function EditingTimeline({ ws, hasMask }: { ws: Ws; hasMask: boolean }) {
 
   return (
     <div className="rounded-2xl border border-white/10 bg-[#10121f] p-3 sm:p-4">
-      <div className="mb-2 flex items-center justify-between text-xs">
+      <div className="mb-3 flex flex-col items-start gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-300/20 bg-cyan-300/[.06] px-2.5 py-1 font-medium text-cyan-100/90">
           <Film className="h-3 w-3" /> Mask applies to the entire video
         </span>
@@ -60,7 +60,7 @@ export function EditingTimeline({ ws, hasMask }: { ws: Ws; hasMask: boolean }) {
           step={0.01}
           value={currentTime}
           onChange={(e) => seek(parseFloat(e.target.value))}
-          className="editor-range relative z-10 w-full"
+          className="editor-range relative z-10 h-11 w-full"
           style={{
             background: `linear-gradient(to right, #4f7cff 0%, #22d3ee ${playheadPct}%, rgba(255,255,255,.1) ${playheadPct}%, rgba(255,255,255,.1) 100%)`,
           }}

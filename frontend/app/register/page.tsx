@@ -98,7 +98,7 @@ export default function RegisterPage() {
         <div className="mt-6">
           <button
             onClick={() => router.push("/login")}
-            className="w-full rounded-xl bg-gradient-to-r from-[#4F7CFF] to-[#6D5EF7] px-4 py-2.5 text-white font-medium shadow-[0_8px_24px_-8px_rgba(79,124,255,.6)] transition hover:opacity-95">
+            className="min-h-12 w-full rounded-xl bg-gradient-to-r from-[#4F7CFF] to-[#6D5EF7] px-4 py-2.5 text-white font-medium shadow-[0_8px_24px_-8px_rgba(79,124,255,.6)] transition hover:opacity-95">
             Go to login
           </button>
         </div>
@@ -153,12 +153,12 @@ export default function RegisterPage() {
           />
           <FieldError msg={errors.password} />
         </div>
-        <label className="flex items-start gap-2.5 text-sm text-white/70">
+        <label className="flex min-h-12 cursor-pointer items-start gap-3 rounded-xl px-1 py-2 text-sm leading-6 text-white/70">
           <input
             type="checkbox"
             checked={terms}
             onChange={(e) => setTerms(e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 accent-[#4F7CFF]"
+            className="mt-0.5 h-5 w-5 shrink-0 accent-[#4F7CFF]"
           />
           <span>
             I confirm I have the right to edit my videos and remove their watermarks, logos,
@@ -169,7 +169,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={busy || !terms}
-          className="w-full rounded-xl bg-gradient-to-r from-[#4F7CFF] to-[#6D5EF7] px-4 py-2.5 text-white font-medium shadow-[0_8px_24px_-8px_rgba(79,124,255,.6)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60">
+          className="min-h-12 w-full rounded-xl bg-gradient-to-r from-[#4F7CFF] to-[#6D5EF7] px-4 py-2.5 text-white font-medium shadow-[0_8px_24px_-8px_rgba(79,124,255,.6)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60">
           {busy ? "Creating account…" : "Create account"}
         </button>
       </form>

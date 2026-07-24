@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 
 const INPUT_CLASS =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 pr-11 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-[#4F7CFF] focus:ring-2 focus:ring-[#4F7CFF]/30";
+  "min-h-12 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 pr-11 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-[#4F7CFF] focus:ring-2 focus:ring-[#4F7CFF]/30";
 
 /** 0–4 score based on the same rules the backend enforces. */
 function scorePassword(pw: string): number {
@@ -61,7 +61,6 @@ export function PasswordField({
         <button
           type="button"
           onClick={() => setShow((s) => !s)}
-          tabIndex={-1}
           aria-label={show ? "Hide password" : "Show password"}
           className="absolute inset-y-0 right-0 grid w-11 place-items-center text-white/40 transition hover:text-white/80">
           {show ? (

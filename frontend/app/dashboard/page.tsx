@@ -82,7 +82,7 @@ function DashboardPageInner() {
     >
       {/* Subscribed success toast */}
       {showSubscribedToast && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl border border-emerald-400/25 bg-[#0e1420] px-5 py-4 shadow-[0_20px_60px_rgba(52,211,153,.15)]">
+        <div className="fixed inset-x-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-50 sm:inset-x-auto sm:bottom-6 sm:right-6 flex items-center gap-3 rounded-2xl border border-emerald-400/25 bg-[#0e1420] px-5 py-4 shadow-[0_20px_60px_rgba(52,211,153,.15)]">
           <span className="grid h-8 w-8 place-items-center rounded-full bg-emerald-400/20 text-emerald-300">
             <Check className="h-4 w-4" />
           </span>
@@ -95,6 +95,7 @@ function DashboardPageInner() {
       )}
 
       <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
+          <label className="mb-5 flex min-h-12 items-center rounded-xl border border-white/10 bg-white/5 px-3 md:hidden"><Search className="h-5 w-5 shrink-0 text-white/40" /><span className="sr-only">Search projects</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search projects…" className="min-w-0 flex-1 border-0 bg-transparent px-3 text-base text-white outline-none placeholder:text-white/35" /></label>
           <div className="mb-8 grid gap-3 sm:grid-cols-4">
             <Stat label="Total projects" value={projects.length} icon={FolderKanban} tone="indigo" />
             <Stat label="Processing now" value={processing} icon={Zap} tone="amber" />
@@ -104,7 +105,7 @@ function DashboardPageInner() {
           {checklist && (
             <section className="relative mb-8 overflow-hidden rounded-2xl border border-[#4f7cff]/25 bg-gradient-to-br from-[#1a2046] via-[#141833] to-[#0e1020] p-5 shadow-[0_16px_60px_rgba(79,124,255,.1)] sm:p-6">
               <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[#6d5ef7]/15 blur-3xl" />
-              <button onClick={() => setChecklist(false)} aria-label="Dismiss onboarding" className="absolute right-4 top-4 z-10 text-white/35 hover:text-white"><X className="h-4 w-4" /></button>
+              <button onClick={() => setChecklist(false)} aria-label="Dismiss onboarding" className="absolute right-3 top-3 z-10 grid h-11 w-11 place-items-center rounded-xl text-white/45 hover:text-white"><X className="h-4 w-4" /></button>
               <p className="bg-gradient-to-r from-[#9db9ff] to-[#c4b0ff] bg-clip-text text-xs font-semibold uppercase tracking-[.16em] text-transparent">Getting started</p>
               <h2 className="mt-2 text-lg font-semibold">A clear path from footage to final frame.</h2>
               <div className="relative mt-5 grid gap-3 sm:grid-cols-4">
@@ -123,10 +124,10 @@ function DashboardPageInner() {
             </section>
           )}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap gap-2">{FILTERS.map((f) => <button key={f.label} onClick={() => setFilter(f.value)} className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${filter === f.value ? "border-[#4f7cff]/40 bg-[#4f7cff]/15 text-[#b7c7ff]" : "border-white/10 bg-white/[.03] text-white/55 hover:text-white"}`}>{f.label}</button>)}</div>
+            <div className="mobile-scroll -mx-5 flex max-w-[calc(100vw-2rem)] gap-2 overflow-x-auto px-5 sm:mx-0 sm:max-w-none sm:flex-wrap sm:px-0">{FILTERS.map((f) => <button key={f.label} onClick={() => setFilter(f.value)} className={`min-h-11 shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition ${filter === f.value ? "border-[#4f7cff]/40 bg-[#4f7cff]/15 text-[#b7c7ff]" : "border-white/10 bg-white/[.03] text-white/55 hover:text-white"}`}>{f.label}</button>)}</div>
             <div className="flex items-center gap-2">
-              <button onClick={() => setView("grid")} aria-label="Grid view" className={`rounded-lg p-2 ${view === "grid" ? "bg-white/10 text-white" : "text-white/40"}`}><LayoutGrid className="h-4 w-4" /></button>
-              <button onClick={() => setView("list")} aria-label="List view" className={`rounded-lg p-2 ${view === "list" ? "bg-white/10 text-white" : "text-white/40"}`}><List className="h-4 w-4" /></button>
+              <button onClick={() => setView("grid")} aria-label="Grid view" className={`grid h-11 w-11 place-items-center rounded-lg ${view === "grid" ? "bg-white/10 text-white" : "text-white/40"}`}><LayoutGrid className="h-4 w-4" /></button>
+              <button onClick={() => setView("list")} aria-label="List view" className={`grid h-11 w-11 place-items-center rounded-lg ${view === "list" ? "bg-white/10 text-white" : "text-white/40"}`}><List className="h-4 w-4" /></button>
             </div>
           </div>
           {isError ? (
@@ -188,12 +189,12 @@ function ProjectCard({ project, onRefresh }: { project: VideoProject; onRefresh:
     <article className="group overflow-hidden rounded-2xl border border-white/[.08] bg-gradient-to-b from-white/[.05] to-white/[.02] transition hover:-translate-y-0.5 hover:border-[#4f7cff]/35 hover:shadow-[0_16px_50px_rgba(79,124,255,.12)]">
       <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-[#17213e] via-[#111827] to-[#251b49]">
         <div className="absolute inset-0 opacity-70 [background-image:linear-gradient(135deg,rgba(79,124,255,.18),transparent_45%),linear-gradient(315deg,rgba(34,211,238,.12),transparent_55%)]" />
-        {project.thumbnail_url ? <img src={project.thumbnail_url} alt={`${project.title} thumbnail`} className="absolute inset-0 h-full w-full object-cover" /> : project.preview_url || project.proxy_url ? <video src={project.preview_url || project.proxy_url || undefined} muted autoPlay loop playsInline className="absolute inset-0 h-full w-full object-cover" /> : <div className="absolute inset-0 grid place-items-center text-white/20"><FolderKanban className="h-12 w-12" /></div>}
+        {project.thumbnail_url ? <img src={project.thumbnail_url} alt={`${project.title} thumbnail`} className="absolute inset-0 h-full w-full object-cover" /> : project.preview_url || project.proxy_url ? <video src={project.preview_url || project.proxy_url || undefined} muted playsInline preload="metadata" className="absolute inset-0 h-full w-full object-cover" /> : <div className="absolute inset-0 grid place-items-center text-white/20"><FolderKanban className="h-12 w-12" /></div>}
         <div className="absolute left-3 top-3"><StatusBadge status={project.status} /></div>
         <span className="absolute bottom-3 right-3 rounded bg-black/70 px-1.5 py-0.5 text-xs text-white/85">{fmtDuration(project.duration)}</span>
       </div>
       <div className="p-4">
-        <h3 className="truncate font-medium text-white" title={project.title}>{project.title}</h3>
+        <h3 className="line-clamp-2 min-h-12 font-medium leading-6 text-white" title={project.title}>{project.title}</h3>
         <p className="mt-1 truncate text-xs text-white/40">{project.width && project.height ? `${project.width}×${project.height}` : "Video project"} · Created {new Date(project.created_at).toLocaleDateString()}</p>
         {processing && (
           <div className="mt-3">
@@ -202,9 +203,9 @@ function ProjectCard({ project, onRefresh }: { project: VideoProject; onRefresh:
           </div>
         )}
         <div className="mt-4 flex items-center justify-between">
-          <Link href={canOpen(project.status) ? `/projects/${project.id}/result` : `/projects/${project.id}`} className="rounded-lg bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-4 py-1.5 text-sm font-medium text-white transition hover:brightness-110">Open</Link>
+          <Link href={canOpen(project.status) ? `/projects/${project.id}/result` : `/projects/${project.id}`} className="inline-flex min-h-11 items-center rounded-xl bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-4 py-1.5 text-sm font-medium text-white transition hover:brightness-110">Open</Link>
           <div className="relative">
-            <button aria-label="More project actions" onClick={() => setOpen(!open)} className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-white/55 hover:text-white"><MoreHorizontal className="h-5 w-5" /></button>
+            <button aria-label="More project actions" onClick={() => setOpen(!open)} className="grid h-11 w-11 place-items-center rounded-lg border border-white/10 text-white/55 hover:text-white"><MoreHorizontal className="h-5 w-5" /></button>
             {open && (
               <div className="absolute bottom-full right-0 z-20 mb-2 w-44 rounded-xl border border-white/10 bg-[#171a2b] p-1 text-sm shadow-2xl">
                 <Link href={`/projects/${project.id}/candidates`} className="block rounded-lg px-3 py-2 text-white/75 hover:bg-white/10">AI Detect</Link>

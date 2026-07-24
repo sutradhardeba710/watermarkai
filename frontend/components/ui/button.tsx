@@ -26,9 +26,9 @@ const buttonVariants = cva(
           "bg-emerald-500 text-[#06120d] hover:bg-emerald-400",
       },
       size: {
-        sm: "min-h-9 px-3",
+        sm: "min-h-11 px-3",
         md: "min-h-11 px-4",
-        lg: "min-h-11 px-5",
+        lg: "min-h-12 px-5",
         icon: "h-11 w-11",
       },
     },

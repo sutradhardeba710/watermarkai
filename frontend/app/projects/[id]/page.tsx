@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Group as PanelGroup, Panel, Separator as PanelResizeHandle } from "react-resizable-panels";
-import { PanelRightOpen } from "lucide-react";
+import { BoxSelect, Brush, Eraser, Pentagon, PanelRightOpen, Redo2, ScanSearch, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { useHydrateAuth } from "@/features/auth/useHydrateAuth";
@@ -23,6 +23,17 @@ import { FirstTimeMaskingTour } from "@/components/mask/FirstTimeMaskingTour";
 import { WorkspaceErrorState, OfflineBanner } from "@/components/mask/WorkspaceErrorState";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+
+const MOBILE_TOOLS = [
+  { id: "rectangle" as const, label: "Rectangle", icon: BoxSelect },
+  { id: "polygon" as const, label: "Polygon", icon: Pentagon },
+  { id: "brush" as const, label: "Brush", icon: Brush },
+  { id: "eraser" as const, label: "Eraser", icon: Eraser },
+];
+
+function MobileMaskToolbar({ ws, detecting, onAiDetect }: { ws: ReturnType<typeof useMaskWorkspace>; detecting: boolean; onAiDetect: () => void }) {
+  return <div className="mobile-scroll -mx-3 overflow-x-auto border-y border-white/10 bg-[#0c0e1a] px-3 py-2" aria-label="Mask tools"><div className="flex w-max gap-2"><button type="button" onClick={onAiDetect} disabled={detecting || ws.readOnly} className="flex min-h-14 min-w-[5.25rem] flex-col items-center justify-center gap-1 rounded-xl border border-cyan-300/25 bg-cyan-300/10 px-3 text-xs font-medium text-cyan-100 disabled:opacity-50"><ScanSearch className="h-5 w-5" />{detecting ? "Detecting" : "AI Detect"}</button>{MOBILE_TOOLS.map(({ id, label, icon: Icon }) => <button type="button" key={id} onClick={() => ws.setTool(id)} disabled={ws.readOnly} aria-pressed={ws.tool === id} className={`flex min-h-14 min-w-[4.75rem] flex-col items-center justify-center gap-1 rounded-xl border px-3 text-xs font-medium ${ws.tool === id ? "border-[#4f7cff]/50 bg-[#4f7cff]/20 text-white" : "border-white/10 bg-white/[.03] text-white/65"}`}><Icon className="h-5 w-5" />{label}</button>)}<button type="button" onClick={ws.undo} disabled={ws.readOnly} className="grid h-14 w-14 place-items-center rounded-xl border border-white/10 text-white/65 disabled:opacity-30" aria-label="Undo"><Undo2 className="h-5 w-5" /></button><button type="button" onClick={ws.redo} disabled={ws.readOnly} className="grid h-14 w-14 place-items-center rounded-xl border border-white/10 text-white/65 disabled:opacity-30" aria-label="Redo"><Redo2 className="h-5 w-5" /></button></div></div>;
+}
 
 export default function ProjectWorkspace() {
   useHydrateAuth();
@@ -149,16 +160,12 @@ export default function ProjectWorkspace() {
 
   const project = ws.project;
 
-  const canvasBlock = (
+  const desktopCanvas = (
     <div className="flex h-full min-h-0 flex-col gap-3">
       <VideoCanvas ws={ws} detecting={detect.phase === "scanning"} panMode={spacePan} />
       <PlaybackControls ws={ws} />
       <EditingTimeline ws={ws} hasMask={ws.hasMask} />
-      <p className="text-center text-xs text-white/40">
-        {ws.hasMask
-          ? "Scrub through the video to confirm the mask covers the watermark at several timestamps."
-          : "Select the unwanted logo, text, or overlay on the video to begin."}
-      </p>
+      <p className="text-center text-sm text-white/45">{ws.hasMask ? "Scrub through the video to confirm the mask at several timestamps." : "Select the unwanted logo, text, or overlay to begin."}</p>
     </div>
   );
 
@@ -200,7 +207,7 @@ export default function ProjectWorkspace() {
         <div className="min-h-0 flex-1">
           <PanelGroup orientation="horizontal" className="h-full px-4 py-4">
             <Panel defaultSize="72%" minSize="55%" className="pr-4">
-              {canvasBlock}
+              {desktopCanvas}
             </Panel>
             <PanelResizeHandle className="group w-1.5 shrink-0 rounded-full bg-white/5 transition hover:bg-cyan-300/30 data-[resize-handle-active]:bg-cyan-300/50" />
             <Panel defaultSize="28%" minSize="22%" maxSize="36%" className="pl-4">
@@ -212,16 +219,24 @@ export default function ProjectWorkspace() {
         </div>
       ) : (
         /* Tablet / mobile: video on top, inspector in a bottom sheet */
-        <div className="flex min-h-0 flex-1 flex-col gap-3 px-3 py-3">
-          {canvasBlock}
-          <div className="sticky bottom-0 z-20 -mx-3 border-t border-white/10 bg-[#07080f]/95 px-3 py-2.5 backdrop-blur">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3 pb-24">
+          <div className="h-[min(42dvh,26rem)] min-h-[12rem] sm:min-h-[18rem]">
+            <VideoCanvas ws={ws} detecting={detect.phase === "scanning"} panMode={spacePan} />
+          </div>
+          <div className="mt-3 space-y-3">
+            <MobileMaskToolbar ws={ws} detecting={detect.phase === "scanning"} onAiDetect={() => detect.run(false)} />
+            <PlaybackControls ws={ws} />
+            <EditingTimeline ws={ws} hasMask={ws.hasMask} />
+            <p className="text-center text-sm leading-6 text-white/45">{ws.hasMask ? "Scrub through several timestamps to confirm the mask stays aligned." : "Choose a tool, then select the unwanted logo, text, or overlay."}</p>
+          </div>
+          <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/10 bg-[#07080f]/95 px-3 py-2.5 pb-[max(.625rem,env(safe-area-inset-bottom))] backdrop-blur lg:hidden">
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
                 <Button variant="primary" className="w-full">
                   <PanelRightOpen className="h-4 w-4" /> Open tools &amp; mask options
                 </Button>
               </SheetTrigger>
-              <SheetContent side="bottom" className="px-4 pb-6 pt-5" aria-describedby={undefined}>
+              <SheetContent side="bottom" className="px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-5" aria-describedby={undefined}>
                 <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/15" />
                 <SheetTitle className="mb-3 text-sm font-semibold text-white/85">Mask workspace</SheetTitle>
                 {inspector}

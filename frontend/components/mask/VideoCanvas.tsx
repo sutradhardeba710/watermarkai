@@ -243,25 +243,25 @@ export function VideoCanvas({
           )}
 
           {/* Canvas toolbar — top right */}
-          <div className="absolute right-3 top-3 z-20 flex items-center gap-1 rounded-xl border border-white/10 bg-[#0a0c18]/85 p-1 opacity-0 backdrop-blur transition group-hover:opacity-100 focus-within:opacity-100">
+          <div className="absolute right-3 top-3 z-20 flex items-center gap-1 rounded-xl border border-white/10 bg-[#0a0c18]/85 p-1 opacity-100 backdrop-blur transition sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100">
             <span className="px-1.5 text-[11px] font-medium tabular-nums text-white/60">{Math.round(zoom * 100)}%</span>
             <InfoTip label="Zoom out" side="bottom">
-              <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Zoom out" onClick={() => changeZoom(zoom - 0.25)} disabled={zoom <= MIN_ZOOM}>
+              <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="Zoom out" onClick={() => changeZoom(zoom - 0.25)} disabled={zoom <= MIN_ZOOM}>
                 <ZoomOut className="h-4 w-4" />
               </Button>
             </InfoTip>
             <InfoTip label="Zoom in" side="bottom">
-              <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Zoom in" onClick={() => changeZoom(zoom + 0.25)} disabled={zoom >= MAX_ZOOM}>
+              <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="Zoom in" onClick={() => changeZoom(zoom + 0.25)} disabled={zoom >= MAX_ZOOM}>
                 <ZoomIn className="h-4 w-4" />
               </Button>
             </InfoTip>
             <InfoTip label="Reset view" side="bottom">
-              <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Reset view" onClick={resetView} disabled={zoom === 1 && pan.x === 0 && pan.y === 0}>
+              <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="Reset view" onClick={resetView} disabled={zoom === 1 && pan.x === 0 && pan.y === 0}>
                 <RotateCcw className="h-4 w-4" />
               </Button>
             </InfoTip>
             <InfoTip label={isFullscreen ? "Exit fullscreen" : "Fullscreen"} side="bottom">
-              <Button variant="ghost" size="icon" className="h-8 w-8" aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"} onClick={toggleFullscreen}>
+              <Button variant="ghost" size="icon" className="h-11 w-11" aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"} onClick={toggleFullscreen}>
                 {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
               </Button>
             </InfoTip>
