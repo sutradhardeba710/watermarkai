@@ -13,8 +13,9 @@
   order and public status URLs.
 - **Tests**: full backend suite: 488 passed, 12 skipped; frontend typecheck and
   production build passed.
-- **Commit / deployment verification**: pending push to `main`, GitHub Actions
-  deployment, and public EC2 smoke test.
+- **Commit / deployment verification**: `cc5f559` â€” GitHub Actions run
+  `30076217170` completed successfully on the EC2 self-hosted runner. Public
+  checks returned 200 for `/health`, `/health/maintenance`, and `/maintenance`.
 
 ---
 # Backend Project Update Log
@@ -51,21 +52,21 @@ Admin Panel).
 - **Commit / deployment verification**: pending.
 
 ---
-## 2026-07-23 — Promo discount type alignment
+## 2026-07-23 ï¿½ Promo discount type alignment
 
 - **Symptom**: creating a percentage or flat promo code in the admin UI failed with `discount_type must be one of fixed, percentage, free_trial_extension, bonus_credits, first_cycle, multi_cycle`.
 - **Root cause**: the form sent obsolete `percent` and `flat` values, while the API accepts canonical `percentage` and `fixed` values. Fixed promos were also not recognized by the checkout calculator.
 - **Fix**: aligned the form and its value conversion with the API contract, and made checkout treat `fixed` promos as paise-denominated fixed discounts (while retaining compatibility with `fixed_amount`).
-- **Tests**: `tests/test_admin_panel_phase4.py` — 27 passed; frontend `npm run typecheck` passed.
+- **Tests**: `tests/test_admin_panel_phase4.py` ï¿½ 27 passed; frontend `npm run typecheck` passed.
 - **Commit / deployment verification**: pending.
 
 ---
-## 2026-07-23 — Clear deleted-account login status
+## 2026-07-23 ï¿½ Clear deleted-account login status
 
-- **Symptom**: a user who had deleted their account saw the generic “Invalid email or password” message when attempting to sign in again.
+- **Symptom**: a user who had deleted their account saw the generic ï¿½Invalid email or passwordï¿½ message when attempting to sign in again.
 - **Root cause**: the authentication service deliberately mapped deleted accounts to `INVALID_CREDENTIALS`, so the UI could not distinguish a confirmed deletion from bad credentials.
 - **Fix**: authenticated password and Google sign-ins for deleted accounts now return `ACCOUNT_DELETED` (403); the login screen displays a clear, professional explanation and also shows it immediately after self-service deletion redirects to `?deleted=1`. Invalid passwords remain generic.
-- **Tests**: `tests/test_google_auth.py` — 14 passed; frontend `npm run typecheck` passed.
+- **Tests**: `tests/test_google_auth.py` ï¿½ 14 passed; frontend `npm run typecheck` passed.
 - **Commit / deployment verification**: pending.
 
 ---
