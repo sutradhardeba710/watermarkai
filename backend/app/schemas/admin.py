@@ -6,8 +6,9 @@ unit-testable on the 32-bit dev box without SQLAlchemy.
 """
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
+from urllib.parse import urlparse
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -1270,6 +1271,29 @@ class MaintenanceState(BaseModel):
     pause_new_processing_jobs: bool = True
     disable_checkout: bool = False
     status_page_link: Optional[str] = None
+
+    @field_validator("status_page_link")
+    @classmethod
+    def _validate_status_page_link(cls, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return None
+        candidate = value.strip()
+        if not candidate:
+            return None
+        parsed = urlparse(candidate)
+        if parsed.scheme not in ("http", "https") or not parsed.netloc:
+            raise ValueError("status_page_link must be an absolute http(s) URL")
+        return candidate
+
+    @model_validator(mode="after")
+    def _validate_window(self) -> "MaintenanceState":
+        """A scheduled window cannot end before it starts."""
+        if self.start_time and self.end_time:
+            start = self.start_time if self.start_time.tzinfo else self.start_time.replace(tzinfo=timezone.utc)
+            end = self.end_time if self.end_time.tzinfo else self.end_time.replace(tzinfo=timezone.utc)
+            if end <= start:
+                raise ValueError("end_time must be later than start_time")
+        return self
 
 
 # =====================================================================

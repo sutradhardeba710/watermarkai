@@ -188,6 +188,26 @@ def test_maintenance_ignores_none_values():
     assert state["public_message"] == ""
 
 
+def test_maintenance_schedule_requires_end_after_start():
+    from datetime import datetime, timezone
+
+    from pydantic import ValidationError
+    from app.schemas.admin import MaintenanceState
+
+    with pytest.raises(ValidationError, match="end_time must be later than start_time"):
+        MaintenanceState(
+            start_time=datetime(2026, 7, 24, 11, tzinfo=timezone.utc),
+            end_time=datetime(2026, 7, 24, 10, tzinfo=timezone.utc),
+        )
+
+
+def test_maintenance_status_link_requires_absolute_http_url():
+    from pydantic import ValidationError
+    from app.schemas.admin import MaintenanceState
+
+    with pytest.raises(ValidationError, match="absolute http"):
+        MaintenanceState(status_page_link="javascript:alert(1)")
+
 # ---------------------------------------------------------------------------
 # validate_broadcast (PRD §23.3)
 # ---------------------------------------------------------------------------

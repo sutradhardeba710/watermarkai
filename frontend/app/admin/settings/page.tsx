@@ -122,19 +122,10 @@ export default function AdminSettingsPage() {
           />
         </label>
       </section>
-      <section className="rounded-2xl border border-rose-400/20 bg-rose-500/[.06] p-5">
-        <h3 className="font-semibold text-rose-200">Danger zone</h3>
-        <p className="mt-1 text-sm text-white/50">Maintenance mode blocks new uploads and processing across the website.</p>
-        <label className="mt-4 flex items-center gap-3 text-sm text-white/80">
-          <input
-            type="checkbox"
-            checked={!!form.maintenance_mode}
-            disabled={!canManage}
-            onChange={(e) => update("maintenance_mode", e.target.checked)}
-            className="h-4 w-4 accent-rose-400"
-          />
-          Enable maintenance mode
-        </label>
+      <section className="rounded-2xl border border-amber-400/20 bg-amber-500/[.06] p-5">
+        <h3 className="font-semibold text-amber-100">Maintenance</h3>
+        <p className="mt-1 text-sm leading-6 text-white/50">Maintenance windows, visitor messaging, and administrator access are managed in one authoritative place.</p>
+        <a href="/admin/maintenance" className="mt-4 inline-flex min-h-11 items-center rounded-xl border border-amber-300/20 bg-amber-300/10 px-4 py-2 text-sm font-medium text-amber-100 transition hover:bg-amber-300/15">Open maintenance controls</a>
       </section>
       {(dirty || message || error) && canManage && (
         <div className="sticky bottom-4 flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-[#0c0e1a]/95 p-4 shadow-2xl backdrop-blur-xl">

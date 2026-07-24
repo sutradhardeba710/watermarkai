@@ -1,3 +1,22 @@
+## 2026-07-24 - Functional maintenance scheduling and public status experience
+
+- **Symptom**: the public maintenance page looked unfinished, the real maintenance
+  schedule could not be configured in the admin UI, and the separate switch in
+  general settings did not control the API maintenance gate.
+- **Root cause**: the operational maintenance setting is a dedicated persisted
+  state, but the admin form omitted its start/end controls and general settings
+  exposed an unrelated legacy configuration flag.
+- **Fix**: consolidated maintenance control into the dedicated Operations page,
+  added local-time schedule inputs and active-window feedback, removed the
+  misleading duplicate switch, redesigned the public status screen with clear
+  recovery details and live refresh, and added server validation for schedule
+  order and public status URLs.
+- **Tests**: full backend suite: 488 passed, 12 skipped; frontend typecheck and
+  production build passed.
+- **Commit / deployment verification**: pending push to `main`, GitHub Actions
+  deployment, and public EC2 smoke test.
+
+---
 # Backend Project Update Log
 
 Living changelog for backend/production work on ClearFrame. Newest entries at
