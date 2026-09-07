@@ -2,6 +2,15 @@ export type FooterLink = { label: string; href: string };
 export type FooterColumnConfig = { title: string; links: FooterLink[] };
 
 export const footerColumns: FooterColumnConfig[] = [
+  { title: "Tools", links: [
+    { label: "Batch Watermark Remover", href: "/batch-watermark-remover" },
+    { label: "Video Watermark Remover", href: "/video-watermark-remover" },
+    { label: "Image Watermark Remover", href: "/image-watermark-remover" },
+    { label: "Sora AI Watermark Remover", href: "/sora-watermark-remover" },
+    { label: "Photo AI Removal Guide", href: "/blog/can-ai-remove-watermarks-from-photos" },
+    { label: "Batch Workflow Guide", href: "/blog/free-ai-batch-watermark-remover-tool" },
+    { label: "Sora AI Cleanup Guide", href: "/blog/how-to-remove-sora-ai-watermark-free" },
+  ] },
   { title: "Product", links: [
     { label: "Overview", href: "/product" }, { label: "AI Detection", href: "/product/ai-detection" }, { label: "Manual Masking", href: "/product/manual-masking" }, { label: "Temporal Tracking", href: "/product/temporal-tracking" }, { label: "Review & Export", href: "/product/review-export" }, { label: "Video Examples", href: "/product/examples" }, { label: "Pricing", href: "/pricing" },
   ] },

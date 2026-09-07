@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Boxes, CircleHelp, Eye, FileCheck2, Film, Gauge, History, Layers3, LifeBuoy, ScanSearch, ShieldCheck, Sparkles, Users, WandSparkles, Workflow } from "lucide-react";
+import { BookOpen, Boxes, CircleHelp, Eye, FileCheck2, Files, Film, Gauge, History, Image, Layers3, LifeBuoy, ScanSearch, ShieldCheck, Sparkles, Users, WandSparkles, Workflow } from "lucide-react";
 
 export type NavLink = { label: string; description: string; href: string; icon: LucideIcon; section?: string };
 export type NavGroup = { label: string; links: NavLink[]; columns: 1 | 2; width: "sm" | "lg" };
@@ -12,6 +12,14 @@ export const navGroups: NavGroup[] = [
     { label: "Temporal Tracking", description: "Keep approved masks aligned where motion tracking is supported.", href: "/product/temporal-tracking", icon: Workflow },
     { label: "Review & Export", description: "Compare a processed preview before starting the final render.", href: "/product/review-export", icon: FileCheck2 },
     { label: "Video Examples", description: "Explore authorized before-and-after cleanup examples.", href: "/product/examples", icon: Eye },
+  ] },
+  { label: "Tools", columns: 2, width: "lg", links: [
+    { label: "Batch Watermark Remover", description: "Clean watermarks across multiple videos and photos at once.", href: "/batch-watermark-remover", icon: Files },
+    { label: "Video Watermark Remover", description: "AI video watermark remover with audio preservation.", href: "/video-watermark-remover", icon: Film },
+    { label: "Image Watermark Remover", description: "Deep learning photo inpainting for logos and timestamps.", href: "/image-watermark-remover", icon: Image },
+    { label: "Sora AI Watermark Remover", description: "Remove corner watermarks from AI-generated videos.", href: "/sora-watermark-remover", icon: Sparkles },
+    { label: "Can AI Remove Photo Marks?", description: "In-depth guide on neural texture synthesis & inpainting.", href: "/blog/can-ai-remove-watermarks-from-photos", icon: BookOpen },
+    { label: "Batch Removal Guide", description: "How to clean multiple video files simultaneously.", href: "/blog/free-ai-batch-watermark-remover-tool", icon: WandSparkles },
   ] },
   { label: "Solutions", columns: 2, width: "lg", links: [
     { label: "For Content Creators", description: "Update self-owned branding, timestamps, and archived footage.", href: "/solutions/content-creators", icon: WandSparkles },

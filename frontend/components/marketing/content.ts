@@ -119,10 +119,14 @@ export type FaqCategory = "Product" | "Processing" | "Credits & billing" | "Priv
 export type FaqItem = { q: string; a: string; category: FaqCategory };
 
 export const faqItems: FaqItem[] = [
+  { category: "Product", q: "Can AI remove watermarks from photos and images?", a: "Yes. Advanced deep-learning AI inpainting models analyze surrounding pixel textures, lighting, and gradients to reconstruct the area beneath watermarks, logos, or timestamps on photos and images with high-resolution clarity." },
+  { category: "Product", q: "Can I remove watermarks from Sora AI generated videos for free?", a: "Yes. For AI-generated videos created with Sora or other text-to-video platforms that you are authorized to edit, you can use ClearFrame to isolate the overlay or corner mark and preview the seamless AI reconstruction for free." },
+  { category: "Product", q: "Does ClearFrame have a free AI watermark batch remover?", a: "Yes. You can queue multiple videos or photos, inspect AI detection suggestions across all files simultaneously, and batch process your authorized media without repeating setup each time." },
   { category: "Product", q: "What can an AI video watermark remover remove?", a: "ClearFrame is built to remove persistent visual overlays — including your own logos, watermarks, timestamps, hardcoded subtitles, and static graphics — from footage you own or are authorized to edit." },
   { category: "Product", q: "Can I remove a logo or timestamp from an MP4 video?", a: "Yes. Upload an MP4, MOV, or WebM video, let ClearFrame suggest the logo or timestamp region, refine the mask if needed, and generate a short preview before processing the full video." },
   { category: "Product", q: "Can ClearFrame remove hardcoded subtitles from a video?", a: "Yes, when the subtitles are burned into the picture on footage you are authorized to edit. Select the subtitle region, preview the reconstructed area, and check detailed backgrounds or moving subjects carefully before export." },
   { category: "Product", q: "Can it remove moving overlays?", a: "Yes, ClearFrame supports tracking a selected region as it moves. Results vary with speed, occlusion, and how much the background changes behind the overlay." },
+  { category: "Processing", q: "How do I remove watermarks from video with AI for free?", a: "Upload your MP4, MOV, or WebM video, let our AI detector highlight the watermark region, adjust the frame mask if needed, and generate a free instant preview to inspect the result before full export." },
   { category: "Processing", q: "Will every video produce a perfect result?", a: "No. Quality depends on scene complexity, movement, mask accuracy, and source quality. That is exactly why you preview a short section before running the full render." },
   { category: "Processing", q: "What video formats are supported?", a: "MP4, MOV, and WebM uploads are supported, subject to the product's validation limits for size, duration, and resolution." },
   { category: "Processing", q: "Is audio preserved?", a: "The workflow is designed to preserve original audio, resolution, frame rate, aspect ratio, and duration where technically possible." },
@@ -143,9 +147,9 @@ export const planTargetCopy: Record<string, string> = {
 };
 
 export const heroTrust = [
+  "Free preview before render",
+  "Batch queue available",
   "No credit card required",
-  "Manual control included",
-  "Preview before processing",
 ];
 
 export const marketingIcons = { Sparkles, Clapperboard, Upload, Download };

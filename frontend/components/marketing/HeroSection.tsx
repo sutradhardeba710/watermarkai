@@ -33,14 +33,14 @@ export function HeroSection() {
         <motion.div variants={reveal} initial={reduce ? false : "hidden"} animate="visible">
           <p className="inline-flex items-center gap-2 rounded-full border border-[#4f7cff]/35 bg-gradient-to-r from-[#4f7cff]/15 to-[#a855f7]/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[.16em] text-[#b7c7ff]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#22d3ee] shadow-[0_0_8px_rgba(34,211,238,.9)]" />
-            Online AI video watermark remover
+            AI Watermark Remover Free Online
           </p>
           <h1 className="mt-6 max-w-2xl text-4xl font-semibold leading-[1.05] tracking-[-.035em] min-[390px]:text-[2.65rem] sm:text-6xl lg:text-[4.2rem]">
-            Remove video watermarks.{" "}
+            Remove watermarks from video & photos.{" "}
             <span className="bg-gradient-to-r from-[#6d9bff] via-[#a78bfa] to-[#22d3ee] bg-clip-text text-transparent">Keep frame-level control.</span>
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 sm:mt-6 sm:text-lg sm:leading-8 text-[#9ca3af]">
-            Use AI to detect and remove your old logos, date stamps, hardcoded subtitles, and unwanted overlays from MP4, MOV, or WebM videos. Refine the mask, preview the result, and export only when you are satisfied.
+            Use AI to detect and remove old logos, date stamps, hardcoded subtitles, and watermarks from MP4, MOV, or WebM videos and photos. Test with a free instant preview, batch multiple clips, and export without quality loss.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">

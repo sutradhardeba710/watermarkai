@@ -3,7 +3,7 @@
 # TLS certificate for the hostname(s) below.
 #
 # Requirements:
-#   • DNS A-record for pdf-cropper.site  → this server's public IP (65.0.179.69)
+#   • DNS A-record for pdf-cropper.site  → this server's public IP (13.127.107.164)
 #   • DNS A-record for www.pdf-cropper.site → same IP  (optional, redirected)
 #   • EC2 security group: ports 80 AND 443 open to 0.0.0.0/0
 #

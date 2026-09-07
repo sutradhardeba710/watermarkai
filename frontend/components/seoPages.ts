@@ -1,6 +1,6 @@
 export type SeoEntry = { title: string; body: string; bullets?: string[]; status?: string };
 export type SeoSection = { id: string; title: string; body?: string; bullets?: string[]; entries?: SeoEntry[] };
-export type SeoPageKind = "workflow" | "creator" | "editor" | "agency" | "compliance" | "formats" | "faq" | "changelog" | "about" | "legal" | "status";
+export type SeoPageKind = "workflow" | "creator" | "editor" | "agency" | "compliance" | "formats" | "faq" | "changelog" | "about" | "legal" | "status" | "batch" | "video" | "image" | "sora" | "guide";
 export type SeoPage = {
   slug: string[]; title: string; description: string; eyebrow: string; heading: string; intro: string;
   kind: SeoPageKind; sections: SeoSection[]; cta: { label: string; href: string; title: string; body: string };
@@ -276,6 +276,394 @@ export const seoPages: SeoPage[] = [
       { id: "processing", title: "Queue and processing workers", body: "Detection, inpainting, encoding, retries, and progress updates." },
     ],
     cta: { label: "Contact support", href: "/contact", title: "A project is not progressing?", body: "Include the project or job reference so support can identify the affected service area." },
+  },
+  {
+    slug: ["batch-watermark-remover"],
+    title: "Free AI Watermark Batch Remover | Process Multiple Files Online",
+    description: "Remove watermarks from multiple videos, images, and photos simultaneously with ClearFrame's free AI batch watermark remover. Bulk upload, auto-detect, and export.",
+    eyebrow: "Free AI batch watermark remover",
+    heading: "Clean watermarks across dozens of videos and photos at once.",
+    intro: "Stop editing clips one by one. Queue your authorized footage, let AI detect recurring watermarks across the entire batch, adjust masks collectively, and export high-fidelity results with full audio preservation.",
+    kind: "batch",
+    sections: [
+      {
+        id: "batch-benefits",
+        title: "Why use an AI batch watermark remover?",
+        entries: [
+          { title: "Parallel queue management", body: "Upload dozens of clips simultaneously. The batch processor schedules each file through automated validation and candidate detection." },
+          { title: "Consistent mask propagation", body: "Define watermark coordinates once for series recordings or let AI automatically pinpoint variations across different camera angles." },
+          { title: "Audio & quality preservation", body: "Every video preserves its original H.264/AAC audio streams, resolution, and frame timing without destructive re-encoding." },
+          { title: "Risk-free preview first", body: "Review side-by-side comparison previews for any item in your batch before approving full renders or spending credits." },
+        ],
+      },
+      {
+        id: "batch-workflow",
+        title: "How the batch watermark removal process works",
+        bullets: [
+          "1. Drag and drop your MP4, MOV, WebM videos, or high-res photos into the batch uploader.",
+          "2. AI scans every file to surface persistent corner logos, timestamps, and subtitles.",
+          "3. Review or refine masks individually or apply standard coordinates across matching clips.",
+          "4. Generate free short previews to verify edge quality and texture reconstruction.",
+          "5. Click 'Process Batch' to export all cleaned files with temporary signed download links.",
+        ],
+      },
+      {
+        id: "batch-use-cases",
+        title: "Popular batch cleanup scenarios",
+        entries: [
+          { title: "Content creator archives", body: "Rebranding a YouTube or TikTok library? Batch clean old channel marks across your entire back catalog in minutes." },
+          { title: "Multi-camera productions", body: "Remove burned-in timecodes and camera stamps across multiple synced tracks before editorial handover." },
+          { title: "Agency client delivery", body: "Clean outdated sponsor logos and presentation overlays across client-approved campaign assets quickly." },
+          { title: "Photo & image series", body: "Clean watermark stamps and date signatures across hundreds of product or event photos simultaneously." },
+        ],
+      },
+      {
+        id: "batch-faq",
+        title: "Batch watermark removal FAQ",
+        entries: [
+          { title: "Is the AI watermark batch remover free to try?", body: "Yes. You can upload batches, run AI detection, and generate before-and-after previews across all your files for free." },
+          { title: "Can I batch process videos and photos together?", body: "Yes. ClearFrame supports mixed batches of MP4, MOV, WebM, PNG, and JPG files within your account upload allowance." },
+          { title: "What happens if one file in the batch fails?", body: "Batch processing is isolated per item. If one file has unsupported codecs or fails, other jobs continue uninterrupted and credits for failed jobs are refunded automatically." },
+        ],
+      },
+    ],
+    cta: {
+      label: "Start batch cleanup free",
+      href: "/signup",
+      title: "Clean your entire video and photo batch today.",
+      body: "Create your free account, queue your authorized files, and inspect instant AI previews across all items.",
+    },
+  },
+  {
+    slug: ["video-watermark-remover"],
+    title: "AI Video Watermark Remover Free Online | Remove Watermark from Video",
+    description: "Remove watermarks from video online with free AI detection, frame-accurate masking, temporal tracking, and zero quality loss. Audio preserved in MP4, MOV, and WebM.",
+    eyebrow: "AI video watermark remover free",
+    heading: "Remove watermarks from video with frame-accurate AI inpainting.",
+    intro: "Erase static channel marks, moving corner logos, hardcoded subtitles, and timestamps from your footage without blurring or cropping video frames. Try a free instant preview before export.",
+    kind: "video",
+    sections: [
+      {
+        id: "video-features",
+        title: "Core AI video watermark removal capabilities",
+        entries: [
+          { title: "Intelligent overlay detection", body: "Neural networks sample video keyframes to pinpoint stationary logos, scrolling subtitles, and date overlays automatically." },
+          { title: "Precision mask controls", body: "Use Rectangle, Polygon, Brush, and Eraser tools with edge feathering and expansion to isolate the mark cleanly." },
+          { title: "Temporal motion tracking", body: "Track overlays through camera pans and moving scenes with temporal smoothing to eliminate flickering or boundary jitter." },
+          { title: "Pristine audio preservation", body: "Your source AAC, MP3, or PCM audio tracks remain synchronized and uncompressed during visual inpainting." },
+        ],
+      },
+      {
+        id: "vs-traditional",
+        title: "Why AI inpainting outperforms blur and crop tools",
+        entries: [
+          { title: "No ugly blur blocks", body: "Traditional tools smudge a blurry square over watermarks, drawing viewers' eyes straight to the defect. AI reconstructs the genuine background texture." },
+          { title: "Zero cropping or resolution loss", body: "Never sacrifice 20% of your 1080p or 4K frame just to cut off a corner logo. Keep your full aspect ratio and framing intact." },
+          { title: "No frame rate drops", body: "Exports maintain your original 24fps, 30fps, or 60fps frame rate for buttery-smooth playback." },
+          { title: "Preview before committing", body: "Inspect an interactive split slider of your processed frames before spending render credits." },
+        ],
+      },
+      {
+        id: "video-workflow",
+        title: "4 simple steps to remove watermarks from video",
+        bullets: [
+          "Step 1: Upload your MP4, MOV, or WebM video file (up to 500MB).",
+          "Step 2: AI suggests the watermark region — accept it or fine-tune with the brush and polygon tools.",
+          "Step 3: Generate a free short preview and slide between original and cleaned frames to verify edge quality.",
+          "Step 4: Export your watermark-free video with audio intact via an encrypted download link.",
+        ],
+      },
+      {
+        id: "video-faq",
+        title: "Video watermark removal FAQ",
+        entries: [
+          { title: "Can I remove watermarks from video online for free?", body: "Yes. ClearFrame gives you free AI detection, manual mask editing, and full-resolution short preview comparisons at zero cost." },
+          { title: "Does it support moving watermarks?", body: "Yes. Our temporal tracking engine propagates approved masks across moving camera footage and scene changes." },
+          { title: "Which video formats can I clean?", body: "We support MP4, MOV, and WebM containers with H.264, H.265/HEVC, VP8, and VP9 video codecs." },
+        ],
+      },
+    ],
+    cta: {
+      label: "Remove video watermark free",
+      href: "/signup",
+      title: "Test AI video cleanup on your footage.",
+      body: "Upload an MP4, MOV, or WebM clip you own and preview the watermark removal in seconds.",
+    },
+  },
+  {
+    slug: ["image-watermark-remover"],
+    title: "AI Image Watermark Remover Free Online | Clear Marks & Logos",
+    description: "Remove watermarks from images and photos free with AI inpainting. Clean logos, timestamps, text, and graphics from PNG, JPG, and WebP with pixel-perfect clarity.",
+    eyebrow: "AI image watermark remover free",
+    heading: "Remove watermarks from photos and images with deep-learning AI.",
+    intro: "Restore your authorized photos, graphics, and image archives with intelligent texture reconstruction. Our AI analyzes surrounding color gradients and micro-textures to seamlessly erase unwanted watermarks.",
+    kind: "image",
+    sections: [
+      {
+        id: "image-features",
+        title: "Deep-learning photo and image inpainting",
+        entries: [
+          { title: "Pixel-accurate texture synthesis", body: "Rather than smearing nearby pixels, our neural network synthesizes authentic textures matching the surrounding grain, shadows, and highlights." },
+          { title: "High-resolution photo export", body: "Retain the crisp original resolution of your DSLR photos, digital artwork, and product renders up to full 4K dimensions." },
+          { title: "Flexible selection brush", body: "Paint over curved logos, angled text, or complex signatures with adjustable brush radius, feathering, and eraser." },
+          { title: "Instant side-by-side inspection", body: "Compare the original watermark and the AI reconstruction side by side with responsive zoom and pan." },
+        ],
+      },
+      {
+        id: "image-watermark-types",
+        title: "What types of image watermarks can AI remove?",
+        entries: [
+          { title: "Burned-in date stamps", body: "Remove yellow or orange digital camera date and time stamps from old family photos and archive scans." },
+          { title: "Outdated brand logos", body: "Clean previous company marks or obsolete agency signatures from graphic design assets and banners." },
+          { title: "Proofing & sample marks", body: "Remove your own evaluation text overlays when retrieving raw photography files." },
+          { title: "Lower-third captions", body: "Erase hardcoded text banners, subtitles, and social handles from visual graphics." },
+        ],
+      },
+      {
+        id: "image-workflow",
+        title: "How to remove watermarks from images in 3 steps",
+        bullets: [
+          "1. Upload your photo or image in PNG, JPG, or WebP format.",
+          "2. Highlight the watermark using the brush or auto-detect tool.",
+          "3. Preview the AI inpainting result and download your clean, high-res image.",
+        ],
+      },
+      {
+        id: "image-faq",
+        title: "Image watermark remover FAQ",
+        entries: [
+          { title: "Is the AI image watermark remover completely free?", body: "Yes. You can test and preview photo watermark removal with our free plan without entering any payment details." },
+          { title: "Will the image lose quality after watermark removal?", body: "No. The AI only regenerates the pixels inside your selected mask. The remaining 99% of your image remains identical to the source." },
+          { title: "What photo resolutions are supported?", body: "ClearFrame supports standard web images as well as high-resolution photographs up to 1920x1080 on free tiers and full 4K on Pro plans." },
+        ],
+      },
+    ],
+    cta: {
+      label: "Clean photo watermarks free",
+      href: "/signup",
+      title: "Restore your photos with AI precision.",
+      body: "Upload an image you own or license and preview the AI inpainting result immediately.",
+    },
+  },
+  {
+    slug: ["sora-watermark-remover"],
+    title: "Free Sora AI Watermark Remover Online | Clean Sora Video Overlays",
+    description: "Free Sora AI watermark remover online. Remove corner tags, generative AI logos, and synthetic text from your authorized AI-generated videos with seamless inpainting.",
+    eyebrow: "Free Sora AI watermark remover",
+    heading: "Seamlessly remove watermarks from Sora AI generated videos.",
+    intro: "Created an AI video with Sora or another text-to-video generator? Clean corner logos, attribution badges, and synthetic watermark overlays from footage you created while preserving full motion continuity and frame detail.",
+    kind: "sora",
+    sections: [
+      {
+        id: "sora-capabilities",
+        title: "Engineered for generative video cleanup",
+        entries: [
+          { title: "Targeted corner detection", body: "Sora outputs often include bottom-right or corner attribution marks. ClearFrame isolates these coordinates with sub-pixel precision." },
+          { title: "Fluid motion continuity", body: "AI video generation contains dynamic lighting shifts and continuous movement. Our temporal inpainting matches neighboring velocity vectors." },
+          { title: "Preserves native 16:9 & 9:16 aspect ratios", body: "Never crop the bottom edge of your generated video. Keep full cinematic widescreen or vertical social framing." },
+          { title: "Free full-frame preview", body: "Test how the corner reconstruction looks across challenging motion scenes before rendering the full video." },
+        ],
+      },
+      {
+        id: "sora-comparison",
+        title: "Why cropping Sora AI videos ruins quality",
+        entries: [
+          { title: "Loss of focal composition", body: "Cropping cuts off subject feet, ground shadows, and environmental framing that make generative video look realistic." },
+          { title: "Resolution degradation", body: "Cropping forces an awkward upscale or re-centering that degrades pixel density and introduces softness." },
+          { title: "Seamless AI inpainting", body: "ClearFrame synthesizes the background behind the watermark, preserving the full frame dimensions and original resolution." },
+          { title: "Audio and timing intact", body: "All soundtrack, voiceover, and sound effect timing remain 100% synchronized." },
+        ],
+      },
+      {
+        id: "sora-steps",
+        title: "How to remove Sora AI watermarks in 4 steps",
+        bullets: [
+          "1. Download your generated video from OpenAI Sora or your generative AI platform.",
+          "2. Upload the MP4 video to ClearFrame.",
+          "3. Select the corner watermark region using the rectangle or brush mask tool.",
+          "4. Generate a free preview, verify temporal smoothness, and export your watermark-free clip.",
+        ],
+      },
+      {
+        id: "sora-faq",
+        title: "Sora AI watermark removal FAQ",
+        entries: [
+          { title: "Can I remove watermarks from Sora AI videos for free?", body: "Yes. ClearFrame allows creators to upload their generated footage, apply watermark masks, and preview the inpainting result for free." },
+          { title: "Is it legal to remove watermarks from AI-generated videos?", body: "Yes, when you are the creator who prompted and generated the video and are authorized under the platform's terms of service to edit your generated outputs." },
+          { title: "Does it work with moving backgrounds in AI videos?", body: "Yes. Our temporal tracking and smoothing pipeline accounts for camera dolly, pan, and dynamic particle movement behind the watermark." },
+        ],
+      },
+    ],
+    cta: {
+      label: "Clean Sora video free",
+      href: "/signup",
+      title: "Remove Sora AI watermarks with one click.",
+      body: "Upload your AI video and see the corner mark disappear in our real-time preview player.",
+    },
+  },
+  {
+    slug: ["blog", "can-ai-remove-watermarks-from-photos"],
+    title: "Can AI Remove Watermarks from Photos? Technical & Legal Guide",
+    description: "Can AI remove watermarks from photos? Discover how deep learning inpainting, diffusion models, and neural texture synthesis reconstruct image backgrounds cleanly.",
+    eyebrow: "KD 18 Guide · Photo AI Inpainting",
+    heading: "Can AI remove watermarks from photos? How the technology works.",
+    intro: "Watermark removal has shifted from crude cloning and smudge brushes to sophisticated neural network inpainting. Here is exactly how modern AI models reconstruct pixels beneath watermarks, what results to expect, and the legal guidelines you need to know.",
+    kind: "guide",
+    sections: [
+      {
+        id: "the-answer",
+        title: "The direct answer: Yes, with deep learning inpainting",
+        entries: [
+          { title: "From manual cloning to neural synthesis", body: "Historically, graphic designers spent hours with Photoshop's clone stamp tool attempting to patch over watermarks. Modern deep convolutional networks and diffusion models understand semantic scene context, allowing them to synthesize unseen textures beneath watermarks in seconds." },
+          { title: "How AI reconstructs hidden information", body: "AI models trained on millions of images recognize that a patch of grass behind a semi-transparent logo should have continuing grass blades, coherent lighting, and matching grain, generating a plausible reconstruction indistinguishable from the original." },
+        ],
+      },
+      {
+        id: "how-it-works",
+        title: "The 4 technical stages of AI photo watermark removal",
+        entries: [
+          { title: "1. Boundary segmentation", body: "The user or automatic detector defines a binary mask separating watermark pixels from clean background pixels." },
+          { title: "2. Contextual feature extraction", body: "A neural encoder reads high-level features (gradients, color palettes, edges, illumination) from the unmasked areas." },
+          { title: "3. Semantic patch generation", body: "The generative decoder fills the masked cavity with synthetic textures that align with surrounding structural lines." },
+          { title: "4. Edge feathering & blending", body: "A multi-scale Poisson blending pass smooths the border between the original photo and the synthesized pixels to eliminate visible seams." },
+        ],
+      },
+      {
+        id: "when-it-works-best",
+        title: "When AI watermark removal excels vs where it struggles",
+        entries: [
+          { title: "Best results: Nature, textures, gradients", body: "Watermarks over sky, water, walls, foliage, fabric, or out-of-focus bokeh backgrounds are reconstructed with near-100% visual perfection." },
+          { title: "Challenging areas: Human eyes and fine text", body: "When a dense, opaque watermark covers intricate human features like pupils, teeth, or small readable text, AI must hallucinate details rather than reconstruct them." },
+          { title: "Semi-transparent vs opaque marks", body: "Semi-transparent watermarks retain underlying contrast and luminance data, making mathematical inversion and neural restoration remarkably accurate." },
+          { title: "Resolution considerations", body: "High-resolution source photos yield superior inpainting because the model has richer surrounding context to sample from." },
+        ],
+      },
+      {
+        id: "legal-boundary",
+        title: "Legal and ethical boundaries for photo watermark removal",
+        entries: [
+          { title: "Permitted & ethical use cases", body: "Restoring photos you took, removing burned-in camera timestamps, cleaning your own company logos from marketing archives, or editing client photos with explicit authorization." },
+          { title: "Prohibited copyright infringement", body: "Removing third-party photographer signatures, commercial stock watermarks (Getty, Shutterstock), or copyright notices to bypass licensing fees is illegal under DMCA Section 1202." },
+        ],
+      },
+      {
+        id: "tutorial",
+        title: "Step-by-step tutorial: Removing a photo watermark with ClearFrame",
+        bullets: [
+          "Step 1: Upload your authorized photo (PNG, JPG, WebP) to ClearFrame.",
+          "Step 2: Use the AI detection button or draw a snug rectangle/brush over the watermark.",
+          "Step 3: Adjust the edge feathering slider (recommended: 4px to 8px).",
+          "Step 4: Inspect the split-screen preview at 100% zoom.",
+          "Step 5: Export the cleaned high-resolution image.",
+        ],
+      },
+    ],
+    cta: {
+      label: "Try photo watermark removal free",
+      href: "/signup",
+      title: "See AI photo inpainting in action.",
+      body: "Upload an authorized photo and see how cleanly ClearFrame reconstructs the background behind any watermark.",
+    },
+  },
+  {
+    slug: ["blog", "free-ai-batch-watermark-remover-tool"],
+    title: "Free AI Batch Watermark Remover Tool: Clean Multiple Videos Fast",
+    description: "Learn how to use a free AI batch watermark remover tool to clean logos and timestamps across dozens of videos and photos simultaneously without repetitive manual work.",
+    eyebrow: "Workflow Guide · Batch Processing",
+    heading: "How to use a free AI batch watermark remover for multiple files.",
+    intro: "Manually scrubbing and masking watermarks across 20 or 50 video clips is exhausting. A batch watermark remover uses AI to detect recurring watermark coordinates and process your entire queue automatically.",
+    kind: "guide",
+    sections: [
+      {
+        id: "batch-problem",
+        title: "The problem with single-file watermark removers",
+        entries: [
+          { title: "Repetitive upload cycles", body: "Traditional online tools force you to upload one file, wait for it to process, download it, and repeat 50 times for a video series." },
+          { title: "Inconsistent mask placement", body: "Drawing manual masks by hand on every clip introduces human error, resulting in flickering borders between episodes." },
+          { title: "Lost encoding time", body: "Without a background server queue, closing your browser tab interrupts the render and forces you to restart from scratch." },
+        ],
+      },
+      {
+        id: "batch-solution",
+        title: "How ClearFrame streamlines batch watermark removal",
+        entries: [
+          { title: "Bulk drag-and-drop upload", body: "Select a folder of clips and drop them into ClearFrame. The platform validates containers, codecs, and durations in parallel." },
+          { title: "Cross-file AI detection", body: "The neural detector identifies recurrent corner marks across all files in your queue, proposing coordinated masks in one sweep." },
+          { title: "Batch preview approval", body: "Flip through short split-screen preview clips across your queue to ensure quality before spending any render credits." },
+          { title: "Background cloud processing", body: "Our distributed Celery worker queue encodes multiple jobs simultaneously with dedicated FFmpeg pipelines." },
+        ],
+      },
+      {
+        id: "batch-tips",
+        title: "Pro tips for maximum batch cleanup quality",
+        bullets: [
+          "Group files by aspect ratio (16:9 widescreen vs 9:16 vertical shorts) to apply matching coordinate presets.",
+          "Check the clip with the most dynamic lighting first to calibrate your mask feathering and expansion.",
+          "Use temporary signed links to download your finished batch immediately upon completion.",
+          "Check our retention policy so you know how long source and output files remain securely available.",
+        ],
+      },
+    ],
+    cta: {
+      label: "Queue your files free",
+      href: "/signup",
+      title: "Automate your video and photo cleanup.",
+      body: "Upload your multi-file queue and preview AI detection across all items with zero card required.",
+    },
+  },
+  {
+    slug: ["blog", "how-to-remove-sora-ai-watermark-free"],
+    title: "How to Remove Sora AI Watermarks Free: Step-by-Step AI Guide",
+    description: "Step-by-step tutorial on how to remove Sora AI watermarks and logos from AI-generated video outputs for free using AI inpainting and temporal smoothing.",
+    eyebrow: "Tutorial · AI Video Cleanup",
+    heading: "How to remove Sora AI watermarks from your videos for free.",
+    intro: "OpenAI's Sora generates breathtaking video, but default outputs frequently include corner logos and attribution watermarks. Here is how to cleanly remove them from videos you generated without degrading motion or picture quality.",
+    kind: "guide",
+    sections: [
+      {
+        id: "sora-characteristics",
+        title: "Understanding Sora AI video watermarks",
+        entries: [
+          { title: "Fixed corner placement", body: "Sora attribution marks typically anchor to the bottom-right or top-right corner of the video frame." },
+          { title: "Semi-transparent blending", body: "The watermark often has semi-transparent opacity, letting underlying colors partially bleed through." },
+          { title: "Motion behind the watermark", body: "Unlike static camera footage, generative AI videos feature complex fluid motion, requiring temporal-aware inpainting." },
+        ],
+      },
+      {
+        id: "why-not-crop",
+        title: "Why you should never crop a Sora AI video",
+        entries: [
+          { title: "Loss of cinematic composition", body: "Generative models produce carefully framed 16:9 cinematic shots. Cropping the corner cuts off crucial visual context." },
+          { title: "Distorted resolution", body: "Cropping forces you to upscale the remaining video, causing blurry pixels and compression artifacts." },
+          { title: "Neural inpainting preserves the full frame", body: "AI inpainting replaces only the watermark pixels, keeping 100% of your video frame resolution intact." },
+        ],
+      },
+      {
+        id: "step-by-step-sora",
+        title: "Step-by-step guide to removing Sora watermarks",
+        bullets: [
+          "1. Download your raw high-resolution output from your Sora generation dashboard.",
+          "2. Upload the MP4 file to ClearFrame.",
+          "3. Select the corner region containing the Sora logo with the Rectangle tool.",
+          "4. Enable 'Temporal Smoothing' to eliminate any frame-to-frame flicker across movement.",
+          "5. Preview the result in the split player and download your pristine watermark-free video.",
+        ],
+      },
+      {
+        id: "sora-faqs",
+        title: "Sora watermark removal tips",
+        entries: [
+          { title: "Does ClearFrame degrade audio when removing Sora watermarks?", body: "No. Soundtracks, ambient effects, and audio timing are preserved losslessly." },
+          { title: "Can I clean 1080p Sora videos?", body: "Yes. ClearFrame supports full 1080p HD processing at 30fps and 60fps." },
+        ],
+      },
+    ],
+    cta: {
+      label: "Clean Sora video free",
+      href: "/signup",
+      title: "Remove Sora AI watermarks now.",
+      body: "Upload your AI video and see the seamless corner inpainting in our free preview player.",
+    },
   },
 ];
 

@@ -7,16 +7,47 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_URL ? `h
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "ClearFrame | Authorized Video Cleanup", template: "%s | ClearFrame" },
-  description: "AI-assisted detection, frame-accurate masking, preview approval, and controlled export for footage you own or are licensed to edit.",
+  title: {
+    default: "ClearFrame | AI Watermark Remover — Free Video, Image & Photo Cleanup",
+    template: "%s | ClearFrame AI Watermark Remover",
+  },
+  description:
+    "Free online AI watermark remover for videos, photos, and images. Remove logos, timestamps, hardcoded subtitles, and unwanted overlays with frame-accurate AI inpainting.",
   applicationName: "ClearFrame",
-  keywords: ["authorized video cleanup", "video overlay cleanup", "video masking", "watermark detection", "video inpainting", "frame accurate masking"],
+  keywords: [
+    "ai watermark remover",
+    "free ai watermark batch remover",
+    "free ai batch watermark remover",
+    "ai video watermark remover free",
+    "ai image watermark remover free",
+    "ai watermark image remover",
+    "free sora ai watermark remover",
+    "remove watermark from video ai free",
+    "can ai remove watermarks from photos",
+    "remove watermark from photo ai",
+    "video watermark remover online",
+    "free ai remove watermark from image",
+  ],
   authors: [{ name: "ClearFrame" }],
   creator: "ClearFrame",
   publisher: "ClearFrame",
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
-  openGraph: { title: "ClearFrame | Authorized Video Cleanup", description: "Reviewable, frame-accurate cleanup for footage you own or are licensed to edit.", type: "website", siteName: "ClearFrame", url: "/" },
-  twitter: { card: "summary_large_image", title: "ClearFrame | Authorized Video Cleanup", description: "AI-assisted cleanup for authorized edits." },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
+  openGraph: {
+    title: "ClearFrame | AI Watermark Remover — Free Video, Image & Photo Cleanup",
+    description: "Free online AI watermark remover with frame-accurate masking, instant preview, and high-quality export.",
+    type: "website",
+    siteName: "ClearFrame",
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ClearFrame | AI Watermark Remover — Free Video, Image & Photo Cleanup",
+    description: "Free online AI watermark remover for video, images, and photos with frame-level control.",
+  },
   icons: { icon: "/icon.svg" },
 };
 

@@ -10,6 +10,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...staticPaths.map((path, index) => ({ url: `${siteUrl}${path}`, lastModified: now, changeFrequency: index === 0 ? "weekly" as const : "monthly" as const, priority: index === 0 ? 1 : 0.8 })),
     ...productFeatures.map((feature) => ({ url: `${siteUrl}${feature.href}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.75 })),
-    ...seoPages.map((page) => ({ url: `${siteUrl}/${page.slug.join("/")}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.65 })),
+    ...seoPages.map((page) => {
+      const isTool = ["batch", "video", "image", "sora"].includes(page.kind);
+      const isGuide = page.kind === "guide";
+      return {
+        url: `${siteUrl}/${page.slug.join("/")}`,
+        lastModified: now,
+        changeFrequency: isTool ? ("weekly" as const) : ("monthly" as const),
+        priority: isTool ? 0.85 : isGuide ? 0.75 : 0.65,
+      };
+    }),
   ];
 }

@@ -47,3 +47,5 @@ weights/
 dump.rdb
 celerybeat-schedule*
 *.tsbuildinfo
+graphify-out/
+.graphify*
