@@ -293,3 +293,56 @@ def test_hash_head_differs_for_different_content(tmp_path):
     f1.write_bytes(b"prefix-A" + b"x" * 100000)
     f2.write_bytes(b"prefix-B" + b"x" * 100000)
     assert validation.hash_head(f1) != validation.hash_head(f2)
+
+
+# --- Image upload validation tests ---
+
+
+def test_validate_extension_accepts_images():
+    for name in ["photo.png", "image.JPG", "graphic.jpeg", "banner.webp"]:
+        v = validation.validate_extension(name)
+        assert v.ok, v.message
+
+
+def test_sniff_mime_detects_images():
+    assert validation.sniff_mime(b"\xff\xd8\xff\xe0" + b"\x00" * 20) == "jpeg"
+    assert validation.sniff_mime(b"\x89PNG\r\n\x1a\n" + b"\x00" * 20) == "png"
+    assert validation.sniff_mime(b"RIFF\x00\x00\x00\x00WEBPVP8 " + b"\x00" * 20) == "webp"
+
+
+def test_validate_mime_accepts_images():
+    v_jpg = validation.validate_mime(b"\xff\xd8\xff\xe0" + b"\x00" * 20, "image/jpeg")
+    assert v_jpg.ok
+    v_png = validation.validate_mime(b"\x89PNG\r\n\x1a\n" + b"\x00" * 20, "image/png")
+    assert v_png.ok
+    v_webp = validation.validate_mime(b"RIFF\x00\x00\x00\x00WEBPVP8 " + b"\x00" * 20, "image/webp")
+    assert v_webp.ok
+
+
+def test_probe_image_reads_dimensions(tmp_path):
+    from PIL import Image
+    img_path = tmp_path / "test.png"
+    img = Image.new("RGB", (320, 240), color="blue")
+    img.save(img_path)
+
+    meta = validation.probe_image(img_path)
+    assert meta["width"] == 320
+    assert meta["height"] == 240
+    assert meta["duration"] == 0.0
+    assert meta["frame_count"] == 1
+    assert meta["media_type"] == "image"
+    assert meta["video_codec"] == "png"
+
+
+def test_enforce_limits_passes_for_valid_images():
+    meta = {
+        "media_type": "image",
+        "duration": 0.0,
+        "width": 1920,
+        "height": 1080,
+        "fps": 0.0,
+        "frame_count": 1,
+    }
+    v = validation.enforce_limits(meta)
+    assert v.ok
+

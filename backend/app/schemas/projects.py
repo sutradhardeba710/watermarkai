@@ -19,6 +19,7 @@ class ProjectSummary(BaseModel):
     created_at: datetime
     completed_at: Optional[datetime] = None
     expires_at: Optional[datetime] = None
+    media_type: str = "video"
     proxy_url: Optional[str] = None
     thumbnail_url: Optional[str] = None
 

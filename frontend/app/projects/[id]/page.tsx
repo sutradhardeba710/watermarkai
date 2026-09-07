@@ -159,13 +159,25 @@ export default function ProjectWorkspace() {
   }
 
   const project = ws.project;
+  const isImage =
+    project?.media_type === "image" ||
+    ["png", "jpg", "jpeg", "webp"].includes(project?.original_filename?.split(".").pop()?.toLowerCase() || "") ||
+    (project?.duration === 0 && (project?.width ?? 0) > 0);
 
   const desktopCanvas = (
     <div className="flex h-full min-h-0 flex-col gap-3">
       <VideoCanvas ws={ws} detecting={detect.phase === "scanning"} panMode={spacePan} />
-      <PlaybackControls ws={ws} />
-      <EditingTimeline ws={ws} hasMask={ws.hasMask} />
-      <p className="text-center text-sm text-white/45">{ws.hasMask ? "Scrub through the video to confirm the mask at several timestamps." : "Select the unwanted logo, text, or overlay to begin."}</p>
+      {!isImage && <PlaybackControls ws={ws} />}
+      {!isImage && <EditingTimeline ws={ws} hasMask={ws.hasMask} />}
+      <p className="text-center text-sm text-white/45">
+        {isImage
+          ? ws.hasMask
+            ? "Mask applied! Click 'Preview' or 'Continue' to remove the watermark."
+            : "Select or brush over any watermark, logo, text, or date stamp to remove."
+          : ws.hasMask
+            ? "Scrub through the video to confirm the mask at several timestamps."
+            : "Select the unwanted logo, text, or overlay to begin."}
+      </p>
     </div>
   );
 
@@ -225,9 +237,17 @@ export default function ProjectWorkspace() {
           </div>
           <div className="mt-3 space-y-3">
             <MobileMaskToolbar ws={ws} detecting={detect.phase === "scanning"} onAiDetect={() => detect.run(false)} />
-            <PlaybackControls ws={ws} />
-            <EditingTimeline ws={ws} hasMask={ws.hasMask} />
-            <p className="text-center text-sm leading-6 text-white/45">{ws.hasMask ? "Scrub through several timestamps to confirm the mask stays aligned." : "Choose a tool, then select the unwanted logo, text, or overlay."}</p>
+            {!isImage && <PlaybackControls ws={ws} />}
+            {!isImage && <EditingTimeline ws={ws} hasMask={ws.hasMask} />}
+            <p className="text-center text-sm leading-6 text-white/45">
+              {isImage
+                ? ws.hasMask
+                  ? "Mask applied! Tap 'Open tools' to preview or remove watermark."
+                  : "Choose a tool, then select the unwanted watermark or logo."
+                : ws.hasMask
+                  ? "Scrub through several timestamps to confirm the mask stays aligned."
+                  : "Choose a tool, then select the unwanted logo, text, or overlay."}
+            </p>
           </div>
           <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/10 bg-[#07080f]/95 px-3 py-2.5 pb-[max(.625rem,env(safe-area-inset-bottom))] backdrop-blur lg:hidden">
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>

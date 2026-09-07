@@ -280,9 +280,18 @@ export default function PreviewApproveScreen() {
   }
 
   const filename = project.title || project.original_filename;
+  const isImage =
+    project.media_type === "image" ||
+    ["png", "jpg", "jpeg", "webp"].includes(project.original_filename?.split(".").pop()?.toLowerCase() || "") ||
+    (project.duration === 0 && (project.width ?? 0) > 0);
+
   const hasPreview = Boolean(clipUrl && beforeClipUrl);
   const progress = job?.progress || 0;
-  const estimatedTime = (project.width || 0) >= 1920 ? "about 3 to 6 minutes" : "about 1 to 3 minutes";
+  const estimatedTime = isImage
+    ? "under 1 second"
+    : (project.width || 0) >= 1920
+      ? "about 3 to 6 minutes"
+      : "about 1 to 3 minutes";
 
   return (
     <AppShell title="Preview and approve" eyebrow="Project workflow">
@@ -295,63 +304,89 @@ export default function PreviewApproveScreen() {
             <h2 className="mt-2 max-w-3xl truncate text-2xl font-semibold tracking-tight sm:text-3xl" title={filename}>{filename}</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               <MetadataBadge>{project.width || "?"}&times;{project.height || "?"}</MetadataBadge>
-              <MetadataBadge>{project.video_codec || "Unknown codec"}</MetadataBadge>
-              <MetadataBadge>{project.duration?.toFixed(1) || "?"}s</MetadataBadge>
-              {project.fps && <MetadataBadge>{project.fps.toFixed(2)} fps</MetadataBadge>}
+              <MetadataBadge>{isImage ? (project.video_codec || "Photo").toUpperCase() : (project.video_codec || "Video")}</MetadataBadge>
+              {!isImage && <MetadataBadge>{project.duration?.toFixed(1) || "?"}s</MetadataBadge>}
+              {!isImage && project.fps && <MetadataBadge>{project.fps.toFixed(2)} fps</MetadataBadge>}
+              {isImage && <MetadataBadge>Photo mode</MetadataBadge>}
             </div>
           </div>
           <Link href="/dashboard" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-sm text-white/60 transition hover:bg-white/5 hover:text-white">Back to projects</Link>
         </header>
 
-        <section className="mt-7 rounded-2xl border border-white/10 bg-[#10121f] p-5 sm:p-6">
-          <div className="flex flex-wrap items-end gap-5">
-            <label htmlFor="preview-start" className="block text-sm font-medium text-white/70">
-              Start (seconds)
-              <input
-                id="preview-start"
-                type="number"
-                min={0}
-                max={Math.max(0, (project.duration || 0) - duration)}
-                value={start}
-                onChange={(event) => setStart(Math.max(0, Number(event.target.value)))}
-                className="mt-2 block h-11 w-28 rounded-xl border border-white/10 bg-white/5 px-3 text-base text-white outline-none transition focus:border-[#4f7cff] focus:ring-2 focus:ring-[#4f7cff]/30"
-              />
-            </label>
-            <fieldset>
-              <legend className="text-sm font-medium text-white/70">Window length</legend>
-              <div className="mt-2 inline-flex rounded-xl border border-white/10 bg-black/25 p-1">
-                {DURATIONS.map((option) => (
-                  <button
-                    type="button"
-                    key={option}
-                    onClick={() => setDuration(option)}
-                    aria-pressed={duration === option}
-                    className={`min-h-9 min-w-14 rounded-lg px-3 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f7cff] ${duration === option ? "bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] text-white shadow-lg" : "text-white/50 hover:bg-white/5 hover:text-white"}`}
-                  >
-                    {option}s
-                  </button>
-                ))}
+        {isImage ? (
+          <section className="mt-7 rounded-2xl border border-white/10 bg-[#10121f] p-5 sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h3 className="font-semibold text-white">Interactive Photo Before &amp; After</h3>
+                <p className="mt-1 text-sm text-white/50">
+                  Drag the cyan comparison handle to inspect original vs clean inpainting.
+                </p>
               </div>
-            </fieldset>
-            <label className="flex min-h-11 items-center gap-3 rounded-xl px-1 text-sm text-white/65">
-              <input type="checkbox" checked={loop} onChange={(event) => setLoop(event.target.checked)} className="h-5 w-5 accent-[#4f7cff]" />
-              Loop playback
-            </label>
-            <div className="ml-auto text-right">
-              <span className="mb-2 hidden items-center justify-end gap-1.5 text-xs text-[#9eb4ff] sm:flex"><ArrowUpRight className="h-3.5 w-3.5" />Start here</span>
               <button
                 type="button"
                 onClick={() => void buildPreview()}
                 disabled={building}
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_28px_rgba(79,124,255,.24)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {building ? <><LoaderCircle className="h-4 w-4 animate-spin motion-reduce:animate-none" />Building {buildProgress}%</> : <><Sparkles className="h-4 w-4" />{hasPreview ? "Rebuild preview" : "Build preview"}</>}
+                {building ? (
+                  <><LoaderCircle className="h-4 w-4 animate-spin motion-reduce:animate-none" />Inpainting photo...</>
+                ) : (
+                  <><Sparkles className="h-4 w-4" />{hasPreview ? "Re-inpaint photo" : "Remove watermark"}</>
+                )}
               </button>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : (
+          <section className="mt-7 rounded-2xl border border-white/10 bg-[#10121f] p-5 sm:p-6">
+            <div className="flex flex-wrap items-end gap-5">
+              <label htmlFor="preview-start" className="block text-sm font-medium text-white/70">
+                Start (seconds)
+                <input
+                  id="preview-start"
+                  type="number"
+                  min={0}
+                  max={Math.max(0, (project.duration || 0) - duration)}
+                  value={start}
+                  onChange={(event) => setStart(Math.max(0, Number(event.target.value)))}
+                  className="mt-2 block h-11 w-28 rounded-xl border border-white/10 bg-white/5 px-3 text-base text-white outline-none transition focus:border-[#4f7cff] focus:ring-2 focus:ring-[#4f7cff]/30"
+                />
+              </label>
+              <fieldset>
+                <legend className="text-sm font-medium text-white/70">Window length</legend>
+                <div className="mt-2 inline-flex rounded-xl border border-white/10 bg-black/25 p-1">
+                  {DURATIONS.map((option) => (
+                    <button
+                      type="button"
+                      key={option}
+                      onClick={() => setDuration(option)}
+                      aria-pressed={duration === option}
+                      className={`min-h-9 min-w-14 rounded-lg px-3 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f7cff] ${duration === option ? "bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] text-white shadow-lg" : "text-white/50 hover:bg-white/5 hover:text-white"}`}
+                    >
+                      {option}s
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+              <label className="flex min-h-11 items-center gap-3 rounded-xl px-1 text-sm text-white/65">
+                <input type="checkbox" checked={loop} onChange={(event) => setLoop(event.target.checked)} className="h-5 w-5 accent-[#4f7cff]" />
+                Loop playback
+              </label>
+              <div className="ml-auto text-right">
+                <span className="mb-2 hidden items-center justify-end gap-1.5 text-xs text-[#9eb4ff] sm:flex"><ArrowUpRight className="h-3.5 w-3.5" />Start here</span>
+                <button
+                  type="button"
+                  onClick={() => void buildPreview()}
+                  disabled={building}
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#4f7cff] via-[#6d5ef7] to-[#8b5cf6] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_28px_rgba(79,124,255,.24)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {building ? <><LoaderCircle className="h-4 w-4 animate-spin motion-reduce:animate-none" />Building {buildProgress}%</> : <><Sparkles className="h-4 w-4" />{hasPreview ? "Rebuild preview" : "Build preview"}</>}
+                </button>
+              </div>
+            </div>
+          </section>
+        )}
 
-        <section className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-black shadow-[0_24px_80px_rgba(0,0,0,.35)]" aria-label="Before and after video comparison">
+        <section className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-black shadow-[0_24px_80px_rgba(0,0,0,.35)]" aria-label="Before and after comparison">
           {building ? (
             <PreviewBuilding progress={buildProgress} />
           ) : hasPreview ? (
@@ -361,8 +396,8 @@ export default function PreviewApproveScreen() {
                 defaultPosition={50}
                 keyboardIncrement="5%"
                 handle={<ReactCompareSliderHandle buttonStyle={{ background: "rgba(10,11,15,.8)", borderColor: "#22d3ee", width: 52, height: 52 }} linesStyle={{ color: "#22d3ee", width: 2 }} />}
-                itemOne={<VideoPane label="Before" videoRef={beforeVideoRef} src={beforeClipUrl!} loop={loop} />}
-                itemTwo={<VideoPane label="After" videoRef={afterVideoRef} src={clipUrl!} loop={loop} />}
+                itemOne={isImage ? <ImagePane label="Before" src={beforeClipUrl!} /> : <VideoPane label="Before" videoRef={beforeVideoRef} src={beforeClipUrl!} loop={loop} />}
+                itemTwo={isImage ? <ImagePane label="After" src={clipUrl!} /> : <VideoPane label="After" videoRef={afterVideoRef} src={clipUrl!} loop={loop} />}
               />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-between bg-gradient-to-t from-black/80 to-transparent px-4 pb-4 pt-12 text-xs font-semibold uppercase tracking-[.14em]">
                 <span className="rounded-full bg-black/60 px-3 py-1.5 text-white/70">Before</span>
@@ -370,13 +405,13 @@ export default function PreviewApproveScreen() {
               </div>
             </div>
           ) : (
-            <PreviewEmpty onBuild={() => void buildPreview()} />
+            <PreviewEmpty onBuild={() => void buildPreview()} isImage={isImage} />
           )}
         </section>
 
         {error && <div className="mt-5"><ErrorBanner message={error} /></div>}
 
-        {approving && job && (
+        {approving && job && !isImage && (
           <section className="mt-6 rounded-2xl border border-[#4f7cff]/25 bg-[#4f7cff]/[.08] p-5" aria-live="polite">
             <div className="flex items-center justify-between gap-4 text-sm"><span className="font-medium text-white">{prettyStage(job)}</span><span className="font-mono text-[#b7c7ff]">{progress}%</span></div>
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-[#4f7cff] via-cyan-400 to-[#6d5ef7] transition-[width] duration-300 motion-reduce:transition-none" style={{ width: `${progress}%` }} /></div>
@@ -388,24 +423,60 @@ export default function PreviewApproveScreen() {
           <section className="rounded-2xl border border-white/10 bg-[#10121f] p-5 sm:p-6">
             <div className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 text-emerald-300" /><h3 className="font-semibold">What stays preserved</h3></div>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <Preserved label="Original audio" value={project.has_audio === false ? "No source audio" : "Preserved"} />
               <Preserved label="Resolution" value={`${project.width || "?"} x ${project.height || "?"}`} />
-              <Preserved label="Frame rate" value={project.fps ? `${project.fps.toFixed(2)} fps` : "Source rate"} />
-              <Preserved label="Duration" value={`${project.duration?.toFixed(1) || "?"} seconds`} />
+              <Preserved label="Color space" value="Full sRGB original" />
+              {!isImage && <Preserved label="Original audio" value={project.has_audio === false ? "No source audio" : "Preserved"} />}
+              {!isImage && <Preserved label="Frame rate" value={project.fps ? `${project.fps.toFixed(2)} fps` : "Source rate"} />}
+              {!isImage && <Preserved label="Duration" value={`${project.duration?.toFixed(1) || "?"} seconds`} />}
+              {isImage && <Preserved label="Format" value={project.video_codec?.toUpperCase() || "Lossless original"} />}
             </div>
           </section>
 
           <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#10121f] to-[#11152a] p-5 sm:p-6">
-            <div className="flex items-start gap-3"><Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-[#9eb4ff]" /><div><h3 className="font-semibold">Ready for the full-resolution render?</h3><p className="mt-2 max-w-2xl text-sm leading-6 text-white/55">We will process all {project.duration?.toFixed(1) || "?"} seconds at full resolution. This usually takes {estimatedTime}. You will be notified when the cleaned video is ready.</p></div></div>
+            <div className="flex items-start gap-3">
+              <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-[#9eb4ff]" />
+              <div>
+                <h3 className="font-semibold">{isImage ? "Ready to export clean photo?" : "Ready for the full-resolution render?"}</h3>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/55">
+                  {isImage
+                    ? `Export your photo in full original resolution (${project.width || "?"} × ${project.height || "?"}). Cleaned seamlessly with AI inpainting.`
+                    : `We will process all ${project.duration?.toFixed(1) || "?"} seconds at full resolution. This usually takes ${estimatedTime}. You will be notified when the cleaned video is ready.`}
+                </p>
+              </div>
+            </div>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               {project.status === "completed" ? (
-                <button type="button" onClick={() => void download()} disabled={downloading} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-[#06120d] transition hover:bg-emerald-400 disabled:opacity-50"><Download className="h-4 w-4" />{downloading ? "Preparing download..." : "Download cleaned video"}</button>
+                <button type="button" onClick={() => void download()} disabled={downloading} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-[#06120d] transition hover:bg-emerald-400 disabled:opacity-50">
+                  <Download className="h-4 w-4" />
+                  {downloading ? "Preparing download..." : isImage ? "Download clean photo" : "Download cleaned video"}
+                </button>
+              ) : isImage ? (
+                <button
+                  ref={approveButtonRef}
+                  type="button"
+                  onClick={() => void beginProcessing()}
+                  disabled={!hasPreview || approving}
+                  title={!hasPreview ? "Remove watermark first to inspect preview" : undefined}
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-[#06120d] transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  {approving ? "Exporting clean photo..." : "Approve & save full photo"}
+                </button>
               ) : (
-                <button ref={approveButtonRef} type="button" onClick={() => setConfirming(true)} disabled={!hasPreview || approving} title={!hasPreview ? "Build and review a preview first" : undefined} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-[#06120d] transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-40"><CheckCircle2 className="h-4 w-4" />{approving ? "Processing full video..." : "Approve and process full video"}</button>
+                <button ref={approveButtonRef} type="button" onClick={() => setConfirming(true)} disabled={!hasPreview || approving} title={!hasPreview ? "Build and review a preview first" : undefined} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-[#06120d] transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-40">
+                  <CheckCircle2 className="h-4 w-4" />
+                  {approving ? "Processing full video..." : "Approve and process full video"}
+                </button>
               )}
-              <button type="button" onClick={() => router.push(`/projects/${projectId}`)} className="min-h-11 rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-white/55 transition hover:bg-white/5 hover:text-white">Return to mask editor</button>
+              <button type="button" onClick={() => router.push(`/projects/${projectId}`)} className="min-h-11 rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-white/55 transition hover:bg-white/5 hover:text-white">
+                Return to mask editor
+              </button>
             </div>
-            {!hasPreview && <p className="mt-3 text-xs text-amber-200/70">Build and review a preview before approving the full render.</p>}
+            {!hasPreview && (
+              <p className="mt-3 text-xs text-amber-200/70">
+                {isImage ? "Click 'Remove watermark' above to inspect the preview before saving." : "Build and review a preview before approving the full render."}
+              </p>
+            )}
           </section>
         </div>
 
@@ -427,12 +498,43 @@ export default function PreviewApproveScreen() {
   );
 }
 
+function ImagePane({ label, src }: { label: string; src: string }) {
+  return (
+    <div className="relative flex h-full w-full items-center justify-center bg-[#050608]">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={`${label} comparison`}
+        className="block max-h-full max-w-full select-none object-contain pointer-events-none"
+      />
+    </div>
+  );
+}
+
 function VideoPane({ label, videoRef, src, loop }: { label: string; videoRef: React.RefObject<HTMLVideoElement>; src: string; loop: boolean }) {
   return <div className="relative h-full w-full bg-black"><video ref={videoRef} src={src} aria-label={`${label} preview`} autoPlay loop={loop} muted playsInline className="h-full w-full object-contain" /></div>;
 }
 
-function PreviewEmpty({ onBuild }: { onBuild: () => void }) {
-  return <div className="grid min-h-[360px] place-items-center px-6 py-14 text-center sm:aspect-video sm:min-h-0"><div><div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl border border-[#4f7cff]/20 bg-gradient-to-br from-[#4f7cff]/20 to-[#6d5ef7]/10 text-[#9eb4ff]"><Film className="h-7 w-7" /></div><h3 className="mt-5 text-xl font-semibold">See the cleanup before you commit</h3><p className="mx-auto mt-2 max-w-md text-sm leading-6 text-white/50">Choose a short window, build the preview, then drag the handle to inspect the original and cleaned frames side by side.</p><button type="button" onClick={onBuild} className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#4f7cff]/30 bg-[#4f7cff]/10 px-5 py-2.5 text-sm font-semibold text-[#b7c7ff] hover:bg-[#4f7cff]/20"><Sparkles className="h-4 w-4" />Build the comparison</button></div></div>;
+function PreviewEmpty({ onBuild, isImage }: { onBuild: () => void; isImage?: boolean }) {
+  return (
+    <div className="grid min-h-[360px] place-items-center px-6 py-14 text-center sm:aspect-video sm:min-h-0">
+      <div>
+        <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl border border-[#4f7cff]/20 bg-gradient-to-br from-[#4f7cff]/20 to-[#6d5ef7]/10 text-[#9eb4ff]">
+          <Film className="h-7 w-7" />
+        </div>
+        <h3 className="mt-5 text-xl font-semibold">{isImage ? "See the clean photo before exporting" : "See the cleanup before you commit"}</h3>
+        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-white/50">
+          {isImage
+            ? "Click below to inpaint the masked area and inspect the original and cleaned photo side by side with the interactive slider."
+            : "Choose a short window, build the preview, then drag the handle to inspect the original and cleaned frames side by side."}
+        </p>
+        <button type="button" onClick={onBuild} className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#4f7cff]/30 bg-[#4f7cff]/10 px-5 py-2.5 text-sm font-semibold text-[#b7c7ff] hover:bg-[#4f7cff]/20">
+          <Sparkles className="h-4 w-4" />
+          {isImage ? "Remove watermark" : "Build the comparison"}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function PreviewBuilding({ progress }: { progress: number }) {

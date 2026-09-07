@@ -148,13 +148,87 @@ def create_preview(
         ) from exc
 
 
+def _is_image_project(project: VideoProject) -> bool:
+    from app.services.validation import file_extension, IMAGE_EXTENSIONS
+    ext = file_extension(project.original_filename)
+    return ext in IMAGE_EXTENSIONS or (project.frame_count == 1 and (project.duration or 0.0) == 0.0)
+
+
+def _build_preview_image(project: VideoProject, mask, quality: str) -> tuple[str, str]:
+    """In-process: read image, render mask, inpaint via OpenCVInpainter, save preview image."""
+    import cv2
+    from app.services.validation import file_extension
+
+    storage = get_storage()
+    candidates: list[tuple[str, str]] = []
+    if project.proxy_storage_key:
+        candidates.append((PROXY_BUCKET, project.proxy_storage_key))
+    if project.input_storage_key:
+        candidates.append(("originals", project.input_storage_key))
+    if not candidates:
+        raise AppError(
+            "SOURCE_MISSING",
+            "Source image is not available in storage. Re-upload and try again.",
+            404,
+        )
+
+    src_bucket = src_key = None
+    for bucket, key in candidates:
+        if storage.exists(bucket, key):
+            src_bucket, src_key = bucket, key
+            break
+    if src_key is None:
+        raise AppError(
+            "SOURCE_MISSING",
+            "Source image is no longer in storage.",
+            404,
+        )
+
+    work_dir = Path(tempfile.mkdtemp(prefix="vwa-preview-img-"))
+    try:
+        ext = file_extension(src_key)
+        ext = ext if ext in ("png", "jpg", "jpeg", "webp") else "png"
+        local_src = work_dir / f"source.{ext}"
+        storage.download_to_file(src_bucket, src_key, str(local_src))
+
+        frame = cv2.imread(str(local_src), cv2.IMREAD_COLOR)
+        if frame is None:
+            raise AppError("EXTRACT_FAILED", "Could not decode source image.", 502)
+
+        h, w = frame.shape[:2]
+        cache = StaticMaskForPreview(mask, int(project.width or w), int(project.height or h))
+        mask_u8 = cache.get_for(w, h)
+
+        inpainter = _new_inpainter()
+        inpainted = inpainter.inpaint_frame(frame, mask_u8, quality=quality)
+
+        out_img = work_dir / f"preview.{ext}"
+        before_img = work_dir / f"preview_before.{ext}"
+
+        cv2.imwrite(str(out_img), inpainted)
+        cv2.imwrite(str(before_img), frame)
+
+        mime = "image/png" if ext == "png" else "image/webp" if ext == "webp" else "image/jpeg"
+        key = f"{project.id}/preview.{ext}"
+        before_key = _before_preview_key(key)
+
+        storage.put_file(PREVIEW_BUCKET, key, str(out_img), content_type=mime)
+        storage.put_file(PREVIEW_BUCKET, before_key, str(before_img), content_type=mime)
+        return key, before_key
+    finally:
+        shutil.rmtree(work_dir, ignore_errors=True)
+
+
 def _build_preview_clip(
     project: VideoProject, mask, start: float, duration: int, quality: str
-) -> str:
+) -> tuple[str, str]:
     """In-process: trim a window, inpaint its frames, encode to H.420p.
 
-    Returns the storage key under the `previews` bucket.
+    Returns (preview_key, before_preview_key) under the `previews` bucket.
     """
+    if _is_image_project(project):
+        return _build_preview_image(project, mask, quality)
+
     import cv2  # heavy dep on the worker/server box only
 
     storage = get_storage()
@@ -344,7 +418,9 @@ def stream_preview_clip(
         path = (settings.storage_local_path / PREVIEW_BUCKET / key).resolve()
         if not path.exists():
             raise AppError("NOT_FOUND", "Preview file missing from storage.", 404)
-        return FileResponse(str(path), media_type="video/mp4")
+        ext = key.rsplit(".", 1)[-1].lower() if "." in key else ""
+        media = "image/png" if ext == "png" else "image/webp" if ext == "webp" else "image/jpeg" if ext in ("jpg", "jpeg") else "video/mp4"
+        return FileResponse(str(path), media_type=media)
     data = storage.get(PREVIEW_BUCKET, key)
     return JSONResponse(content={"error": "backend_not_local"},
                         status_code=502)  # MinIO path: bytes via Response in a later polish
@@ -464,13 +540,16 @@ def stream_signed_output(
     storage = get_storage()
     from app.storage.local_fs import LocalFsStorage
 
+    ext = key.rsplit(".", 1)[-1].lower() if "." in key else ""
+    media = "image/png" if ext == "png" else "image/webp" if ext == "webp" else "image/jpeg" if ext in ("jpg", "jpeg") else "video/mp4"
+
     if isinstance(storage, LocalFsStorage):
         path = (settings.storage_local_path / OUTPUT_BUCKET / key).resolve()
         if not path.exists():
             raise AppError("NOT_FOUND", "Output file missing from storage.", 404)
-        return FileResponse(str(path), media_type="video/mp4")
+        return FileResponse(str(path), media_type=media)
     data = storage.get(OUTPUT_BUCKET, key)
-    return Response(content=data, media_type="video/mp4")
+    return Response(content=data, media_type=media)
 
 
 def _project_via_output_token(db: Session, project_id: str, token: str) -> VideoProject:

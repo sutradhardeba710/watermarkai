@@ -91,6 +91,13 @@ def _attach_signed_media_urls(detail: ProjectSummary, p: VideoProject) -> None:
     # can't parse (403 / black media element).
     from app.storage.local_fs import mint_signed_token
 
+    from app.services.validation import file_extension, IMAGE_EXTENSIONS
+    ext = file_extension(p.original_filename)
+    if ext in IMAGE_EXTENSIONS or (p.frame_count == 1 and (p.duration or 0.0) == 0.0):
+        detail.media_type = "image"
+    else:
+        detail.media_type = "video"
+
     if p.proxy_storage_key:
         detail.proxy_url = f"/api/v1/projects/{p.id}/proxy?token={mint_signed_token('proxies', p.proxy_storage_key, _MEDIA_TOKEN_TTL)}"
     if p.thumbnail_storage_key:

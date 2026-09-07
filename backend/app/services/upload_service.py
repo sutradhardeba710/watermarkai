@@ -148,42 +148,84 @@ def _finalize_upload(
     project.file_size = received
     project.input_storage_key = final_key
 
-    # Proxy + (optional) audio separation. These are best-effort at the MVP
-    # layer: if ffmpeg is missing we still mark the upload uploaded so the
-    # manual-mask path (Phase 4, which only needs the proxy) can degrade
-    # gracefully and surface the gap. We track whether the proxy succeeded so
-    # the API can warn the frontend the canvas may be unavailable.
+    # Proxy + (optional) audio separation. For images, we create a high-resolution
+    # web proxy and thumbnail directly with PIL; for videos, we invoke FFmpeg.
+    is_image = meta.get("media_type") == "image" or validation.file_extension(upload.filename) in validation.IMAGE_EXTENSIONS
     proxy_ok = False
-    try:
-        proxy_key = f"{project.id}/proxy.mp4"
-        proxy_dst = Path(tempfile.mkdtemp(prefix="vwa-proxy-")) / "proxy.mp4"
-        normalize.run_ffmpeg(normalize.proxy_args(tmp_path, proxy_dst))
-        storage.put_file(BUCKET_PROXY, proxy_key, str(proxy_dst), content_type="video/mp4")
-        project.proxy_storage_key = proxy_key
-        proxy_ok = True
-        shutil.rmtree(proxy_dst.parent, ignore_errors=True)
 
-        if meta.get("has_audio"):
-            audio_key = f"{project.id}/audio_orig"
-            audio_dst = Path(tempfile.mkdtemp(prefix="vwa-aud-")) / "audio.bin"
-            normalize.run_ffmpeg(normalize.split_audio_args(tmp_path, audio_dst))
-            storage.put_file(BUCKET_AUDIO, audio_key, str(audio_dst), content_type="audio/aac")
-            shutil.rmtree(audio_dst.parent, ignore_errors=True)
-    except AppError:
-        # Proxy missing degrades Phase 4 (mask canvas) but does not block the
-        # upload itself; project proceeds in 'uploaded' so the user can retry.
-        pass
+    if is_image:
+        try:
+            from PIL import Image
 
-    thumb_key = None
-    try:
-        thumb_key = f"{project.id}/thumb.jpg"
-        thumb_dst = Path(tempfile.mkdtemp(prefix="vwa-thumb-")) / "thumb.jpg"
-        normalize.run_ffmpeg(normalize.thumbnail_args(tmp_path, thumb_dst))
-        storage.put_file(BUCKET_THUMB, thumb_key, str(thumb_dst), content_type="image/jpeg")
-        project.thumbnail_storage_key = thumb_key
-        shutil.rmtree(thumb_dst.parent, ignore_errors=True)
-    except AppError:
-        pass
+            ext = validation.file_extension(upload.filename)
+            proxy_ext = ext if ext in ("png", "jpg", "jpeg", "webp") else "jpg"
+            proxy_key = f"{project.id}/proxy.{proxy_ext}"
+            proxy_dst = Path(tempfile.mkdtemp(prefix="vwa-proxy-")) / f"proxy.{proxy_ext}"
+            proxy_mime = "image/png" if proxy_ext == "png" else "image/webp" if proxy_ext == "webp" else "image/jpeg"
+
+            with Image.open(tmp_path) as im:
+                w, h = im.size
+                if w > 1920 or h > 1080:
+                    im.thumbnail((1920, 1080), Image.Resampling.LANCZOS)
+                if proxy_ext in ("jpg", "jpeg") and im.mode in ("RGBA", "P"):
+                    im = im.convert("RGB")
+                save_kw = {"quality": 92} if proxy_ext in ("jpg", "jpeg", "webp") else {}
+                im.save(str(proxy_dst), **save_kw)
+
+            storage.put_file(BUCKET_PROXY, proxy_key, str(proxy_dst), content_type=proxy_mime)
+            project.proxy_storage_key = proxy_key
+            proxy_ok = True
+            shutil.rmtree(proxy_dst.parent, ignore_errors=True)
+        except Exception:
+            pass
+
+        thumb_key = None
+        try:
+            from PIL import Image
+
+            thumb_key = f"{project.id}/thumb.jpg"
+            thumb_dst = Path(tempfile.mkdtemp(prefix="vwa-thumb-")) / "thumb.jpg"
+            with Image.open(tmp_path) as im:
+                if im.mode in ("RGBA", "P"):
+                    im = im.convert("RGB")
+                im.thumbnail((320, 320), Image.Resampling.LANCZOS)
+                im.save(str(thumb_dst), "JPEG", quality=85)
+            storage.put_file(BUCKET_THUMB, thumb_key, str(thumb_dst), content_type="image/jpeg")
+            project.thumbnail_storage_key = thumb_key
+            shutil.rmtree(thumb_dst.parent, ignore_errors=True)
+        except Exception:
+            pass
+    else:
+        try:
+            proxy_key = f"{project.id}/proxy.mp4"
+            proxy_dst = Path(tempfile.mkdtemp(prefix="vwa-proxy-")) / "proxy.mp4"
+            normalize.run_ffmpeg(normalize.proxy_args(tmp_path, proxy_dst))
+            storage.put_file(BUCKET_PROXY, proxy_key, str(proxy_dst), content_type="video/mp4")
+            project.proxy_storage_key = proxy_key
+            proxy_ok = True
+            shutil.rmtree(proxy_dst.parent, ignore_errors=True)
+
+            if meta.get("has_audio"):
+                audio_key = f"{project.id}/audio_orig"
+                audio_dst = Path(tempfile.mkdtemp(prefix="vwa-aud-")) / "audio.bin"
+                normalize.run_ffmpeg(normalize.split_audio_args(tmp_path, audio_dst))
+                storage.put_file(BUCKET_AUDIO, audio_key, str(audio_dst), content_type="audio/aac")
+                shutil.rmtree(audio_dst.parent, ignore_errors=True)
+        except AppError:
+            # Proxy missing degrades Phase 4 (mask canvas) but does not block the
+            # upload itself; project proceeds in 'uploaded' so the user can retry.
+            pass
+
+        thumb_key = None
+        try:
+            thumb_key = f"{project.id}/thumb.jpg"
+            thumb_dst = Path(tempfile.mkdtemp(prefix="vwa-thumb-")) / "thumb.jpg"
+            normalize.run_ffmpeg(normalize.thumbnail_args(tmp_path, thumb_dst))
+            storage.put_file(BUCKET_THUMB, thumb_key, str(thumb_dst), content_type="image/jpeg")
+            project.thumbnail_storage_key = thumb_key
+            shutil.rmtree(thumb_dst.parent, ignore_errors=True)
+        except AppError:
+            pass
 
     upload_repo.finalize_upload(db, upload, storage_key=final_key, received_bytes=received)
     upload_repo.mark_completed(db, project, ProjectStatus.uploaded)

@@ -74,14 +74,22 @@ def _download_original(project: VideoProject, dest: Path) -> Path:
 
 
 def _extract_sample_frames(src: Path, out_dir: Path, timestamps: list[float]) -> list[Path]:
-    """Pull the requested sample timestamps as PNG files via FFmpeg's
-    ``-vf select='eq(n,K)'`` filter. Returns the sorted file list. Falls back
-    to a single-frame probe when nothing was requested (defensive)."""
+    """Pull the requested sample timestamps as PNG files. For images, reads the single
+    image directly. Returns the sorted file list."""
     out_dir.mkdir(parents=True, exist_ok=True)
+    import cv2  # heavy; deferred
+
+    ext = src.suffix.lower().lstrip(".")
+    if ext in ("png", "jpg", "jpeg", "webp"):
+        frame = cv2.imread(str(src), cv2.IMREAD_COLOR)
+        if frame is not None:
+            fp = out_dir / "frame_0000.png"
+            cv2.imwrite(str(fp), frame)
+            return [fp]
+
     paths: list[Path] = []
     if not timestamps:
         return paths
-    import cv2  # heavy; deferred
 
     cap = cv2.VideoCapture(str(src))
     if not cap.isOpened():
@@ -214,8 +222,8 @@ def _execute_detection(db, job, project, wid: str, *,
         duration = float(project.duration or 0.0)
         timestamps = sample_timestamps(duration, sample_fps=1.0, min_samples=10)
         if not timestamps:
-            # tiny clips / metadata gap — fall back to one middle-of-clip timestamp
-            timestamps = [duration / 2] if duration > 0 else []
+            # tiny clips / images / metadata gap — fall back to one timestamp
+            timestamps = [duration / 2] if duration > 0 else [0.0]
 
         with isolated_tempdir(prefix=f"vwa-detect-{job_id}-") as work:
             src_path = (Path(dry_run_path) if dry_run_path

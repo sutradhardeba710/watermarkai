@@ -97,7 +97,19 @@ def stream_artifact(
     storage = get_storage()
     settings = get_settings()
     bucket = _KIND_TO_BUCKET[kind]
-    media = "video/mp4" if kind == "proxy" else "image/jpeg"
+    ext = key.rsplit(".", 1)[-1].lower() if "." in key else ""
+    if ext == "png":
+        media = "image/png"
+    elif ext in ("jpg", "jpeg"):
+        media = "image/jpeg"
+    elif ext == "webp":
+        media = "image/webp"
+    elif ext == "mp4":
+        media = "video/mp4"
+    elif kind == "proxy":
+        media = "video/mp4"
+    else:
+        media = "image/jpeg"
 
     # Fast path for LocalFs: serve the file directly from disk, no copy.
     from app.storage.local_fs import LocalFsStorage

@@ -62,6 +62,52 @@ def _require_mask(db: Session, project_id: str):
     return mask
 
 
+def _process_image_direct(project: VideoProject, mask, quality: str) -> str:
+    """In-process full-resolution inpainting for an image project."""
+    import shutil
+    import tempfile
+    from pathlib import Path
+    import cv2
+    from app.api.preview import StaticMaskForPreview, _new_inpainter
+    from app.services.validation import file_extension
+    from app.storage.factory import get_storage
+
+    storage = get_storage()
+    src_bucket = "originals" if project.input_storage_key else "proxies"
+    src_key = project.input_storage_key or project.proxy_storage_key
+    if not src_key:
+        raise AppError("SOURCE_MISSING", "Original image not found in storage.", 404)
+
+    ext = file_extension(project.original_filename)
+    ext = ext if ext in ("png", "jpg", "jpeg", "webp") else "png"
+
+    work_dir = Path(tempfile.mkdtemp(prefix="vwa-img-proc-"))
+    try:
+        local_src = work_dir / f"original.{ext}"
+        storage.download_to_file(src_bucket, src_key, str(local_src))
+
+        frame = cv2.imread(str(local_src), cv2.IMREAD_COLOR)
+        if frame is None:
+            raise AppError("PROCESSING_FAILED", "Could not decode source image.", 502)
+
+        h, w = frame.shape[:2]
+        cache = StaticMaskForPreview(mask, int(project.width or w), int(project.height or h))
+        mask_u8 = cache.get_for(w, h)
+
+        inpainter = _new_inpainter()
+        cleaned = inpainter.inpaint_frame(frame, mask_u8, quality=quality)
+
+        out_file = work_dir / f"clean.{ext}"
+        cv2.imwrite(str(out_file), cleaned)
+
+        out_key = f"{project.id}/clean.{ext}"
+        mime = "image/png" if ext == "png" else "image/webp" if ext == "webp" else "image/jpeg"
+        storage.put_file("outputs", out_key, str(out_file), content_type=mime)
+        return out_key
+    finally:
+        shutil.rmtree(work_dir, ignore_errors=True)
+
+
 # A created/processing_queued job older than this with no worker ever having
 # started it is treated as dead — its Celery message is no longer in the queue
 # (worker was down at enqueue time, or died mid-flight without acking), so
@@ -142,6 +188,38 @@ def enqueue_process(
         output_resolution=overrides.output_resolution if overrides else None,
         preserve_audio=overrides.preserve_audio if overrides else True,
     )
+
+    from app.services.validation import file_extension, IMAGE_EXTENSIONS
+    is_image = file_extension(p.original_filename) in IMAGE_EXTENSIONS or (
+        p.frame_count == 1 and (p.duration or 0.0) == 0.0
+    )
+
+    if is_image:
+        image_cost = 1
+        deduct_credits(db, user=user, cost=image_cost)
+        job = proc_repo.create_job(db, p, job_type=JobType.process, quality_mode=quality)
+        proc_repo.transition(db, job, JobState.processing, stage="inpainting")
+        p.status = ProjectStatus.processing
+        db.commit()
+
+        try:
+            out_key = _process_image_direct(p, mask, quality.value)
+            p.output_storage_key = out_key
+            p.status = ProjectStatus.completed
+            proc_repo.transition(db, job, JobState.completed, stage="done")
+            job.progress = 100
+            db.commit()
+            return ProcessResponse(job_id=job.id, project_id=p.id, status=job.status.value)
+        except Exception as exc:
+            refund_credits(db, user=user, cost=image_cost)
+            proc_repo.transition(
+                db, job, JobState.failed, stage="inpainting",
+                error_code="PROCESSING_FAILED",
+                error_message=f"Image inpainting failed: {exc}",
+            )
+            p.status = ProjectStatus.failed
+            db.commit()
+            raise AppError("PROCESSING_FAILED", f"Image processing failed: {exc}", 502) from exc
 
     # BILLING: deduct credits before dispatching. Raises 402 if balance is low.
     deduct_credits(db, user=user, cost=CREDITS_PER_JOB)

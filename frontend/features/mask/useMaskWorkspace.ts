@@ -197,20 +197,22 @@ export function useMaskWorkspace(projectId: string) {
     [toDisplay],
   );
 
-  // --- Resize canvas to the displayed video size (verbatim) ---
+  // --- Resize canvas to the displayed video/image size ---
   useEffect(() => {
     const canvas = canvasRef.current;
-    const video = videoRef.current;
-    if (!canvas || !video) return;
+    const target = videoRef.current || canvas?.parentElement;
+    if (!canvas || !target) return;
     const resize = () => {
-      const r = video.getBoundingClientRect();
-      canvas.width = r.width;
-      canvas.height = r.height;
-      redrawOverlay();
+      const r = target.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0) {
+        canvas.width = r.width;
+        canvas.height = r.height;
+        redrawOverlay();
+      }
     };
     resize();
     const ro = new ResizeObserver(resize);
-    ro.observe(video);
+    ro.observe(target);
     return () => ro.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project?.id]);

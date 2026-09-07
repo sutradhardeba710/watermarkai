@@ -81,6 +81,10 @@ def validate_extension(filename: str, allowed: list[str] | None = None) -> Valid
     return ValidationResult(ok=True, details={"extension": ext})
 
 
+IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+VIDEO_EXTENSIONS = {"mp4", "mov", "webm"}
+
+
 def sniff_mime(head: bytes) -> str | None:
     """Map leading file bytes to a container family, or None if unknown.
 
@@ -92,6 +96,15 @@ def sniff_mime(head: bytes) -> str | None:
     # MP4/MOV: bytes 4-7 are 'ftyp'
     if len(head) >= 12 and head[4:8] == b"ftyp":
         return "mp4"
+    # JPEG: starts with FF D8 FF
+    if head.startswith(b"\xff\xd8\xff"):
+        return "jpeg"
+    # PNG: starts with \x89PNG\r\n\x1a\n
+    if head.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "png"
+    # WebP: starts with RIFF and bytes 8-11 are WEBP
+    if len(head) >= 12 and head[:4] == b"RIFF" and head[8:12] == b"WEBP":
+        return "webp"
     return None
 
 
@@ -102,16 +115,21 @@ def validate_mime(
     allowed = allowed_mime or settings.allowed_upload_mime
     sniffed = sniff_mime(head)
     if sniffed is None:
-        return ValidationResult(False, "UNSUPPORTED_FORMAT", "File does not look like a supported video container.")
+        return ValidationResult(False, "UNSUPPORTED_FORMAT", "File does not look like a supported video or image container.")
     expected = {
         "mp4": "video/mp4",
         "webm": "video/webm",
+        "jpeg": "image/jpeg",
+        "png": "image/png",
+        "webp": "image/webp",
     }.get(sniffed)
     if expected and expected not in allowed:
         return ValidationResult(False, "UNSUPPORTED_FORMAT", f"Container '{sniffed}' is not in the allowlist.")
     # If the client declared a MIME, it must match the sniffed container family.
     if declared_mime:
         declared = declared_mime.split(";")[0].strip().lower()
+        if declared == "image/jpg":
+            declared = "image/jpeg"
         if declared != expected:
             return ValidationResult(
                 False,
@@ -198,6 +216,33 @@ def _parse_fps(expr: str | None) -> float | None:
         return None
 
 
+def probe_image(path: str | Path) -> dict[str, Any]:
+    """Inspect image dimensions without requiring ffprobe."""
+    from PIL import Image
+
+    try:
+        with Image.open(path) as img:
+            width, height = img.size
+            fmt = (img.format or "image").lower()
+    except Exception as exc:
+        raise AppError("METADATA_ERROR", f"Failed to inspect image: {exc}", 415) from exc
+
+    return {
+        "duration": 0.0,
+        "width": int(width),
+        "height": int(height),
+        "fps": 0.0,
+        "frame_count": 1,
+        "video_codec": fmt,
+        "audio_codec": None,
+        "has_audio": False,
+        "container": fmt,
+        "bit_rate": None,
+        "media_type": "image",
+        "raw": {"format": fmt, "width": width, "height": height},
+    }
+
+
 def enforce_limits(meta: dict[str, Any], settings=None) -> ValidationResult:
     """Apply duration / resolution / FPS caps (NORM / UPLOAD limits).
 
@@ -205,37 +250,47 @@ def enforce_limits(meta: dict[str, Any], settings=None) -> ValidationResult:
     the route can surface it via the BE-004 envelope.
     """
     settings = settings or get_settings()
-    duration = meta.get("duration") or 0.0
-    if duration > settings.max_duration_seconds:
-        return ValidationResult(
-            False, "DURATION_TOO_LONG",
-            f"Video is {duration:.1f}s; max is {settings.max_duration_seconds}s.",
-            {"max_duration_seconds": settings.max_duration_seconds},
-        )
+    is_image = meta.get("media_type") == "image" or (
+        meta.get("frame_count") == 1 and (meta.get("duration") or 0.0) == 0.0
+    )
+    if not is_image:
+        duration = meta.get("duration") or 0.0
+        if duration > settings.max_duration_seconds:
+            return ValidationResult(
+                False, "DURATION_TOO_LONG",
+                f"Video is {duration:.1f}s; max is {settings.max_duration_seconds}s.",
+                {"max_duration_seconds": settings.max_duration_seconds},
+            )
+        fps = meta.get("fps") or 0.0
+        if fps > settings.max_fps:
+            return ValidationResult(
+                False, "FPS_TOO_HIGH",
+                f"Video is {fps:.1f}fps; max is {settings.max_fps}fps.",
+                {"max_fps": settings.max_fps},
+            )
+
     width = meta.get("width") or 0
     height = meta.get("height") or 0
-    if width > settings.max_width or height > settings.max_height:
+    max_w = 8192 if is_image else settings.max_width
+    max_h = 8192 if is_image else settings.max_height
+    if width > max_w or height > max_h:
         return ValidationResult(
             False, "RESOLUTION_TOO_HIGH",
-            f"Video is {width}x{height}; max is {settings.max_width}x{settings.max_height}.",
-            {"max_width": settings.max_width, "max_height": settings.max_height},
-        )
-    fps = meta.get("fps") or 0.0
-    if fps > settings.max_fps:
-        return ValidationResult(
-            False, "FPS_TOO_HIGH",
-            f"Video is {fps:.1f}fps; max is {settings.max_fps}fps.",
-            {"max_fps": settings.max_fps},
+            f"Media is {width}x{height}; max is {max_w}x{max_h}.",
+            {"max_width": max_w, "max_height": max_h},
         )
     return ValidationResult(ok=True)
 
 
 def probe_container(path: str | Path) -> dict[str, Any]:
-    """Run ffprobe over a local file, returning normalised metadata.
+    """Run probe over a local file, returning normalised metadata.
 
-    SEC-007: subprocess arg-list only — never shell=True, never string-concat.
-    Raises :class:`AppError` on non-zero exit or missing binary.
+    Supports both video containers via ffprobe and image files via PIL.
     """
+    ext = file_extension(str(path))
+    if ext in IMAGE_EXTENSIONS:
+        return probe_image(path)
+
     settings = get_settings()
     args = [
         settings.ffprobe_bin,
@@ -265,6 +320,8 @@ def hash_head(path: str | Path, chunk_bytes: int = 1 << 20) -> str:
 
 
 __all__ = [
+    "IMAGE_EXTENSIONS",
+    "VIDEO_EXTENSIONS",
     "ValidationResult",
     "sanitize_filename",
     "file_extension",
@@ -275,5 +332,6 @@ __all__ = [
     "parse_ffprobe_json",
     "enforce_limits",
     "probe_container",
+    "probe_image",
     "hash_head",
 ]

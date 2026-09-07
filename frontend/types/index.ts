@@ -27,6 +27,7 @@ export interface VideoProject {
   title: string;
   original_filename: string;
   status: ProjectStatus["status"];
+  media_type?: "video" | "image";
   duration?: number;
   width?: number;
   height?: number;

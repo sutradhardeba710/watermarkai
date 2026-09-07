@@ -61,11 +61,14 @@ class Settings(BaseSettings):
     max_width: int = 1920
     max_height: int = 1080
     max_fps: int = 60
-    allowed_upload_extensions: list[str] = ["mp4", "mov", "webm"]
+    allowed_upload_extensions: list[str] = ["mp4", "mov", "webm", "png", "jpg", "jpeg", "webp"]
     allowed_upload_mime: list[str] = [
         "video/mp4",
         "video/quicktime",
         "video/webm",
+        "image/png",
+        "image/jpeg",
+        "image/webp",
     ]
 
     # --- Output / retention (SRS STORAGE-006) ---

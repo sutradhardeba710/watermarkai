@@ -138,6 +138,11 @@ export function VideoCanvas({
   // width = min(panel width, available height × ratio) using container units.
   const ratio = project?.width && project?.height ? project.width / project.height : 16 / 9;
 
+  const isImage =
+    project?.media_type === "image" ||
+    ["png", "jpg", "jpeg", "webp"].includes(project?.original_filename?.split(".").pop()?.toLowerCase() || "") ||
+    (project?.duration === 0 && (project?.width ?? 0) > 0);
+
   return (
     <TooltipProvider delayDuration={150}>
       <div className="flex min-h-0 flex-1 flex-col gap-2">
@@ -155,31 +160,45 @@ export function VideoCanvas({
             style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})` }}
           >
             {proxyUrl ? (
-              <video
-                ref={videoRef}
-                src={proxyUrl}
-                className="block h-full w-full object-contain"
-                onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-                onLoadedMetadata={(e) => {
-                  setDuration(e.currentTarget.duration || project?.duration || 0);
-                  setVideoLoading(false);
-                }}
-                onLoadedData={() => setVideoLoading(false)}
-                onCanPlay={() => setVideoLoading(false)}
-                onPlay={() => setPlaying(true)}
-                onPause={() => setPlaying(false)}
-                onError={() => {
-                  const code = videoRef.current?.error?.code ?? null;
-                  setVideoErrorCode(code);
-                  setVideoError(videoErrorReason(code));
-                  setVideoLoading(false);
-                }}
-                onEnded={() => setPlaying(false)}
-                playsInline
-              />
+              isImage ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={proxyUrl}
+                  alt={project?.title || "Image for watermark removal"}
+                  className="block h-full w-full select-none object-contain pointer-events-none"
+                  onLoad={() => setVideoLoading(false)}
+                  onError={() => {
+                    setVideoError("Failed to load image preview.");
+                    setVideoLoading(false);
+                  }}
+                />
+              ) : (
+                <video
+                  ref={videoRef}
+                  src={proxyUrl}
+                  className="block h-full w-full object-contain"
+                  onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+                  onLoadedMetadata={(e) => {
+                    setDuration(e.currentTarget.duration || project?.duration || 0);
+                    setVideoLoading(false);
+                  }}
+                  onLoadedData={() => setVideoLoading(false)}
+                  onCanPlay={() => setVideoLoading(false)}
+                  onPlay={() => setPlaying(true)}
+                  onPause={() => setPlaying(false)}
+                  onError={() => {
+                    const code = videoRef.current?.error?.code ?? null;
+                    setVideoErrorCode(code);
+                    setVideoError(videoErrorReason(code));
+                    setVideoLoading(false);
+                  }}
+                  onEnded={() => setPlaying(false)}
+                  playsInline
+                />
+              )
             ) : (
               <div className="grid h-full w-full place-items-center px-6 text-center text-sm text-white/45">
-                Video preview is not available yet. The proxy is still being generated.
+                {isImage ? "Photo preview is generating…" : "Video preview is not available yet. The proxy is still being generated."}
               </div>
             )}
 
@@ -202,7 +221,7 @@ export function VideoCanvas({
             <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden bg-cyan-300/[.035]" aria-hidden="true">
               <div className="mask-scan-line absolute inset-x-0 h-px bg-cyan-200 shadow-[0_0_18px_4px_rgba(34,211,238,.55)]" />
               <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-cyan-300/25 bg-[#071014]/85 px-3 py-1.5 text-xs font-semibold text-cyan-100 backdrop-blur">
-                <ScanSearch className="h-3.5 w-3.5 animate-pulse motion-reduce:animate-none" /> Analyzing frames
+                <ScanSearch className="h-3.5 w-3.5 animate-pulse motion-reduce:animate-none" /> {isImage ? "Analyzing photo & detecting logos/watermarks…" : "Analyzing frames"}
               </div>
             </div>
           )}
